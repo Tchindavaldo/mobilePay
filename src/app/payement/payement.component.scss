@@ -1,0 +1,108 @@
+.progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+  }
+  
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .icon {
+    font-size: 24px;
+    color: gray;
+    transition: color 0.3s;
+  }
+  
+  .label {
+    margin-top: 5px;
+    font-size: 12px;
+    color: gray;
+  }
+  
+  .line {
+    width: 50px;
+    height: 2px;
+    border-top: 2px dotted gray;
+    transition: border-color 0.3s;
+  }
+  
+  .active .icon {
+    color: red; /* Couleur rouge pour l'étape active */
+  }
+  
+  .active .label {
+    color: red; /* Texte de l'étape active en rouge */
+  }
+  
+  .active + .line {
+    border-color: red; /* Le trait devient rouge une fois l'étape atteinte */
+  }
+
+  .forfait{
+    width: 100%;
+    height: 84px;
+    /* background-color: black; */
+    display: flex;
+    justify-content: space-between;
+  }
+  .park{
+    width: 72px;
+    height: 84px;
+    background-color: #fff;
+    border-radius: 6px;
+    border: 1px solid #3b3737;
+  }
+
+ 
+.park.active.dive {
+  color: rgb(77, 11, 11); /* Pour le texte et l'icône */
+}
+.cocher {
+  padding-left: 52px;
+  padding-top: 18px;
+}
+ion-item {
+  --inner-padding-start: 0;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-end: 0;
+}
+ion-label.pour{
+  font-size: 12px;
+  color: gray;
+  display: flex;
+  justify-content: space-between;
+}
+.page1{
+    margin: 20px;
+}
+ ion-header.custom{
+
+   box-shadow: none;
+
+   border: none;
+}
+.park.active {
+    background:linear-gradient(45deg ,red,blue);
+    color: white; /* Pour le texte et l'icône */
+    border: none;
+}
+.cliquer{
+  margin: 20px;
+}
+.custom-checkbox{
+  --border-radius: 50%
+}
+.custom-toast {
+  --background: #000000; /* Fond noir */
+  --color: #ffffff;      /* Texte blanc */
+  --border-radius: 10px; /* Facultatif : coins arrondis */
+  --box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Facultatif : ombre */
+}
+
+
+

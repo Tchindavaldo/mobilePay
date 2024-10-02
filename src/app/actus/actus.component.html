@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar >
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Actualites des Fimls</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="movie-container">
+    <ion-card *ngFor="let movie of currentMovies">
+      <img [src]="movie.poster" alt="Affiche de {{ movie.title }}">
+      <ion-card-header>
+        <ion-card-title>{{ movie.title }}</ion-card-title>
+        <ion-card-subtitle>Date de sortie: {{ movie.releaseDate | date:'shortDate' }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ movie.description }}</p>
+        <ion-button expand="full" color="light" (click)="openMovieDetails(movie)" class="bordure" >Voir Détails</ion-button>
+        <div class="like-dislike-buttons">
+          <ion-button (click)="likeMovie(movie)" color="success" fill="clear" class="bordure">👍</ion-button>
+          <ion-button (click)="dislikeMovie(movie)" color="danger" fill="clear">👎</ion-button>
+          <ion-button (click)="setNotification(movie)" fill="clear" color="danger">🔔 Notifier</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>{{ selectedMovie.title }}</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal()">Fermer</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <img [src]="selectedMovie.poster" alt="Affiche de {{ selectedMovie.title }}">
+          <p>{{ selectedMovie.description }}</p>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </div>
+</ion-content>

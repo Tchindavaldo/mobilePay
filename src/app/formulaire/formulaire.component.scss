@@ -1,0 +1,62 @@
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  h1 {
+    font-size: 28px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  p {
+    color: #666;
+    margin-bottom: 40px;
+  }
+  
+  .input-item {
+    --background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  ion-icon {
+    color: #555;
+  }
+  
+  ion-input {
+    padding-left: 8px;
+  }
+  
+  .register-btn {
+      --background: linear-gradient(45deg, #ff6b6b, #f06595);
+    --box-shadow: 0px 4px 15px rgba(255, 107, 107, 0.5);
+    border-radius: 25px;
+    font-size: 18px;
+  }
+  
+  .already-account {
+    margin-top: 20px;
+  }
+  
+  .already-account p {
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .already-account a {
+    color: #ff6b6b;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  ion-header.md.header-md.header-collapse-none.hydrated {
+      border: none;
+      box-shadow: none;
+  }
+  
+  

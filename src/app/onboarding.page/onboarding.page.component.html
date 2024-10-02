@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeSlides()">Fermer</ion-button>
+    </ion-buttons>
+    <ion-title>Tutoriel</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <mat-tab-group>
+    <mat-tab label="Étape 1">
+      <div class="slide-content">
+        <img src="assets/illustration1.svg" alt="Illustration 1" />
+        <h2>Bienvenue dans l'application !</h2>
+        <p>Découvrez nos fonctionnalités en quelques étapes simples.</p>
+      </div>
+    </mat-tab>
+    <mat-tab label="Étape 2">
+      <div class="slide-content">
+        <img src="assets/illustration2.svg" alt="Illustration 2" />
+        <h2>Suivez vos progrès</h2>
+        <p>Accédez facilement à vos statistiques et données personnelles.</p>
+      </div>
+    </mat-tab>
+    <mat-tab label="Étape 3">
+      <div class="slide-content">
+        <img src="assets/illustration3.svg" alt="Illustration 3" />
+        <h2>Commencez dès maintenant !</h2>
+        <p>Inscrivez-vous pour profiter de toutes nos fonctionnalités.</p>
+        <ion-button expand="block" (click)="startApp()">Commencer</ion-button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</ion-content>

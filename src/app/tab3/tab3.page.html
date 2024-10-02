@@ -1,0 +1,74 @@
+<ion-header class="custom">
+  <ion-toolbar>
+    <ion-title>Paramètres</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="saveSettings()">
+        <ion-icon color="danger" name="save-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Section Paramètres Généraux -->
+  <ion-list>
+    <ion-list-header>Paramètres Généraux</ion-list-header>
+    <ion-item>
+      <ion-label>Langue</ion-label>
+      <ion-select slot="end" [(ngModel)]="selectedLanguage">
+        <ion-select-option value="fr">Français</ion-select-option>
+        <ion-select-option value="en">English</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Thème</ion-label>
+      <ion-select slot="end" [(ngModel)]="selectedTheme">
+        <ion-select-option value="light">Clair</ion-select-option>
+        <ion-select-option value="dark">Sombre</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <!-- Section Notifications -->
+  <ion-list>
+    <ion-list-header>Notifications</ion-list-header>
+    <ion-item>
+      <ion-label >Activer les notifications</ion-label>
+      <ion-toggle slot="end" color="danger" [(ngModel)]="notificationsEnabled"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Type de notification</ion-label>
+      <ion-select slot="end" [(ngModel)]="notificationType">
+        <ion-select-option value="all">Toutes</ion-select-option>
+        <ion-select-option value="mentions">Mentions uniquement</ion-select-option>
+        <ion-select-option value="none">Aucune</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <!-- Section Compte -->
+  <ion-list>
+    <ion-list-header>Compte</ion-list-header>
+    <ion-item (click)="changePassword()">
+      <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+      <ion-label>Changer le mot de passe</ion-label>
+    </ion-item>
+    <ion-item (click)="deleteAccount()">
+      <ion-icon name="trash-outline" slot="start"></ion-icon>
+      <ion-label style="color: red;">Supprimer le compte</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Section Aide -->
+  <ion-list>
+    <ion-list-header>Aide</ion-list-header>
+    <ion-item (click)="contactSupport()" [routerLink]="['/support']">
+      <ion-icon name="help-circle-outline" slot="start"></ion-icon>
+      <ion-label>Contacter le support</ion-label>
+    </ion-item>
+    <ion-item (click)="aboutApp()">
+      <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+      <ion-label>À propos de l'application</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

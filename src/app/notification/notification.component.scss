@@ -1,0 +1,24 @@
+ion-header.custom{
+
+    box-shadow: none;
+ 
+    border: none;
+ }
+
+ ion-header {
+    --background: var(--ion-color-primary);
+    --color: #fff;
+  }
+  
+//   ion-item {
+//     margin-bottom: 10px;
+//     border-radius: 10px;
+   
+//   }
+  
+  ion-avatar {
+    background-color: #f0f0f0;
+    padding: 5px;
+    border-radius: 50%;
+  }
+  

@@ -1,0 +1,44 @@
+.splash-screen {
+    --background: linear-gradient(120deg, #ff6a6a 0%, #ff0000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+  
+  .splash-container {
+    text-align: center;
+    padding-top: 50%;
+  }
+  
+  .logo {
+    width: 150px;
+    animation: bounce 2s infinite;
+  }
+  
+  .loader .circle {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-top: 20px;
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  

@@ -1,0 +1,35 @@
+.account-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between the account cards */
+  }
+  
+  .card-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .account-info {
+    flex: 1; /* Allows the account info to take as much space as available */
+    overflow: hidden; /* Prevents overflow when the text is too long */
+  }
+  
+  .account-name {
+    white-space: nowrap; /* Prevents text from wrapping */
+    overflow: hidden;    /* Ensures content doesn't overflow */
+    text-overflow: ellipsis; /* Adds '...' when the text is too long */
+    max-width: 70%; /* Limits the width so that buttons remain visible */
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 10px; /* Space between the buttons */
+    flex-shrink: 0; /* Prevents the buttons from shrinking */
+  }
+  ion-header.md.header-md.header-collapse-none.hydrated {
+    border: none;
+    box-shadow: none;
+}
+  

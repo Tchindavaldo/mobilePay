@@ -1,0 +1,79 @@
+<ion-header>
+    <ion-toolbar >
+      <ion-title>Mon Profil</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="editProfile()">
+          <ion-icon name="create-outline"></ion-icon> Modifier
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+  
+    <!-- Section Hero avec Image de couverture et Avatar -->
+    <div class="profile-header">
+      <img class="cover-photo" src="../../assets/LOGO.jpg" alt="Couverture">
+      <ion-avatar class="profile-avatar" (click)="changeProfilePicture()">
+        <img src="../../assets/31988.jpg" alt="Profil">
+      </ion-avatar>
+      <h2>{{ user.name }}</h2>
+      <p class="user-bio">{{ user.bio }}</p>
+    </div>
+  
+    <!-- Statistiques Utilisateur -->
+    <ion-grid class="stats-grid">
+      <ion-row>
+        <ion-col>
+          <div class="stat-box">
+            <h3 style="color:rgb(216, 0, 0) ;">{{ user.followers }}</h3>
+            <p>Compte</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="stat-box">
+            <h3 style="color:rgb(216, 0, 0) ;">{{ user.posts }}</h3>
+            <p>Partage</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="stat-box">
+            <h3 style="color:rgb(216, 0, 0) ;">{{ user.likes }}</h3>
+            <p>Points</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  
+    <!-- Actions Rapides -->
+    <ion-list class="action-list">
+      <ion-item (click)="viewDetailedStats()">
+        <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+        <ion-label>Voir les statistiques</ion-label>
+      </ion-item>
+      <ion-item (click)="changePassword()">
+        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+        <ion-label>Changer le mot de passe</ion-label>
+      </ion-item>
+      <ion-item  (click)="logout()">
+        <ion-icon name="notifications-outline" slot="start"></ion-icon>
+        <ion-label  [routerLink]="['/notif']" >Notifications du compte</ion-label>
+      </ion-item>
+      <ion-item (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        <ion-label>Se déconnecter</ion-label>
+      </ion-item>
+    </ion-list>
+  
+    <!-- Activité Récente -->
+    <!-- <ion-list>
+      <ion-list-header>Activité Récente</ion-list-header>
+      <ion-item *ngFor="let activity of user.recentActivity">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        <ion-label>{{ activity.description }}</ion-label>
+        <ion-note>{{ activity.date | date:'short' }}</ion-note>
+      </ion-item>
+    </ion-list> -->
+  
+  </ion-content>
+  

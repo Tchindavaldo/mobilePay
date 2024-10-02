@@ -1,0 +1,28 @@
+.movie-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  ion-card {
+    width: 90%;
+    margin: 10px 0;
+  }
+  
+  .like-dislike-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  ion-button.bordure{
+    --border: none;
+    --box-shadow: none;
+  }
+  button.button-native {
+    --border: none;
+}
+ion-header.md.header-md.header-collapse-none.hydrated {
+    border: none;
+    box-shadow: none;
+}
+  

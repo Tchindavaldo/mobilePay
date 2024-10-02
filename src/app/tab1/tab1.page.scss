@@ -1,0 +1,294 @@
+.menu {
+    background-color: blue;
+    width: 100%;
+    height:175px;
+}
+img {
+    width: 100%;
+    height: 100%;
+}
+.rond {
+    background-color: #ffffff;
+    width: 100%;
+    height: 44px;
+    border-top-left-radius: 37px;
+    border-top-right-radius: 37px;
+}
+ion-header.tete{
+    background-color: black;
+    box-shadow: none;
+    height: 218px;
+    border: none;
+}
+.donnee {
+    // background-color: blue;
+    /* border-top-right-radius: 94px; */
+    // height: 220px;
+    // border-radius: 37px;
+    margin-top: -27px;
+    // border: 2px solid;
+}
+.informations{
+    padding: 8%;
+}
+.chiffre {
+    padding-top: 5%;
+    // padding-left: 5%;
+    font-size: 22px;
+}
+.statistique {
+    height: 12px;
+    border: 1px solid;
+    margin-top: 5%;
+    border-radius: 10px;
+}
+.avancer {
+    height: 100%;
+    width: 198px;
+    background-color:  rgb(216, 0, 0);
+    border-radius: 10px;
+}
+.flex{
+    display: flex;
+    // width: 100%;
+    // height: 43px;
+    padding-top: 5%;
+    justify-content: space-between;
+}
+
+  .stick {
+    // background-color: aqua;
+    height: 50px;
+    width: 52px;
+    margin-right: 0px;
+    font-size: 30px;
+    text-align: center;
+    padding-top: 3%;
+    border-radius: 15px;
+}
+.bons{
+    height: 100%;
+    width: 140px;
+    // background-color: aqua;
+    /* margin-right: 6%; */
+    border-radius: 10px;
+    margin-right: 0;
+}
+
+
+.plan {
+    height: 175px;
+    // background-color: black;
+    display: flex;
+    /* margin: 7%; */
+    justify-content: space-between;
+}
+img{
+    width: 100%;
+    height: 100%;
+}
+// .reduire{
+//     height: 30px;
+//     width: 30px;
+//     background-color: black;
+// }
+.reduire {
+    height: 80px;
+    width: 65px;
+    // background-color: black;
+    margin-right: 0;
+    border-radius: 10px;
+    font-size: 12px;
+    text-align: center;
+}
+.photo{
+    height: 60px;
+    width: 100%;
+    background-color: rgb(228, 228, 228);
+    border-radius: 10px;
+}
+
+@media (min-width: 400px) {
+    .bons {
+      width: 155px;
+    }
+  }
+  @media (min-width: 400px) {
+    .reduire {
+      width: 70px;
+    }
+  }
+  .autre{
+display: flex;
+justify-content: space-between;
+width: 100%;
+height: 50px;
+// background-color: black;
+  }
+  .reseaux{
+    height: 50px;
+    width: 50px;
+    background-color: rgb(228, 228, 228);
+    border-radius: 10px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .souche{
+    width: 100%;
+    height: 88px;
+    // background-color: white;
+    z-index: 100;
+    position: absolute;
+    padding: 5%;
+    top: 33px;
+   
+    // justify-content: space-between;
+}
+.partie{
+    width: 40px;
+    height: 40px;
+    // background-color: rgb(146, 146, 146);
+  
+}
+.photos{
+    height: 100%;
+    // width: 80%;
+    background-color: rgb(228, 228, 228);
+    border-radius: 10px;
+    // font-size: 12px;
+    // text-align: center;
+}
+
+
+ion-fab-button.md.ion-activatable.ion-focusable.hydrated.fab-button-close-active {
+    width: 40px;
+    height: 40px;
+        // --background: #6a6060;
+}
+ion-fab-button.md.ion-activatable.ion-focusable.hydrated {
+    width: 40px;
+    height: 40px;
+}
+ion-fab.md.fab-horizontal-start.fab-edge.hydrated {
+    padding-left: 7px;
+    margin-top: -4px;
+}
+ion-fab-list.md.fab-list-side-bottom.hydrated.fab-list-active {
+    display: contents;
+}
+// ion-icon.md.flip-rtl.hydrated {
+//     font-size: 42px;
+// }
+
+/* Style pour la div lorsque active */
+.stick.active {
+    background-color: rgb(216, 0, 0);
+    color: white; /* Pour le texte et l'icône */
+}
+.alert-wrapper.ion-overlay-wrapper.sc-ion-alert-md {
+    border-radius: 21px;
+}
+button.alert-button.ion-focusable.ion-activatable.alert-button-cancel.sc-ion-alert-md {
+    color: #535353;
+}
+span.alert-button-inner.sc-ion-alert-md {
+        color: red;
+}
+.span.alert-button-inner.sc-ion-alert-md {
+    color: red;
+}
+.yes-button {
+  --color: red;         /* Couleur du texte du bouton "Oui" */
+  --background: transparent;  /* Fond transparent */
+}
+
+.no-button {
+  --color: black;       /* Couleur du texte du bouton "Non" */
+  --background: transparent;  /* Fond transparent */
+}
+
+ion-alert img {
+  display: block;
+  margin: 0 auto 10px;  /* Centrer l'image triste */
+}
+
+
+
+
+.dialog {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .dialog-content {
+    background-color:  #ffa2a2;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    width: 294px;
+  }
+  
+  .close {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+  }
+  
+  .dialog-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .yes-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .no-button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .custom-toast {
+    --background: white; /* Fond blanc */
+    --color: black; /* Texte noir */
+    --box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    border: 1px solid #ccc; /* Bordure gris clair */
+    border-radius: 8px; /* Coins arrondis */
+  }
+  h2 {
+    /* margin-top: 18px; */
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+}
+
+
+ion-searchbar {
+    bottom: 27px;
+    --border-radius: 50px;
+    color: rgb(151, 151, 151);
+}
+
+  
+  
+  
+
+

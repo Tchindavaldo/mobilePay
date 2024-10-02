@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar >
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mes comptes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="account-list">
+    <!-- List of streaming accounts -->
+    <ion-card *ngFor="let account of accounts">
+      <img [src]="account.avatar || 'default-avatar.png'" alt="Account Avatar">
+      <ion-card-header>
+        <!-- Using a flex container for title and buttons -->
+        <div class="card-header-content">
+          <div class="account-info">
+            <ion-card-title class="account-name">{{ account.name }}</ion-card-title>
+            <ion-card-subtitle color="danger">{{ account.type }}</ion-card-subtitle>
+          </div>
+          <div class="button-container">
+            <ion-button (click)="editAccount(account)" color="light">Edit</ion-button>
+            <ion-button (click)="deleteAccount(account.id)" color="danger">Delete</ion-button>
+          </div>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p>Status: {{ account.status }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Floating Action Button to Add Account -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="danger" (click)="openAddAccountModal()">
+      <ion-icon  name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

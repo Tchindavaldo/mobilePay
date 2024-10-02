@@ -1,0 +1,44 @@
+
+<ion-header class="custom">
+  <ion-toolbar>
+    <!-- Icone pour retourner à la page d'accueil (start) -->
+    <ion-buttons slot="start">
+      <ion-button routerLink="/tabs/tab1"> <!-- Rediriger vers la page d'accueil -->
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Titre du header -->
+    <ion-title>
+      Notifications
+    </ion-title>
+
+    <!-- Icone pour les notifications (end) -->
+    <ion-buttons slot="end">
+      <ion-button (click)="openNotifications()">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <!-- Optionnel: Badge de notification -->
+        <ion-badge style="border-radius: 50%;width: 20px;height: 20px;" color="danger" *ngIf="unreadNotifications > 0">{{ unreadNotifications }}</ion-badge>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let notification of notifications">
+      <ion-avatar slot="start">
+        <img [src]="notification.image" alt="Avatar">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ notification.title }}</h2>
+        <p>{{ notification.message }}</p>
+        <ion-note>{{ notification.time | date:'short' }}</ion-note>
+      </ion-label>
+      <ion-button fill="clear" color="danger" slot="end">
+        Voir
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

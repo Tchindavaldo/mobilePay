@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Edit' : 'Add' }} Account</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Fermer</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label position="floating">Nom du compte</ion-label>
+    <ion-input [(ngModel)]="account.name"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Type</ion-label>
+    <ion-select [(ngModel)]="account.type">
+      <ion-select-option value="Netflix">Netflix</ion-select-option>
+      <ion-select-option value="Spotify">Spotify</ion-select-option>
+      <ion-select-option value="Hulu">Hulu</ion-select-option>
+      <ion-select-option value="Disney+">Disney+</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Status</ion-label>
+    <ion-toggle [(ngModel)]="account.status" checked="account.status === 'Active'"></ion-toggle>
+  </ion-item>
+
+  <ion-button expand="full" (click)="saveAccount()">
+    {{ isEdit ? 'Save Changes' : 'Add Account' }}
+  </ion-button>
+</ion-content>

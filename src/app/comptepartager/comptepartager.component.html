@@ -1,0 +1,36 @@
+<ion-header class="header-netflix">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Comptes Netflix Partagés</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="danger" (click)="addAccount()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        <span></span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="custom-background">
+  <ion-card-title style="color: white;font-size: 28px; text-align: center;">choisir votre profil</ion-card-title>
+  <div class="account-list">
+    <div class="netflix-account-card" *ngFor="let account of netflixAccounts" (click)="selectAccount(account)">
+      <div class="avatar">
+        <img [src]="account.avatar" alt="avatar" />
+      </div>
+      <div class="account-info">
+        <h3>{{ account.name }}</h3>
+        <p>Plan: {{ account.plan }}</p>
+      </div>
+      <ion-button class="edit-button" fill="clear" (click)="editAccount(account)">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button class="delete-button" fill="clear" color="danger" (click)="deleteAccount(account)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+

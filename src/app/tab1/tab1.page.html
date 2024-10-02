@@ -1,0 +1,149 @@
+<!-- <ion-fab slot="fixed" vertical="top" horizontal="start" [edge]="true">
+  <ion-fab-button>
+    <ion-icon name="chevron-down-circle"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="bottom">
+    <ion-fab-button>
+      <ion-icon name="document"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button>
+      <ion-icon name="color-palette"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button>
+      <ion-icon name="globe"></ion-icon>
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab> -->
+<!-- Boîte de dialogue de confirmation -->
+<div *ngIf="isDialogVisible" class="dialog">
+  <div class="dialog-content">
+    <span class="close" (click)="closeDialog()">&times;</span>
+    
+    <img style="width: 32%;" src="../../assets/character-2022531_1280.webp" alt="sad face" width="50px">
+    <h2>Êtes-vous sûr de vouloir vous désabonner ?</h2>
+    <div class="dialog-buttons">
+      <button class="no-button" (click)="closeDialog()">Non</button>
+      <button class="yes-button" (click)="confirmUnsubscribe()">Oui</button>
+    </div>
+  </div>
+</div>
+
+<ion-header class="tete">
+  
+  <div class="menu">
+    <img src="../../assets/LOGO.jpg" alt="erreur">
+    <div class="souche">
+      <ion-searchbar></ion-searchbar>
+
+      <div class="partie">
+ <ion-fab slot="fixed"  horizontal="end" [edge]="true">
+  <ion-fab-button style="    --background: #ff6969;    width: 40px;
+  height: 40px;
+  margin-top: -76px;margin-right: 18px;">
+    <ion-icon name="chevron-down-outline"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="bottom">
+    <ion-fab-button routerLink="/notif">
+      <ion-icon name="notifications" style="color: rgb(216, 0, 0)"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button routerLink="/tabs/tab3">
+      <ion-icon name="cog" style="color: rgb(216, 0, 0);"></ion-icon>
+     
+    </ion-fab-button>
+    <ion-fab-button routerLink="/tabs/tab2">
+      <img src="../../assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png" alt="">
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab> 
+      </div>
+     
+      
+      
+      <!-- <div class="partie" >
+        <div class="profil" style="width: 40px;height: 40px; background-color:white ; border-radius: 50%; overflow: hidden;">
+         
+            <img style="width: 100%;height: 100%;" src="../../assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png" alt="">
+         
+        </div>
+      </div> -->
+    </div>
+  </div>
+  <div class="rond">
+    <br><span style="padding: 8%;">  Hello michael, comment allez-vous</span><ion-toggle  color="danger" [checked]="true"></ion-toggle>
+  </div>
+</ion-header>
+<ion-content >
+
+  <div class="stiker" style="
+  height: 80px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-right: 0px;
+  padding: 8%;
+  justify-content: space-between;
+  padding-top: 14px;
+">
+  <div class="stick" active><ion-icon name="happy-outline"></ion-icon></div>
+  <div class="stick" ><ion-icon name="sad-outline"></ion-icon></div>
+  <div class="stick"><ion-icon name="happy-outline"></ion-icon></div>
+  <div class="stick"><ion-icon name="sad-outline"></ion-icon></div>
+  <div class="stick"><ion-icon name="happy-outline"></ion-icon></div>
+</div>
+
+
+  <div class="informations">
+
+
+
+    <div class="donnee">
+
+    <div class="chiffre" style="display: flex;justify-content: space-between;" ><span style="font-size: 36px;"><span style="font-size: 18px;">$</span>20.01</span> <span style="font-size: 36px; color: #ff6969;" >-28</span> </div>
+    <div class="soustitre" style="color: gray;display: flex;justify-content: space-between;">Jours restant<span>jours</span></div>
+    <div class="statistique" >
+<div class="avancer" ></div>
+    </div>
+    <div class="soustitre" style="    padding-top: 5%;color: gray;display: flex;justify-content: space-between;"> Plan: Premiun <span >1 mois</span></div>
+    <div class="flex">
+      <ion-button  [routerLink]="['/pay']"  class="but" color="danger">
+        <ion-icon slot="end" name="flash-sharp"></ion-icon>
+        <span style="font-size: 10px;"  >Reabonner</span>
+      </ion-button>
+      
+  
+
+      <!-- Bouton Désabonner -->
+      <ion-button color="dark" fill="outline" (click)="showDialog()">
+        <ion-icon slot="end" name="flash-off-sharp"></ion-icon>
+        <span style="font-size: 10px;">Désabonner</span>
+      </ion-button>
+      
+    </div>
+    </div><br><br>
+    <div class="tiret" style="height: 1px;background-color: gray;"></div>
+    <br>
+<div class="bonus">Mes plans</div>
+<br>
+    <div class="plan" >
+<div  class="bons" [routerLink]="['/plan']"><div style="width: 100%; height: 150px;background-color: black;border: 1px solid;border-radius: 10px;overflow: hidden;"><img src="../../assets/flyers netfliox.jpg" alt=""></div><div style="text-align: center;">Compte partager</div></div >
+<div  class="bons" style="display: flex;flex-wrap: wrap;justify-content: space-between;">
+  <div class="reduire" [routerLink]="['/compte']"><div class="photo"><img style="width: 34px;" src="../../assets/person_add_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div> <span style="padding-top: 20px;">Comptes</span> </div>
+  <div class="reduire" [routerLink]="['/support']"><div class="photo"><img style="width: 34px;" src="../../assets/perm_phone_msg_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;"  >Aide</span></div>
+  <div class="reduire" [routerLink]="['/actus']"><div class="photo"><img style="width: 34px;" src="../../assets/view_cozy_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Actus film</span></div>
+  <div class="reduire" [routerLink]="['/partage']"><div class="photo"><img style="width: 34px;" src="../../assets/share_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Patarger</span></div>
+</div >
+    </div>
+    <br>
+    <div class="tiret" style="height: 1px;background-color: gray;"></div>
+<br>
+<div class="bonus">Autres services</div>
+<br>
+<div class="autre">
+  <div class="reseaux" (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/dessin.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">dessin</span></div>
+  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/jeux.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">jeux</span></div>
+  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/achats.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">achats</span></div>
+  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/internet.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">reseaux</span></div>
+</div>
+
+  </div>
+</ion-content>
