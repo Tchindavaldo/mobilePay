@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { addIcons } from 'ionicons';
-import {
-  chevronDownCircle,
-  chevronForwardCircle,
-  chevronUpCircle,
-  document as ionDocument,
-  globe,
-} from 'ionicons/icons';
+import { getAuth, signOut } from 'firebase/auth';
+import { app } from '../../firebase-config';
+import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
+
+
 
 @Component({
   selector: 'app-tab2',
@@ -15,7 +13,7 @@ import {
 })
 export class Tab2Page implements OnInit {
 
-  constructor() {}
+  constructor(private router: Router, private alertController: AlertController) {}
   ngOnInit() {
   }
   user = {
@@ -51,7 +49,27 @@ export class Tab2Page implements OnInit {
     console.log('Changer le mot de passe');
   }
 
-  logout() {
-    console.log('Se déconnecter');
+  async logout() {
+    const auth = getAuth(app);
+    
+    try {
+      await signOut(auth);
+      const alert = await this.alertController.create({
+        header: 'Déconnexion',
+        message: 'Vous êtes déconnecté.',
+        buttons: ['OK']
+      });
+      await alert.present();
+
+      // Redirigez vers la page de connexion
+      this.router.navigate(['/login']);
+    } catch (error) {
+      const alert = await this.alertController.create({
+        header: 'Erreur',
+        message: 'Erreur lors de la déconnexion.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 }

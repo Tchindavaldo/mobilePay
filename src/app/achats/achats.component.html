@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Aide aux Achats</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="product-content">
+  <div class="container">
+    <!-- Champ pour entrer l'URL -->
+    <ion-item class="url-input">
+      <ion-label position="floating">Entrer l'URL du produit</ion-label>
+      <ion-input [(ngModel)]="productUrl" type="url" placeholder="https://..."></ion-input>
+    </ion-item>
+    <ion-button expand="block" shape="round" (click)="fetchProductDetails()">Rechercher</ion-button>
+  
+    <!-- Loader animé -->
+    <ion-spinner *ngIf="loading" name="dots"></ion-spinner>
+  
+    <!-- Section d'affichage du produit -->
+    <ion-card class="product-card" *ngIf="productDetails">
+      <img [src]="productDetails.imageUrl" alt="Image du produit" class="product-image"/>
+      <ion-card-header>
+        <ion-card-title class="product-title">{{ productDetails.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="product-content">
+        <p class="product-price">Prix: {{ productDetails.price }}</p>
+      </ion-card-content>
+      <div class="button-group">
+        <ion-button expand="block" color="success" (click)="confirmProduct()" shape="round">Confirmer</ion-button>
+        <ion-button expand="block" color="light" (click)="cancel()" shape="round">Annuler</ion-button>
+      </div>
+    </ion-card>
+  </div>
+</ion-content>

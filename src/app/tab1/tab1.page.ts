@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../user.service';
 import { AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -8,6 +9,9 @@ import {
   document as ionDocument,
   globe,
 } from 'ionicons/icons';
+import { CountdownService } from '../countdown.service';
+import { PlanService } from '../plan.service';
+import { NotificationService, Notification } from '../notification.service';
 
 @Component({
   selector: 'app-tab1',
@@ -16,11 +20,19 @@ import {
 })
 export class Tab1Page implements OnInit {
 
+  userName: string | null = null;
+  selectedPlanName: string = 'aucun';
+  selectedPlanPrice: string = '0';
+
   constructor(
     private alertController: AlertController,
-    private toastController: ToastController  // Ajout du ToastController
+    private toastController: ToastController, private userService: UserService, // Ajout du ToastController
+    private countdownService: CountdownService,
+    private planService: PlanService,
+    private notificationService: NotificationService
   ) {
     addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, ionDocument, globe });
+    
   }
 
   public alertButtons = [
@@ -31,6 +43,7 @@ export class Tab1Page implements OnInit {
     {
       text: 'oui',
       cssClass: 'alert-button-confirm',
+      
     },
   ];
 
@@ -49,6 +62,7 @@ export class Tab1Page implements OnInit {
         // Si aucun index n'est trouvé, activez la première div
         sticks[0].classList.add('active');
       }
+     
     }
 
     // Ajouter un écouteur d'événements à chaque div 'stick'
@@ -63,6 +77,20 @@ export class Tab1Page implements OnInit {
         // Enregistrer l'index de la div active dans localStorage
         localStorage.setItem('activeStickIndex', index.toString());
       });
+    });
+
+    // this.userName = this.userService.getUserName();
+
+    // Subscribe to the public observable `days$` from the CountdownService
+    this.countdownService.days$.subscribe((value: number) => {
+      this.days = value; // Update the days value to be displayed
+    });
+
+
+    // S'abonner au service pour obtenir les mises à jour en temps réel
+    this.planService.selectedPlan$.subscribe(({ plan, price }) => {
+      this.selectedPlanName = plan;
+      this.selectedPlanPrice = price;
     });
   }
 
@@ -126,5 +154,36 @@ export class Tab1Page implements OnInit {
     await toast.present();
   }
   
+  numbers: number[] = [1, 2, 3, 4];
+  resetNumbers(){
+    this.numbers= this.numbers.map(()=> 0);
+  }
+  
+
+
+
+
+  onUnsubscribe() {
+    // Réinitialiser le plan et le prix
+    this.planService.resetPlan();
+  }
+  onStopCountdown() {
+    this.countdownService.stopCountdown(); // Appeler la méthode pour arrêter et réinitialiser le compte à rebours
+    console.log('Compte à rebours arrêté et réinitialisé à 0');
+
+    const notification: Notification = {
+      title: 'Desabonner',
+      message: 'Le desabonnement a bien ete efectuer.',
+      image: '../../assets/LOGO.jpg',
+      time: new Date(),
+    };
+    this.notificationService.addNotification(notification);
+  }
+
+
+
+
+
+  days: number = 0; // L'état initial est 0
   
 }

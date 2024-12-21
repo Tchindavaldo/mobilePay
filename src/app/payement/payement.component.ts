@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular'; // Import du ToastController
+import { CountdownService } from '../countdown.service';
+import { PlanService } from '../plan.service'; // Assurez-vous d'importer le service
+import { NotificationService, Notification } from '../notification.service';
 
 @Component({
   selector: 'app-payement',
@@ -8,20 +11,42 @@ import { ToastController } from '@ionic/angular'; // Import du ToastController
   styleUrls: ['./payement.component.scss'],
 })
 export class PayementComponent implements OnInit {
+
   page: number = 1;          // Débute à la première page
   isLoading: boolean = false; // Indique si la barre de progression doit être affichée
   buffer: number = 0.06;      // Valeur de buffer initiale
   progress: number = 0;       // Valeur de progression initiale
 
-  constructor(private router: Router, private toastController: ToastController) {} // Injecte ToastController
+  constructor(private router: Router, private toastController: ToastController, private countdownService: CountdownService,    private planService: PlanService, private notificationService: NotificationService) {} // Injecte ToastController
+
+  onStartClick() {
+    this.countdownService.startCountdown(); // Appeler la méthode du service
+  }
 
   nextPage() {
     if (this.page < 3) {
-      this.page += 1; // Incrémente la page jusqu'à 3
+      this.page += 1;
     } else {
-      this.showLoadingAndNavigate(); // Affiche la barre de progression et redirige
+      const activePlanElement = document.querySelector('.park.active');
+      const planName = activePlanElement?.getAttribute('data-plan') || '';
+      const planPrice = activePlanElement?.getAttribute('data-prix') || '';
+
+      // Mettre à jour le service avec le plan sélectionné
+      this.planService.updateSelectedPlan(planName, planPrice);
+
+      this.showLoadingAndNavigate();
+      this.startCountdownProcess();
+          // Émettre une notification
+    const notification: Notification = {
+      title: 'Abonnement',
+      message: 'Votre abonnement a ete active avec succes.',
+      image: '../../assets/LOGO.jpg',
+      time: new Date(),
+    };
+    this.notificationService.addNotification(notification);
     }
   }
+  
 
   showLoadingAndNavigate() {
     this.isLoading = true; // Affiche la barre de progression
@@ -46,11 +71,14 @@ export class PayementComponent implements OnInit {
     }, 1000); // Mise à jour toutes les 1000ms (1 seconde)
   }
 
+  startCountdownProcess() {
+    this.countdownService.startCountdown(); // Appeler la méthode du service pour démarrer le compte à rebours
+  }
+
   resetPager() {
     this.page = 1; // Réinitialise à la première page
   }
 
-  // Méthode pour afficher le toast
   async presentToast() {
     const toast = await this.toastController.create({
       message: 'Le paiement a bien été effectué.',
@@ -61,7 +89,24 @@ export class PayementComponent implements OnInit {
     await toast.present();
   }
 
-  // Use ngOnInit to handle DOM manipulations
+  // Method to update plan info when a park is clicked
+  updatePlanInfo(park: HTMLElement): void {
+    const prix = park.getAttribute('data-prix');
+    const qualite = park.getAttribute('data-qualite');
+    const resolution = park.getAttribute('data-resolution');
+    const support = park.getAttribute('data-support');
+    const appareils = park.getAttribute('data-appareils');
+    const telechargement = park.getAttribute('data-telechargement');
+
+    // Update the info divs
+    (document.getElementById('info-div1') as HTMLElement).textContent = prix ?? '';
+    (document.getElementById('info-div2') as HTMLElement).textContent = qualite ?? '';
+    (document.getElementById('info-div3') as HTMLElement).textContent = resolution ?? '';
+    (document.getElementById('info-div4') as HTMLElement).textContent = support ?? '';
+    (document.getElementById('info-div5') as HTMLElement).textContent = appareils ?? '';
+    (document.getElementById('info-div6') as HTMLElement).textContent = telechargement ?? '';
+  }
+
   ngOnInit() {
     const parks: NodeListOf<HTMLElement> = document.querySelectorAll('.park');
     if (parks.length > 0) {
@@ -70,54 +115,19 @@ export class PayementComponent implements OnInit {
 
       if (indexToActivate >= 0 && indexToActivate < parks.length) {
         parks[indexToActivate].classList.add('active');
+        this.updatePlanInfo(parks[indexToActivate]); // Met à jour les infos avec le plan actif
       } else {
         parks[0].classList.add('active'); // Définit la première div comme active par défaut
+        this.updatePlanInfo(parks[0]); // Met à jour les infos avec le premier plan par défaut
       }
     }
 
     parks.forEach((park: HTMLElement, index: number) => {
       park.addEventListener('click', () => {
-        // Retirer la classe 'active' de tous les parks
         parks.forEach((s: HTMLElement) => s.classList.remove('active'));
-
-        // Ajouter la classe 'active' à la div cliquée
         park.classList.add('active');
-
-        // Enregistrer l'index de la div active dans localStorage
         localStorage.setItem('activeparkIndex', index.toString());
-      });
-    });
-
-    // Query and add event listeners to the clickable divs
-    const clickableDivs: NodeListOf<HTMLElement> = document.querySelectorAll('.clickable-div');
-    clickableDivs.forEach((element: HTMLElement) => {
-      element.addEventListener('click', (event: Event) => {
-        const target = event.currentTarget as HTMLElement;
-        const prix = target.getAttribute('data-prix');
-        const qualite = target.getAttribute('data-qualite');
-        const resolution = target.getAttribute('data-resolution');
-        const support = target.getAttribute('data-support');
-        const appareils = target.getAttribute('data-appareils');
-        const telechargement = target.getAttribute('data-telechargement');
-
-        // Update the info divs
-        const infoDiv1 = document.getElementById('info-div1');
-        if (infoDiv1) infoDiv1.innerText = prix ?? '';
-
-        const infoDiv2 = document.getElementById('info-div2');
-        if (infoDiv2) infoDiv2.innerText = qualite ?? '';
-
-        const infoDiv3 = document.getElementById('info-div3');
-        if (infoDiv3) infoDiv3.innerText = resolution ?? '';
-
-        const infoDiv4 = document.getElementById('info-div4');
-        if (infoDiv4) infoDiv4.innerText = support ?? '';
-
-        const infoDiv5 = document.getElementById('info-div5');
-        if (infoDiv5) infoDiv5.innerText = appareils ?? '';
-
-        const infoDiv6 = document.getElementById('info-div6');
-        if (infoDiv6) infoDiv6.innerText = telechargement ?? '';
+        this.updatePlanInfo(park); // Update the info divs when a park is clicked
       });
     });
   }

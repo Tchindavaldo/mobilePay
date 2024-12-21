@@ -17,6 +17,6 @@ export class SplashPageComponent  implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.navCtrl.navigateRoot('/login'); // Rediriger vers la page de connexion
-    }, 600000); // Attendre 3 secondes
+    }, 6000); // Attendre 3 secondes
   }
 }

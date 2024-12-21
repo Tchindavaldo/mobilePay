@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NotificationService, Notification } from '../notification.service';
 
 @Component({
   selector: 'app-notification',
@@ -7,31 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NotificationComponent  implements OnInit {
 
-  constructor() { }
+ 
+  notifications: Notification[] = [];
+  unreadNotifications = 0;
 
-  ngOnInit() {}
-  notifications = [
-    {
-      title: 'Nouveau message',
-      message: 'Vous avez reçu un nouveau message.',
-      image: '../../assets/th (1).jpeg',
-      time: new Date()
-    },
-    {
-      title: 'Mise à jour',
-      message: 'La mise à jour du système a été effectuée.',
-      image: '../../assets/R.png',
-      time: new Date()
-    },
-    {
-      title: 'Avertissement',
-      message: 'Votre espace de stockage est presque plein.',
-      image: '../../assets/crunch.jpg',
-      time: new Date()
-    }
-  ];
+  constructor(private notificationService: NotificationService) {}
 
-  unreadNotifications = 3; // Exemple : compteur de notifications non lues
+  ngOnInit() {
+    this.notifications = this.notificationService.getNotifications();
+
+    // S'abonner aux nouvelles notifications
+    this.notificationService.getNotificationsObservable().subscribe((notifications) => {
+      this.notifications = notifications;
+      this.unreadNotifications = notifications.length; // Mettre à jour le compteur des notifications non lues
+    });
+  }
+
   openNotifications() {
     console.log('Notifications ouvertes');
     // Logique pour ouvrir la page ou popup des notifications

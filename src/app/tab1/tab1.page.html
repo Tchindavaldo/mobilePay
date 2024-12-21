@@ -23,7 +23,7 @@
     <h2>Êtes-vous sûr de vouloir vous désabonner ?</h2>
     <div class="dialog-buttons">
       <button class="no-button" (click)="closeDialog()">Non</button>
-      <button class="yes-button" (click)="confirmUnsubscribe()">Oui</button>
+      <button (click)="onStopCountdown()"  (click)="onUnsubscribe()" class="yes-button" (click)="confirmUnsubscribe()">Oui</button>
     </div>
   </div>
 </div>
@@ -98,12 +98,16 @@
 
     <div class="donnee">
 
-    <div class="chiffre" style="display: flex;justify-content: space-between;" ><span style="font-size: 36px;"><span style="font-size: 18px;">$</span>20.01</span> <span style="font-size: 36px; color: #ff6969;" >-28</span> </div>
+    <div class="chiffre" style="display: flex;justify-content: space-between;" ><span style="font-size: 36px;"><span style="font-size: 18px;">$</span>{{ selectedPlanPrice }}</span>     <span class="compteur" [style.color]="'#ff6969'" [style.fontSize.px]="36">
+      {{ days }}
+    </span>
+  
+  </div>
     <div class="soustitre" style="color: gray;display: flex;justify-content: space-between;">Jours restant<span>jours</span></div>
     <div class="statistique" >
 <div class="avancer" ></div>
     </div>
-    <div class="soustitre" style="    padding-top: 5%;color: gray;display: flex;justify-content: space-between;"> Plan: Premiun <span >1 mois</span></div>
+    <div class="soustitre" style="    padding-top: 5%;color: gray;display: flex;justify-content: space-between;"> Plan:  {{ selectedPlanName }} <span >1 mois</span></div>
     <div class="flex">
       <ion-button  [routerLink]="['/pay']"  class="but" color="danger">
         <ion-icon slot="end" name="flash-sharp"></ion-icon>
@@ -113,7 +117,7 @@
   
 
       <!-- Bouton Désabonner -->
-      <ion-button color="dark" fill="outline" (click)="showDialog()">
+      <ion-button color="dark" fill="outline" (click)="showDialog()" (click)="resetNumbers()" >
         <ion-icon slot="end" name="flash-off-sharp"></ion-icon>
         <span style="font-size: 10px;">Désabonner</span>
       </ion-button>
@@ -139,11 +143,12 @@
 <div class="bonus">Autres services</div>
 <br>
 <div class="autre">
-  <div class="reseaux" (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/dessin.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">dessin</span></div>
-  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/jeux.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">jeux</span></div>
-  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/achats.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">achats</span></div>
-  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/internet.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">reseaux</span></div>
+  <div class="reseaux" (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/dessin.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Cinema</span></div>
+  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/jeux.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Jeux</span></div>
+  <div class="reseaux" (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/achats.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Achats</span></div>
+  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/internet.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Reseaux</span></div>
 </div>
 
+<!-- <ion-button (click)="startCountdown()">Démarrer le compte à rebours</ion-button> -->
   </div>
 </ion-content>

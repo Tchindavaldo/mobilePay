@@ -14,13 +14,25 @@ export class OnboardingPageComponent  implements OnInit {
 
   ngOnInit() {}
 
-  constructor(private navCtrl: NavController) {}
+ 
+  days: number = -28; // Initialiser à -28
+  countdownInterval: any;
 
-  closeSlides() {
-    this.navCtrl.navigateRoot('/home');
-  }
+  constructor() {}
 
-  startApp() {
-    this.navCtrl.navigateRoot('/home');
+  startCountdown() {
+    // Si le compte à rebours est déjà en cours, l'empêcher de redémarrer
+    if (this.countdownInterval) {
+      return;
+    }
+
+    // Décrémenter de 1 chaque jour
+    this.countdownInterval = setInterval(() => {
+      if (this.days < 0) {
+        this.days += 1; // Incrémenter vers 0
+      } else {
+        clearInterval(this.countdownInterval); // Arrêter le compte à rebours une fois arrivé à 0
+      }
+    }, 24 * 60 * 60 * 1000); // Décrémenter toutes les 24 heures
   }
 }

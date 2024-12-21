@@ -12,6 +12,9 @@ import { FormulaireComponent } from './formulaire/formulaire.component';
 import { SplashPageComponent } from './splash.page/splash.page.component';
 import { LoginPageComponent } from './login.page/login.page.component';
 import { OnboardingPageComponent } from './onboarding.page/onboarding.page.component';
+import { JeuxComponent } from './jeux/jeux.component';
+import { SiteComponent } from './site/site.component';
+import { AchatsComponent } from './achats/achats.component';
 
 const routes: Routes = [
   {
@@ -65,6 +68,18 @@ const routes: Routes = [
   {
     path: 'login',
     component:LoginPageComponent
+  },
+  {
+    path: 'jeux',
+    component:JeuxComponent
+  },
+  {
+    path: 'site',
+    component:SiteComponent
+  },
+  {
+    path: 'achats',
+    component:AchatsComponent
   },
 ];
 @NgModule({

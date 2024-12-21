@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Jeux Disponibles</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="games-container">
+    <ion-card *ngFor="let game of games">
+      <img [src]="game.imageUrl" alt="{{ game.name }}" />
+      <ion-card-header>
+        <ion-card-title>{{ game.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngFor="let pack of game.packs">
+          <p>{{ pack.name }}: {{ pack.price }}</p>
+          <ion-button (click)="purchasePack(game.id, pack.name)">Acheter</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

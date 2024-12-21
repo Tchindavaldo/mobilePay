@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # mobilpay
+=======
+# mobilepay
+>>>>>>> acecc5a5596748670c4936899e0f2f21842a72aa
 
 
 
@@ -15,14 +19,22 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
+<<<<<<< HEAD
 git remote add origin https://gitlab.com/michael1900529/mobilpay.git
+=======
+git remote add origin https://gitlab.com/michael1900529/mobilepay.git
+>>>>>>> acecc5a5596748670c4936899e0f2f21842a72aa
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
+<<<<<<< HEAD
 - [ ] [Set up project integrations](https://gitlab.com/michael1900529/mobilpay/-/settings/integrations)
+=======
+- [ ] [Set up project integrations](https://gitlab.com/michael1900529/mobilepay/-/settings/integrations)
+>>>>>>> acecc5a5596748670c4936899e0f2f21842a72aa
 
 ## Collaborate with your team
 

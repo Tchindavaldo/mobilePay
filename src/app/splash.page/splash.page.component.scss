@@ -1,5 +1,5 @@
 .splash-screen {
-    --background: linear-gradient(120deg, #ff6a6a 0%, #ff0000 100%);
+    // --background: linear-gradient(120deg, #ff6a6a 0%, #ff0000 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,10 +18,10 @@
   }
   
   .loader .circle {
-    width: 50px;
+width: 50px;
     height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #fff;
+    border: 5px solid rgb(152 122 122 / 30%);
+    border-top-color: #e00808;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-top: 20px;
