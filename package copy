@@ -32,7 +32,6 @@
     "@capacitor/share": "^6.0.2",
     "@capacitor/status-bar": "6.0.1",
     "@ionic/angular": "^8.0.0",
-    "axios": "^1.7.9",
     "firebase": "^10.14.0",
     "ionicons": "^7.0.0",
     "ngx-bootstrap": "^18.0.2",
@@ -43,20 +42,32 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.0.0",
+//     "@angular-eslint/builder": "^18.0.0", 
+//     "@angular-eslint/eslint-plugin-template": "^18.0.0",
+//     "@angular-eslint/schematics": "^18.0.0",
+//     "@angular-eslint/template-parser": "^18.0.0",
+//     "@typescript-eslint/eslint-plugin": "^6.0.0",
+//     "@typescript-eslint/parser": "^6.0.0",
+
+
     "@angular-eslint/builder": "^18.3.1",
-    "@angular-eslint/eslint-plugin": "^18.3.1",
-    "@angular-eslint/eslint-plugin-template": "^18.3.1",
-    "@angular-eslint/schematics": "^18.3.1",
-    "@angular-eslint/template-parser": "^18.3.1",
+"@angular-eslint/eslint-plugin": "^18.3.1",
+"@angular-eslint/eslint-plugin-template": "^18.3.1",
+"@angular-eslint/schematics": "^18.3.1",
+"@angular-eslint/template-parser": "^18.3.1",
+"@typescript-eslint/eslint-plugin": "^7.11.0",
+"@typescript-eslint/parser": "^7.11.0",
+"@typescript-eslint/utils": "^7.11.0",
+
+ 
+
+
     "@angular/cli": "^18.0.0",
     "@angular/compiler-cli": "^18.0.0",
     "@angular/language-service": "^18.0.0",
     "@capacitor/cli": "6.1.2",
     "@ionic/angular-toolkit": "^11.0.1",
     "@types/jasmine": "~5.1.0",
-    "@typescript-eslint/eslint-plugin": "^7.11.0",
-    "@typescript-eslint/parser": "^7.11.0",
-    "@typescript-eslint/utils": "^7.11.0",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsdoc": "^48.2.1",
