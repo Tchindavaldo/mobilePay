@@ -1,44 +1,64 @@
-
-<ion-header class="custom">
-  <ion-toolbar>
-    <!-- Icone pour retourner à la page d'accueil (start) -->
-    <ion-buttons slot="start">
-      <ion-button routerLink="/tabs/tab1"> <!-- Rediriger vers la page d'accueil -->
-        <ion-icon name="chevron-back"></ion-icon>
+<!-- Header moderne et compact -->
+<ion-header class="modern-header" [translucent]="true">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <div class="header-main">
+      <ion-button fill="clear" class="back-btn" routerLink="/tabs/tab1">
+        <ion-icon name="chevron-back" class="back-icon"></ion-icon>
       </ion-button>
-    </ion-buttons>
+      
+      <div class="header-title-section">
+        <h1 class="page-title">Notifications</h1>
+        <p class="page-subtitle" *ngIf="unreadNotifications > 0">{{ unreadNotifications }} nouvelle(s) notification(s)</p>
+        <p class="page-subtitle" *ngIf="unreadNotifications === 0">Aucune nouvelle notification</p>
+      </div>
 
-    <!-- Titre du header -->
-    <ion-title>
-      Notifications
-    </ion-title>
-
-    <!-- Icone pour les notifications (end) -->
-    <ion-buttons slot="end">
-      <ion-button (click)="openNotifications()">
-        <ion-icon name="notifications-outline"></ion-icon>
-        <!-- Optionnel: Badge de notification -->
-        <ion-badge style="border-radius: 50%;width: 20px;height: 20px;" color="danger" *ngIf="unreadNotifications > 0">{{ unreadNotifications }}</ion-badge>
+      <ion-button fill="clear" class="clear-all-btn" (click)="clearAllNotifications()" *ngIf="notifications.length > 0">
+        <ion-icon name="trash-outline"></ion-icon>
       </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+    </div>
+  </div>
 </ion-header>
 
+<ion-content class="notifications-content">
+  <!-- Message vide si aucune notification -->
+  <div class="empty-state" *ngIf="notifications.length === 0">
+    <div class="empty-icon">
+      <ion-icon name="notifications-off-outline"></ion-icon>
+    </div>
+    <h2>Aucune notification</h2>
+    <p>Vous êtes à jour ! Aucune nouvelle notification pour le moment.</p>
+  </div>
 
-<ion-content>
-  <ion-list>
-    <ion-item *ngFor="let notification of notifications">
-      <ion-avatar slot="start">
-        <img [src]="notification.image" alt="Avatar">
-      </ion-avatar>
-      <ion-label>
-        <h2>{{ notification.title }}</h2>
-        <p>{{ notification.message }}</p>
-        <ion-note>{{ notification.time | date:'short' }}</ion-note>
-      </ion-label>
-      <ion-button fill="clear" color="danger" slot="end">
-        Voir
-      </ion-button>
-    </ion-item>
-  </ion-list>
+  <!-- Liste des notifications -->
+  <div class="notifications-container" *ngIf="notifications.length > 0">
+    <div class="notification-card" *ngFor="let notification of notifications; let i = index" 
+         [style.animation-delay]="i * 0.1 + 's'">
+      <div class="notification-content">
+        <div class="notification-avatar">
+          <img [src]="notification.image" alt="Avatar" (error)="onImageError($event)">
+        </div>
+        
+        <div class="notification-details">
+          <h3 class="notification-title">{{ notification.title }}</h3>
+          <p class="notification-message">{{ notification.message }}</p>
+          <div class="notification-footer">
+            <span class="notification-time">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ getTimeAgo(notification.time) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="notification-actions">
+        <ion-button fill="clear" size="small" class="action-btn view-btn">
+          <ion-icon name="eye-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" class="action-btn delete-btn" (click)="deleteNotification(i)">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-content>

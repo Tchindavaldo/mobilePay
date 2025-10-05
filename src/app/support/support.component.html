@@ -1,100 +1,311 @@
-<ion-header class="=custom">
-  <ion-toolbar class="custom">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" ></ion-back-button>
-    </ion-buttons>
-    <ion-title>Contact Support</ion-title>
-  </ion-toolbar>
+<!-- Header Premium -->
+<ion-header class="premium-support-header">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <div class="header-main">
+      <ion-button fill="clear" class="back-btn" (click)="goBack()">
+        <ion-icon name="chevron-back" class="back-icon"></ion-icon>
+      </ion-button>
+      <div class="header-title-section">
+        <h1 class="page-title">Centre d'Aide</h1>
+        <p class="page-subtitle">Nous sommes là pour vous accompagner</p>
+      </div>
+      <div class="header-status">
+        <div class="status-indicator online">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- Conteneur avec un visuel moderne -->
-  <div class="support-wrapper">
-    <ion-card class="support-card">
-      <ion-card-header class="ion-text-center">
-         <ion-avatar class="support-avatar">
-          <img src="../../assets/istockphoto-1319388111-170x170.jpg" alt="Support Icon">
-        </ion-avatar> 
-        <ion-card-title>Besoin d'aide ?</ion-card-title>
-        <ion-card-subtitle>Nous sommes là pour vous aider !</ion-card-subtitle>
-      </ion-card-header>
+<ion-content class="compact-support-content" [fullscreen]="true">
+  <!-- Section Principale Compacte -->
+  <div class="main-support-section" *ngIf="currentPage === 'main'">
+    <div class="support-header">
+      <div class="header-icon">
+        <ion-icon name="headset"></ion-icon>
+      </div>
+      <h2>Centre d'Aide MobilPay</h2>
+      <p>Choisissez comment nous pouvons vous aider</p>
+    </div>
 
-      <ion-card-content>
-        <!-- <ion-item class="support-item">
-          <ion-label position="floating">Nom</ion-label>
-          <ion-input [(ngModel)]="userName" placeholder="Votre nom" class="input-field">
-            <ion-icon name="person-outline" slot="end"></ion-icon>
-          </ion-input>
-        </ion-item>
+    <!-- Actions de Contact Principales -->
+    <div class="contact-methods">
+      <div class="contact-card primary" (click)="contactSupport('chat')">
+        <div class="contact-icon">
+          <ion-icon name="chatbubbles"></ion-icon>
+        </div>
+        <div class="contact-info">
+          <h3>Chat en Direct</h3>
+          <p>Réponse immédiate</p>
+          <span class="status online">● En ligne</span>
+        </div>
+        <ion-icon name="chevron-forward" class="arrow"></ion-icon>
+      </div>
 
-        <ion-item class="support-item">
-          <ion-label position="floating">Email</ion-label>
-          <ion-input [(ngModel)]="userEmail" type="email" placeholder="Votre email" class="input-field">
-            <ion-icon name="mail-outline" slot="end"></ion-icon>
-          </ion-input>
-        </ion-item> -->
+      <div class="contact-card" (click)="toggleContactForm()">
+        <div class="contact-icon">
+          <ion-icon name="mail"></ion-icon>
+        </div>
+        <div class="contact-info">
+          <h3>Envoyer un Message</h3>
+          <p>Formulaire de contact</p>
+          <span class="status">Réponse sous 2h</span>
+        </div>
+        <ion-icon name="chevron-forward" class="arrow"></ion-icon>
+      </div>
 
-        <ion-item class="support-item">
-          <ion-label position="floating">Sujet</ion-label>
-          <ion-input [(ngModel)]="subject" placeholder="Sujet de votre demande" class="input-field">
-            <ion-icon name="chatbubbles-outline" slot="end"></ion-icon>
-          </ion-input>
-        </ion-item>
+      <div class="contact-card" (click)="contactSupport('phone')">
+        <div class="contact-icon">
+          <ion-icon name="call"></ion-icon>
+        </div>
+        <div class="contact-info">
+          <h3>Téléphone</h3>
+          <p>+237 698 178 925</p>
+          <span class="status">Lun-Ven 8h-18h</span>
+        </div>
+        <ion-icon name="chevron-forward" class="arrow"></ion-icon>
+      </div>
+    </div>
 
-        <ion-item class="support-item">
-          <ion-label position="floating">Message</ion-label>
-          <ion-textarea [(ngModel)]="message" placeholder="Expliquez-nous votre problème ou question" class="textarea-field">
-          </ion-textarea>
-        </ion-item>
+    <!-- Ressources d'Aide Compactes -->
+    <div class="help-resources">
+      <h3 class="resources-title">Ressources Utiles</h3>
+      <div class="resources-list">
+        <div class="resource-item" (click)="openFAQ()">
+          <div class="resource-icon">
+            <ion-icon name="help-circle"></ion-icon>
+          </div>
+          <div class="resource-text">
+            <span class="resource-name">FAQ</span>
+            <span class="resource-count">{{ faqCount }} articles</span>
+          </div>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </div>
 
-        <ion-button expand="block" color="danger" (click)="sendMessage()" class="send-button">
-          <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
-          Envoyer le message
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
+        <div class="resource-item" (click)="openDocumentation()">
+          <div class="resource-icon">
+            <ion-icon name="document"></ion-icon>
+          </div>
+          <div class="resource-text">
+            <span class="resource-name">Guides</span>
+            <span class="resource-count">{{ docsCount }} guides</span>
+          </div>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </div>
+
+        <div class="resource-item" (click)="openTutorials()">
+          <div class="resource-icon">
+            <ion-icon name="play-circle"></ion-icon>
+          </div>
+          <div class="resource-text">
+            <span class="resource-name">Vidéos</span>
+            <span class="resource-count">{{ tutorialsCount }} tutoriels</span>
+          </div>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </div>
+
+        <div class="resource-item" (click)="openCommunity()">
+          <div class="resource-icon">
+            <ion-icon name="people"></ion-icon>
+          </div>
+          <div class="resource-text">
+            <span class="resource-name">Communauté</span>
+            <span class="resource-count">{{ communityCount }} membres</span>
+          </div>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <!-- Page FAQ -->
+  <div class="faq-page" *ngIf="currentPage === 'faq'">
+    <div class="page-header">
+      <div class="header-icon">
+        <ion-icon name="help-circle"></ion-icon>
+      </div>
+      <h2>Questions Fréquentes</h2>
+      <p>Trouvez rapidement les réponses à vos questions</p>
+    </div>
 
+    <div class="faq-list">
+      <div class="faq-item" *ngFor="let faq of faqItems">
+        <div class="faq-question" (click)="faq.expanded = !faq.expanded">
+          <h3>{{ faq.question }}</h3>
+          <ion-icon [name]="faq.expanded ? 'chevron-up' : 'chevron-down'"></ion-icon>
+        </div>
+        <div class="faq-answer" *ngIf="faq.expanded">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Options de support rapide -->
-  <ion-list>
-    <ion-list-header>Support rapide</ion-list-header>
+  <!-- Page Guides -->
+  <div class="guides-page" *ngIf="currentPage === 'guides'">
+    <div class="page-header">
+      <div class="header-icon">
+        <ion-icon name="document"></ion-icon>
+      </div>
+      <h2>Guides d'Utilisation</h2>
+      <p>Apprenez à utiliser MobilPay étape par étape</p>
+    </div>
 
-    <ion-item button (click)="contactSupport('email')">
-      <ion-icon slot="start" name="mail-outline"></ion-icon>
-      <ion-label>Email</ion-label>
-    </ion-item>
+    <div class="guides-list">
+      <div class="guide-item" *ngFor="let guide of guideItems">
+        <div class="guide-header">
+          <h3>{{ guide.title }}</h3>
+          <p>{{ guide.description }}</p>
+        </div>
+        <div class="guide-steps">
+          <div class="step-item" *ngFor="let step of guide.steps; let i = index">
+            <div class="step-number">{{ i + 1 }}</div>
+            <span class="step-text">{{ step }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <ion-item button (click)="contactSupport('chat')">
-      <ion-icon slot="start" name="chatbubble-outline"></ion-icon>
-      <ion-label>Chat en direct</ion-label>
-    </ion-item>
+  <!-- Page Chat en Direct -->
+  <div class="chat-page" *ngIf="currentPage === 'chat'">
+    <div class="page-header">
+      <div class="header-icon online">
+        <ion-icon name="chatbubbles"></ion-icon>
+      </div>
+      <h2>Chat en Direct</h2>
+      <p>Notre équipe est en ligne pour vous aider</p>
+    </div>
 
-    <ion-item button (click)="contactSupport('phone')">
-      <ion-icon slot="start" name="call-outline"></ion-icon>
-      <ion-label>Appelez-nous</ion-label>
-    </ion-item>
-  </ion-list>
+    <div class="chat-container">
+      <div class="chat-messages">
+        <div class="message bot-message">
+          <div class="message-avatar">
+            <ion-icon name="headset"></ion-icon>
+          </div>
+          <div class="message-content">
+            <p>Bonjour ! Je suis l'assistant MobilPay. Comment puis-je vous aider aujourd'hui ?</p>
+            <span class="message-time">Maintenant</span>
+          </div>
+        </div>
+      </div>
 
-  <!-- Liens d'aide rapides -->
-  <ion-list>
-    <ion-list-header>Aide rapide</ion-list-header>
+      <div class="chat-input-area">
+        <div class="quick-responses">
+          <ion-button fill="outline" size="small" (click)="sendQuickMessage('Problème de connexion')">
+            Problème de connexion
+          </ion-button>
+          <ion-button fill="outline" size="small" (click)="sendQuickMessage('Ajouter un compte')">
+            Ajouter un compte
+          </ion-button>
+          <ion-button fill="outline" size="small" (click)="sendQuickMessage('Question facturation')">
+            Question facturation
+          </ion-button>
+        </div>
+        
+        <div class="chat-input">
+          <ion-input 
+            placeholder="Tapez votre message..."
+            [(ngModel)]="chatMessage"
+            (keyup.enter)="sendChatMessage()">
+          </ion-input>
+          <ion-button fill="clear" (click)="sendChatMessage()">
+            <ion-icon name="send"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <ion-item button (click)="openFAQ()">
-      <ion-icon slot="start" name="help-outline"></ion-icon>
-      <ion-label>FAQ</ion-label>
-    </ion-item>
+  <!-- Formulaire de Contact (Affiché conditionnellement) -->
+  <div class="contact-form-overlay" *ngIf="showContactForm">
+    <div class="form-container">
+      <div class="form-header">
+        <h3>Nous Contacter</h3>
+        <ion-button fill="clear" (click)="toggleContactForm()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </div>
 
-    <ion-item button (click)="openDocumentation()">
-      <ion-icon slot="start" name="document-text-outline"></ion-icon>
-      <ion-label>Documentation</ion-label>
-    </ion-item>
+      <!-- Étapes du formulaire simplifiées -->
+      <div class="form-content">
+        <div class="form-step" *ngIf="currentFormStep === 1">
+          <h4>Type de demande</h4>
+          <div class="category-list">
+            <div class="category-item" 
+                 *ngFor="let category of supportCategories"
+                 [class.selected]="selectedCategory === category.id"
+                 (click)="selectCategory(category.id)">
+              <ion-icon [name]="category.icon"></ion-icon>
+              <span>{{ category.name }}</span>
+            </div>
+          </div>
+        </div>
 
-    <ion-item button (click)="openTutorials()">
-      <ion-icon slot="start" name="videocam-outline"></ion-icon>
-      <ion-label>Vidéos Tutoriels</ion-label>
-    </ion-item>
-  </ion-list>
+        <div class="form-step" *ngIf="currentFormStep === 2">
+          <div class="form-fields-compact">
+            <ion-input 
+              [(ngModel)]="userName" 
+              placeholder="Votre nom"
+              fill="outline">
+            </ion-input>
+            
+            <ion-input 
+              [(ngModel)]="userEmail" 
+              type="email"
+              placeholder="Votre email"
+              fill="outline">
+            </ion-input>
+            
+            <ion-input 
+              [(ngModel)]="subject" 
+              placeholder="Sujet"
+              fill="outline">
+            </ion-input>
+            
+            <ion-textarea 
+              [(ngModel)]="message" 
+              placeholder="Votre message..."
+              rows="4"
+              fill="outline">
+            </ion-textarea>
+          </div>
+        </div>
 
+        <div class="form-step" *ngIf="currentFormStep === 3">
+          <div class="confirmation-summary">
+            <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
+            <h4>Prêt à envoyer</h4>
+            <p>{{ getSelectedCategoryName() }} - {{ subject }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation simplifiée -->
+      <div class="form-actions">
+        <ion-button 
+          fill="outline" 
+          *ngIf="currentFormStep > 1"
+          (click)="previousFormStep()">
+          Retour
+        </ion-button>
+
+        <ion-button 
+          *ngIf="currentFormStep < 3"
+          [disabled]="!canProceedToNextStep()"
+          (click)="nextFormStep()">
+          Suivant
+        </ion-button>
+
+        <ion-button 
+          color="success"
+          *ngIf="currentFormStep === 3"
+          (click)="sendMessage()">
+          Envoyer
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-content>

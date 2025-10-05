@@ -1,0 +1,179 @@
+.compact-header {
+  --background: transparent;
+  position: relative;
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+  overflow: hidden;
+}
+
+.header-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.header-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+  padding: 15px 20px 20px 20px !important;
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 25px;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.app-logo {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-text {
+  color: white;
+  font-size: 22px;
+  font-weight: 900;
+  font-family: 'Arial Black', sans-serif;
+}
+
+.greeting-compact {
+  flex: 1;
+  max-width: calc(100% - 120px);
+  overflow: hidden;
+}
+
+.greeting-text {
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.greeting-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+}
+
+.notification-btn {
+  position: relative;
+  --color: white;
+  --background: rgba(255, 255, 255, 0.15);
+  --border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  backdrop-filter: blur(10px);
+  margin: 8px;
+}
+
+.notification-btn ion-icon {
+  font-size: 20px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.6);
+  border: 2px solid white;
+  z-index: 15;
+}
+
+.user-profile {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.profile-image {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  display: block;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.search-section {
+  margin-top: 35px !important;
+  margin-bottom: 20px !important;
+}
+
+.simple-searchbar {
+  --background: rgba(255, 255, 255, 0.1);
+  --color: white;
+  --placeholder-color: rgba(255, 255, 255, 0.6);
+  --icon-color: rgba(255, 255, 255, 0.6);
+  --border-radius: 15px;
+  --box-shadow: none;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 0 !important;
+}

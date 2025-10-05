@@ -1,38 +1,47 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
-
-
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-onboarding.page',
   templateUrl: './onboarding.page.component.html',
   styleUrls: ['./onboarding.page.component.scss'],
 })
-export class OnboardingPageComponent  implements OnInit {
+export class OnboardingPageComponent implements OnInit {
+  currentStep: number = 1;
+  totalSteps: number = 3;
 
-  // constructor() { }
+  constructor(private router: Router) {}
 
   ngOnInit() {}
 
- 
-  days: number = -28; // Initialiser à -28
-  countdownInterval: any;
-
-  constructor() {}
-
-  startCountdown() {
-    // Si le compte à rebours est déjà en cours, l'empêcher de redémarrer
-    if (this.countdownInterval) {
-      return;
+  nextStep() {
+    if (this.currentStep < this.totalSteps) {
+      this.currentStep++;
+    } else {
+      // Dernière étape, marquer l'onboarding comme vu et aller à la page de connexion
+      this.markOnboardingAsSeen();
+      this.router.navigate(['/login']);
     }
+  }
 
-    // Décrémenter de 1 chaque jour
-    this.countdownInterval = setInterval(() => {
-      if (this.days < 0) {
-        this.days += 1; // Incrémenter vers 0
-      } else {
-        clearInterval(this.countdownInterval); // Arrêter le compte à rebours une fois arrivé à 0
-      }
-    }, 24 * 60 * 60 * 1000); // Décrémenter toutes les 24 heures
+  prevStep() {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
+  goToStep(step: number) {
+    if (step >= 1 && step <= this.totalSteps) {
+      this.currentStep = step;
+    }
+  }
+
+  skipOnboarding() {
+    this.markOnboardingAsSeen();
+    this.router.navigate(['/login']);
+  }
+
+  private markOnboardingAsSeen() {
+    localStorage.setItem('hasSeenOnboarding', 'true');
   }
 }

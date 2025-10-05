@@ -1,0 +1,40 @@
+<ion-header class="compact-header" [translucent]="true">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <div class="header-main">
+      <div class="left-section">
+        <div class="app-logo">
+          <span class="logo-text">M</span>
+        </div>
+        <div class="greeting-compact">
+          <h1 class="greeting-text" *ngIf="!pageTitle">Salut {{ getFirstName() }} 👋</h1>
+          <h1 class="greeting-text" *ngIf="pageTitle">{{ pageTitle }}</h1>
+          <p class="greeting-subtitle" *ngIf="!pageTitle">{{ getTimeGreeting() }}</p>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <ion-button fill="clear" class="notification-btn" routerLink="/notif">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <div class="notification-badge" [class.large-number]="notificationCount >= 10" *ngIf="notificationCount > 0">
+            {{ notificationCount > 99 ? '99+' : notificationCount }}
+          </div>
+        </ion-button>
+
+        <div class="user-profile">
+          <img
+            [src]="getUserPhoto()"
+            [alt]="getFirstName() || 'Utilisateur'"
+            class="profile-image"
+            (error)="onImageError($event)"
+            loading="lazy" />
+        </div>
+      </div>
+    </div>
+
+    <div class="search-section" *ngIf="showSearch">
+      <ion-searchbar placeholder="Rechercher un service..." class="simple-searchbar" [debounce]="300">
+      </ion-searchbar>
+    </div>
+  </div>
+</ion-header>

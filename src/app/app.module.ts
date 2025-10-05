@@ -23,6 +23,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { JeuxComponent } from './jeux/jeux.component';
 import { AchatsComponent } from './achats/achats.component';
 import { SiteComponent } from './site/site.component';
+import { PhoneAuthComponent } from './phone-auth/phone-auth.component';
 import { HttpClientModule } from '@angular/common/http';
 
 
@@ -32,7 +33,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 
 @NgModule({
-  declarations: [AppComponent, PayementComponent,NotificationComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent],
+  declarations: [AppComponent, PayementComponent,NotificationComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,FormsModule,CarouselModule.forRoot(),MatTabsModule, HttpClientModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideAnimationsAsync()],
   bootstrap: [AppComponent],

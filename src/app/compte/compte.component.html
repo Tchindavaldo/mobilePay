@@ -1,41 +1,131 @@
-<ion-header>
-  <ion-toolbar >
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Mes comptes</ion-title>
-  </ion-toolbar>
+<!-- Header Premium -->
+<ion-header class="premium-account-header">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <div class="header-main">
+      <ion-button fill="clear" class="back-btn" (click)="goBack()">
+        <ion-icon name="chevron-back" class="back-icon"></ion-icon>
+      </ion-button>
+      <div class="header-title-section">
+        <h1 class="page-title">Mes Comptes</h1>
+        <p class="page-subtitle">Gérez vos comptes de streaming</p>
+      </div>
+      <div class="header-stats">
+        <div class="stats-indicator">
+          <ion-icon name="tv"></ion-icon>
+          <span>{{ accounts.length }} comptes</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content>
-  <div class="account-list">
-    <!-- List of streaming accounts -->
-    <ion-card *ngFor="let account of accounts">
-      <img [src]="account.avatar || 'default-avatar.png'" alt="Account Avatar">
-      <ion-card-header>
-        <!-- Using a flex container for title and buttons -->
-        <div class="card-header-content">
-          <div class="account-info">
-            <ion-card-title class="account-name">{{ account.name }}</ion-card-title>
-            <ion-card-subtitle color="danger">{{ account.type }}</ion-card-subtitle>
+<ion-content class="premium-account-content" [fullscreen]="true">
+  <!-- Section Principale -->
+  <div class="main-account-section">
+    <!-- Stats Améliorées -->
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <ion-icon name="tv"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ accounts.length }}</span>
+          <span class="stat-label">Comptes total</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon active">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ getActiveAccounts() }}</span>
+          <span class="stat-label">Actifs</span>
+        </div>
+      </div>
+      <div class="stat-card primary">
+        <div class="stat-icon">
+          <ion-icon name="pause-circle"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ getInactiveAccounts() }}</span>
+          <span class="stat-label">Inactifs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gestion des Comptes -->
+    <div class="accounts-management-section">
+      <div class="accounts-header">
+        <ion-icon name="tv"></ion-icon>
+        <span>Vos Comptes Streaming</span>
+      </div>
+      
+      <ion-button 
+        expand="block" 
+        class="main-add-btn" 
+        (click)="toggleAccountsView()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Gérer mes comptes
+        <ion-icon [name]="showAccountsGrid ? 'chevron-up' : 'chevron-down'" slot="end"></ion-icon>
+      </ion-button>
+
+      <!-- Grid des Comptes -->
+      <div class="accounts-grid-container" *ngIf="showAccountsGrid">
+        <div class="accounts-grid">
+      <div class="account-card" *ngFor="let account of accounts; let i = index" 
+           [style.animation-delay.s]="i * 0.1">
+        
+        <!-- Card Header with Avatar -->
+        <div class="card-header">
+          <div class="avatar-container">
+            <img [src]="account.avatar || 'assets/default-avatar.png'" 
+                 [alt]="account.name" class="account-avatar">
+            <div class="status-indicator" [class.active]="account.status === 'Active'"></div>
           </div>
-          <div class="button-container">
-            <ion-button (click)="editAccount(account)" color="light">Edit</ion-button>
-            <ion-button (click)="deleteAccount(account.id)" color="danger">Delete</ion-button>
+          <div class="platform-badge" [attr.data-platform]="account.type.toLowerCase()">
+            {{ account.type }}
           </div>
         </div>
-      </ion-card-header>
 
-      <ion-card-content>
-        <p>Status: {{ account.status }}</p>
-      </ion-card-content>
-    </ion-card>
+        <!-- Card Content -->
+        <div class="card-content">
+          <h3 class="account-name">{{ account.name }}</h3>
+          <div class="account-status" [class.active]="account.status === 'Active'">
+            <ion-icon [name]="account.status === 'Active' ? 'checkmark-circle' : 'pause-circle'"></ion-icon>
+            <span>{{ account.status }}</span>
+          </div>
+        </div>
+
+        <!-- Card Actions -->
+        <div class="card-actions">
+          <ion-button fill="clear" class="action-btn edit-btn" (click)="editAccount(account)">
+            <ion-icon name="create"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" class="action-btn delete-btn" (click)="deleteAccount(account.id)">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" class="action-btn share-btn">
+            <ion-icon name="share"></ion-icon>
+          </ion-button>
+        </div>
+
+        <!-- Hover Overlay -->
+        <div class="card-overlay"></div>
+      </div>
+
+      <!-- Add New Account Card -->
+      <div class="account-card add-card" (click)="openAddAccountModal()">
+        <div class="add-content">
+          <div class="add-icon">
+            <ion-icon name="add-circle"></ion-icon>
+          </div>
+          <h3>Ajouter un Compte</h3>
+          <p>Connectez un nouveau service de streaming</p>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <!-- Floating Action Button to Add Account -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="danger" (click)="openAddAccountModal()">
-      <ion-icon  name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>

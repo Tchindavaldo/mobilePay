@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { UserService } from '../user.service';
 import { AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
@@ -12,6 +12,8 @@ import {
 import { CountdownService } from '../countdown.service';
 import { PlanService } from '../plan.service';
 import { NotificationService, Notification } from '../notification.service';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from '../../firebase-config';
 
 @Component({
   selector: 'app-tab1',
@@ -21,8 +23,16 @@ import { NotificationService, Notification } from '../notification.service';
 export class Tab1Page implements OnInit {
 
   userName: string | null = null;
-  selectedPlanName: string = 'aucun';
-  selectedPlanPrice: string = '0';
+  userPhoto: string | null = null;
+  selectedPlanName: string = 'Basic';
+  selectedPlanPrice: string = '9.99';
+  notificationCount: number = 0;
+  isDialogVisible: boolean = false;
+  selectedFilter: string = 'all';
+  showTooltip: boolean = false;
+  currentSlide: number = 0;
+  totalSlides: number = 3;
+  autoSlideInterval: any;
 
   constructor(
     private alertController: AlertController,
@@ -48,6 +58,11 @@ export class Tab1Page implements OnInit {
   ];
 
   ngOnInit() {
+    // Charger les données utilisateur
+    this.loadUserData();
+    this.loadNotificationCount();
+    this.startAutoSlide();
+
     const sticks: NodeListOf<HTMLElement> = document.querySelectorAll('.stick');
 
     // Vérifiez s'il y a des sticks et définissez le premier comme actif par défaut
@@ -62,7 +77,7 @@ export class Tab1Page implements OnInit {
         // Si aucun index n'est trouvé, activez la première div
         sticks[0].classList.add('active');
       }
-     
+
     }
 
     // Ajouter un écouteur d'événements à chaque div 'stick'
@@ -94,10 +109,6 @@ export class Tab1Page implements OnInit {
     });
   }
 
-  
-
-  isDialogVisible: boolean = false; // Pour contrôler l'affichage de la boîte de dialogue
-
 
 
   // Afficher la boîte de dialogue
@@ -110,31 +121,7 @@ export class Tab1Page implements OnInit {
     this.isDialogVisible = false;
   }
 
-  // Confirmer le désabonnement
-  confirmUnsubscribe() {
-    // Logique pour désabonner l'utilisateur
-    console.log('Utilisateur désabonné avec succès.');
-    this.closeDialog(); // Fermer la boîte de dialogue après la confirmation
-    this.presentSuccessToast(); // Afficher la notification de succès
-  }
 
-  // Fonction pour afficher la notification Toast
-  async presentSuccessToast() {
-    const toast = await this.toastController.create({
-      message: 'Vous avez été désabonné avec succès.',
-      duration: 3000,
-      position: 'middle',
-      cssClass: 'custom-toast',  // Classe CSS personnalisée
-      buttons: [
-        {
-          text: 'Fermer',
-          role: 'cancel'
-        }
-      ]
-    });
-  
-    await toast.present();
-  }
 
 
   async presentToast(position: 'top' | 'middle' | 'bottom') {
@@ -185,5 +172,219 @@ export class Tab1Page implements OnInit {
 
 
   days: number = 0; // L'état initial est 0
-  
+
+  loadUserData() {
+    const auth = getAuth(app);
+
+    // D'abord, essayer de récupérer depuis localStorage
+    const storedUserName = localStorage.getItem('userName');
+    const storedUserPhoto = localStorage.getItem('userPhoto');
+
+    if (storedUserName) {
+      console.log('Loading user data from localStorage:', storedUserName);
+      console.log('Loading user photo from localStorage:', storedUserPhoto);
+      this.userName = storedUserName;
+      this.userPhoto = storedUserPhoto;
+    }
+
+    // Ensuite, écouter les changements d'état d'authentification
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('User data loaded from Firebase:', user);
+
+        // Récupérer le nom complet ou l'email
+        let fullName = user.displayName || user.email?.split('@')[0] || 'Utilisateur';
+
+        console.log('Full name from Firebase:', fullName);
+        this.userName = fullName;
+        this.userPhoto = user.photoURL;
+
+        // Sauvegarder dans localStorage pour la prochaine fois
+        localStorage.setItem('userName', fullName);
+        if (user.photoURL) {
+          localStorage.setItem('userPhoto', user.photoURL);
+        }
+
+        console.log('UserName set to:', this.userName);
+      } else {
+        console.log('No user found in Firebase');
+        // Ne pas effacer les données si elles existent déjà
+        if (!this.userName) {
+          this.userName = 'Utilisateur';
+          this.userPhoto = null;
+        }
+      }
+    });
+  }
+
+  loadNotificationCount() {
+    // Simuler le nombre de notifications
+    this.notificationCount = 3;
+  }
+
+  getProgressPercentage(): number {
+    const maxDays = 30; // Durée totale de l'abonnement
+    const daysUsed = maxDays - this.days; // Jours déjà utilisés
+    const percentage = Math.max(0, Math.min(100, (daysUsed / maxDays) * 100));
+    return percentage;
+  }
+
+  openProfileMenu() {
+    // Ouvrir le menu de profil ou naviguer vers la page de profil
+    console.log('Opening profile menu');
+  }
+
+  getFirstName(): string {
+    // Si pas de nom utilisateur, essayer de recharger depuis localStorage
+    if (!this.userName || this.userName === 'Utilisateur') {
+      const storedName = localStorage.getItem('userName');
+      if (storedName && storedName !== 'Utilisateur') {
+        this.userName = storedName;
+      }
+    }
+
+    if (this.userName && this.userName !== 'Utilisateur') {
+      // Si le nom est long, prendre seulement le premier mot
+      const firstName = this.userName.split(' ')[0];
+
+      // Si le prénom est trop long (plus de 12 caractères), le couper
+      if (firstName.length > 12) {
+        return firstName.substring(0, 12) + '...';
+      }
+
+      return firstName;
+    }
+    return 'Utilisateur';
+  }
+
+  getTimeGreeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      return 'Bonne matinée ! ☀️';
+    } else if (hour < 18) {
+      return 'Bon après-midi ! 🌤️';
+    } else {
+      return 'Bonne soirée ! 🌙';
+    }
+  }
+
+  getUserPhoto(): string {
+    // Si pas de photo, essayer de recharger depuis localStorage
+    if (!this.userPhoto) {
+      const storedPhoto = localStorage.getItem('userPhoto');
+      if (storedPhoto) {
+        this.userPhoto = storedPhoto;
+        console.log('Photo loaded from localStorage:', storedPhoto);
+      }
+    }
+
+    return this.userPhoto || 'assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png';
+  }
+
+  onImageError(event: any) {
+    console.log('Image failed to load, using fallback');
+    event.target.src = 'assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png';
+  }
+
+  // Méthode de debug pour vérifier les données utilisateur
+  debugUserData() {
+    console.log('=== DEBUG USER DATA ===');
+    console.log('userName:', this.userName);
+    console.log('userPhoto:', this.userPhoto);
+    console.log('localStorage userName:', localStorage.getItem('userName'));
+    console.log('localStorage userPhoto:', localStorage.getItem('userPhoto'));
+    console.log('getFirstName():', this.getFirstName());
+    console.log('getUserPhoto():', this.getUserPhoto());
+    console.log('======================');
+  }
+
+  // Confirmer le désabonnement
+  confirmUnsubscribe() {
+    this.onStopCountdown();
+    this.onUnsubscribe();
+    this.closeDialog();
+    this.presentSuccessToast();
+  }
+
+  // Fonction pour afficher la notification Toast
+  async presentSuccessToast() {
+    const toast = await this.toastController.create({
+      message: 'Vous avez été désabonné avec succès.',
+      duration: 3000,
+      position: 'middle',
+      cssClass: 'custom-toast',  // Classe CSS personnalisée
+      buttons: [
+        {
+          text: 'Fermer',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await toast.present();
+  }
+
+  // Méthode pour gérer la sélection des filtres
+  selectFilter(filter: string) {
+    this.selectedFilter = filter;
+    console.log('Filter selected:', filter);
+
+    // Ici tu peux ajouter la logique pour filtrer le contenu
+    // Par exemple, filtrer les services selon la catégorie sélectionnée
+    switch(filter) {
+      case 'all':
+        console.log('Afficher tous les services');
+        break;
+      case 'streaming':
+        console.log('Afficher les services de streaming');
+        break;
+      case 'music':
+        console.log('Afficher les services de musique');
+        break;
+      case 'gaming':
+        console.log('Afficher les services de gaming');
+        break;
+      case 'productivity':
+        console.log('Afficher les services de productivité');
+        break;
+    }
+  }
+
+  // Méthode pour basculer l'affichage du tooltip
+  toggleTooltip() {
+    this.showTooltip = !this.showTooltip;
+
+    // Fermer automatiquement après 3 secondes
+    if (this.showTooltip) {
+      setTimeout(() => {
+        this.showTooltip = false;
+      }, 3000);
+    }
+  }
+
+  // Méthodes pour gérer le slider
+  startAutoSlide() {
+    this.autoSlideInterval = setInterval(() => {
+      this.nextSlide();
+    }, 4000);
+  }
+
+  nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+  }
+
+  goToSlide(index: number) {
+    this.currentSlide = index;
+    // Redémarrer l'auto-slide
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+      this.startAutoSlide();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+  }
 }

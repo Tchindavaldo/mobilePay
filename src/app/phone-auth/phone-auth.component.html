@@ -1,0 +1,67 @@
+<!-- Logo MobilePay -->
+<div class="app-logo">
+  <div class="logo-container">
+    <div class="logo-icon">
+      <span class="logo-text">M</span>
+    </div>
+    <span class="logo-name">MobilePay</span>
+  </div>
+</div>
+
+<!-- Phone Auth Page -->
+<ion-content class="phone-auth-content" fullscreen="true">
+  <div class="auth-container">
+    <!-- Background pattern -->
+    <div class="background-pattern"></div>
+
+    <div class="auth-content">
+      <div class="auth-header">
+        <div class="auth-icon">
+          <ion-icon name="chatbox-outline"></ion-icon>
+        </div>
+        <h1>Code de vérification</h1>
+        <p>Entrez le code à 6 chiffres envoyé au<br><strong>+237 6XX XXX X78</strong></p>
+      </div>
+
+      <div class="verification-form">
+        <ion-item class="code-input">
+          <ion-input 
+            placeholder="000000" 
+            type="number" 
+            maxlength="6" 
+            [(ngModel)]="verificationCode">
+          </ion-input>
+        </ion-item>
+
+        <ion-button expand="block" class="primary-button" (click)="verifyCode()">
+          Vérifier le code
+        </ion-button>
+
+        <div class="resend-section">
+          <p>Vous n'avez pas reçu le code ?</p>
+          <ion-button fill="clear" class="link-button" (click)="resendCode()" [disabled]="resendTimer > 0">
+            {{ resendTimer > 0 ? 'Renvoyer dans ' + resendTimer + 's' : 'Renvoyer le code' }}
+          </ion-button>
+        </div>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span>ou</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <ion-button fill="outline" class="outline-button" (click)="changeNumber()">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Changer de numéro
+        </ion-button>
+      </div>
+
+      <div class="auth-footer">
+        <p>Préférez-vous vous connecter par email ?</p>
+        <ion-button fill="clear" class="link-button" (click)="goToEmailLogin()">
+          Connexion par email
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

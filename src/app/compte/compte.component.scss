@@ -1,35 +1,452 @@
-.account-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Space between the account cards */
+// Header Premium (Style Partage)
+.premium-account-header {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    height: 150px;
   }
-  
-  .card-header-content {
+
+  .header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: -10%;
+      width: 120%;
+      height: 120%;
+      background: radial-gradient(ellipse at center, rgba(220, 38, 38, 0.15) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .back-btn {
+    --color: rgba(255, 255, 255, 0.9);
+    --background: rgba(255, 255, 255, 0.15);
+    --border-radius: 14px;
+    backdrop-filter: blur(10px);
+    width: 48px;
+    height: 48px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      --background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .back-icon {
+      font-size: 1.5rem;
+    }
+  }
+
+  .header-title-section {
+    flex: 1;
+    text-align: center;
+    margin: 0 1rem;
+
+    .page-title {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+
+    .page-subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      margin: 0;
+      font-weight: 400;
+    }
+  }
+
+  .header-stats {
+    .stats-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 20px;
+      padding: 0.5rem 0.75rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(34, 197, 94, 0.3);
+        transform: scale(1.05);
+      }
+
+      ion-icon {
+        color: #22c55e;
+        font-size: 1rem;
+      }
+
+      span {
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Content Premium
+.premium-account-content {
+  --background: var(--background-primary);
+  --color: var(--text-primary);
+}
+
+// Section Principale (Style Partage)
+.main-account-section {
+  padding: 1.5rem;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+// Stats Section (Style Partage)
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+
+  .stat-card {
+    background: var(--surface-glass);
+    border: 2px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    &.primary {
+      border-color: #dc2626;
+      background: rgba(220, 38, 38, 0.05);
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(220, 38, 38, 0.3);
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(220, 38, 38, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      &.active {
+        background: rgba(34, 197, 94, 0.1);
+        
+        ion-icon {
+          color: #22c55e;
+        }
+      }
+
+      ion-icon {
+        font-size: 1.2rem;
+        color: #dc2626;
+      }
+    }
+
+    .stat-info {
+      flex: 1;
+      min-width: 0;
+
+      .stat-number {
+        display: block;
+        color: #dc2626;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        line-height: 1;
+
+        @media (max-width: 768px) {
+          font-size: 1.2rem;
+        }
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 500;
+        line-height: 1.2;
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+
+      .stat-icon {
+        width: 32px;
+        height: 32px;
+        
+        ion-icon {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
+
+// Gestion des Comptes (Style Partage)
+.accounts-management-section {
+  margin-bottom: 1.5rem;
+
+  .accounts-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+
+    ion-icon {
+      color: #dc2626;
+      font-size: 1.3rem;
+    }
+  }
+
+  .main-add-btn {
+    --background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    --color: #ffffff;
+    --border-radius: 14px;
+    height: 52px;
+    font-weight: 600;
+    text-transform: none;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    transition: all 0.3s ease;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    }
+  }
+
+  .accounts-grid-container {
+    background: var(--surface-glass);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    animation: slideInUp 0.3s ease-out;
+    padding: 1rem;
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Accounts Grid Styles
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  .account-card {
+    background: var(--surface-glass);
+    border: 2px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 0.75rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 85px;
+    max-height: 100px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(220, 38, 38, 0.3);
+    }
+
+    &.add-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-style: dashed;
+
+      .add-content {
+        .add-icon {
+          margin-bottom: 0.5rem;
+          
+          ion-icon {
+            font-size: 2rem;
+            color: #dc2626;
+          }
+        }
+
+        h3 {
+          color: var(--text-primary);
+          font-size: 0.9rem;
+          font-weight: 600;
+          margin: 0 0 0.25rem 0;
+        }
+
+        p {
+          color: var(--text-secondary);
+          font-size: 0.75rem;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    margin-bottom: 0.5rem;
   }
-  
-  .account-info {
-    flex: 1; /* Allows the account info to take as much space as available */
-    overflow: hidden; /* Prevents overflow when the text is too long */
+
+  .avatar-container {
+    position: relative;
+
+    .account-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border-primary);
+    }
+
+    .status-indicator {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      border: 2px solid var(--background-primary);
+
+      &.active {
+        background: #22c55e;
+      }
+    }
   }
-  
-  .account-name {
-    white-space: nowrap; /* Prevents text from wrapping */
-    overflow: hidden;    /* Ensures content doesn't overflow */
-    text-overflow: ellipsis; /* Adds '...' when the text is too long */
-    max-width: 70%; /* Limits the width so that buttons remain visible */
+
+  .platform-badge {
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.2);
   }
-  
-  .button-container {
+
+  .card-content {
+    margin-bottom: 0.5rem;
+
+    .account-name {
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 0 0 0.2rem 0;
+      line-height: 1.2;
+    }
+
+    .account-status {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-size: 0.75rem;
+      color: #ef4444;
+
+      &.active {
+        color: #22c55e;
+      }
+
+      ion-icon {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .card-actions {
     display: flex;
-    gap: 10px; /* Space between the buttons */
-    flex-shrink: 0; /* Prevents the buttons from shrinking */
+    gap: 0.4rem;
+
+    .action-btn {
+      --background: rgba(255, 255, 255, 0.1);
+      --color: var(--text-secondary);
+      --border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      backdrop-filter: blur(10px);
+
+      &:hover {
+        --background: rgba(220, 38, 38, 0.1);
+        --color: #dc2626;
+      }
+
+      ion-icon {
+        font-size: 0.9rem;
+      }
+    }
   }
-  ion-header.md.header-md.header-collapse-none.hydrated {
-    border: none;
-    box-shadow: none;
 }
-  

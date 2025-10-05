@@ -1,44 +1,416 @@
-ion-content {
-    --background: #ffffff;
-  }
-  
-  .slide-content {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .slide-image {
-    width: 250px;
-    height: auto;
-    margin-bottom: 20px;
-  }
-  
-  h2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  p {
-    font-size: 16px;
-    color: #666;
-    margin-top: 10px;
-  }
-  
-  .slides-navigation {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 20px;
-  }
-  
-  ion-button {
-    --background: linear-gradient(45deg, #ff6b6b, #f06595);
-    --box-shadow: 0px 4px 15px rgba(255, 107, 107, 0.5);
-    --border-radius: 25px;
-  }
-  
-  ion-button:hover {
-    transform: scale(1.05);
-    --box-shadow: 0px 8px 25px rgba(255, 107, 107, 0.7);
-  }
+// Onboarding Styles
+.onboarding-content {
+  --background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  position: relative;
+}
+
+.onboarding-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.onboarding-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.onboarding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-top: 40px;
+}
+
+.progress-container {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--ion-color-light);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  color: var(--ion-color-light);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.skip-button {
+  color: var(--ion-color-light);
+  --color: var(--ion-color-light);
+}
+
+.steps-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.step-content {
+  width: 100%;
+  text-align: center;
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.3s ease;
+}
+
+.step-content.hidden {
+  opacity: 0;
+  transform: translateX(100%);
+  position: absolute;
+}
+
+.step-illustration {
+  margin-bottom: 40px;
+}
+
+.icon-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.streaming-scene {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+}
+
+.netflix-card {
+  width: 120px;
+  height: 80px;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(220, 38, 38, 0.3);
+}
+
+.netflix-logo {
+  color: #dc2626;
+  font-size: 32px;
+  font-weight: 900;
+  font-family: 'Arial Black', sans-serif;
+}
+
+.play-button {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+  animation: pulse 2s infinite;
+}
+
+.floating-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.floating-icon {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.floating-icon:nth-child(1) {
+  top: 10px;
+  left: 10px;
+  animation-delay: 0s;
+}
+
+.floating-icon:nth-child(2) {
+  top: 20px;
+  right: 5px;
+  animation-delay: 1s;
+}
+
+.floating-icon:nth-child(3) {
+  bottom: 15px;
+  left: 20px;
+  animation-delay: 2s;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-10px) rotate(5deg); opacity: 1; }
+}
+
+/* Étape 2 - Paiements */
+.payment-scene {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+}
+
+.payment-cards {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.payment-card {
+  width: 60px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: cardFloat 2s ease-in-out infinite;
+}
+
+.payment-card.mtn {
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
+  animation-delay: 0s;
+}
+
+.payment-card.orange {
+  background: linear-gradient(135deg, #ff6600 0%, #ff3300 100%);
+  animation-delay: 0.5s;
+}
+
+.card-logo {
+  font-size: 10px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.card-signal {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.security-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+  animation: pulse 2s infinite;
+}
+
+.security-icon {
+  color: white;
+  font-size: 20px;
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Étape 3 - Succès */
+.success-scene {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+}
+
+.success-circle {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+  animation: successPulse 2s infinite;
+}
+
+.success-check {
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.streaming-devices {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.device {
+  font-size: 20px;
+  animation: deviceBounce 1.5s ease-in-out infinite;
+}
+
+.device.phone { animation-delay: 0s; }
+.device.laptop { animation-delay: 0.3s; }
+.device.tv { animation-delay: 0.6s; }
+
+.success-waves {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.wave {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(34, 197, 94, 0.3);
+  border-radius: 50%;
+  animation: waveExpand 2s ease-out infinite;
+}
+
+.wave:nth-child(1) { animation-delay: 0s; }
+.wave:nth-child(2) { animation-delay: 0.7s; }
+.wave:nth-child(3) { animation-delay: 1.4s; }
+
+@keyframes successPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes deviceBounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes waveExpand {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.step-title {
+  color: var(--ion-color-light);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.step-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.step-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 300px;
+}
+
+.dots-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 30px 0;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: var(--ion-color-light);
+  transform: scale(1.2);
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.nav-button {
+  --border-radius: 12px;
+  height: 50px;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.prev-button {
+  flex: 0 0 auto;
+  --color: rgba(255, 255, 255, 0.7);
+}
+
+.next-button {
+  flex: 1;
+}
+
+.hidden {
+  display: none !important;
+}
   

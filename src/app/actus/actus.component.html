@@ -1,46 +1,260 @@
-<ion-header>
-  <ion-toolbar >
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Actualites des Fimls</ion-title>
-  </ion-toolbar>
+<!-- Header Moderne comme Notifications -->
+<ion-header class="modern-header">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <div class="header-main">
+      <ion-button fill="clear" class="back-btn" (click)="goBack()">
+        <ion-icon name="chevron-back" class="back-icon"></ion-icon>
+      </ion-button>
+      <div class="header-title-section">
+        <h1 class="page-title">Actualités Cinéma</h1>
+        <p class="page-subtitle">Découvrez les derniers films et séries</p>
+      </div>
+      <ion-button fill="clear" class="filter-btn" (click)="toggleFilters()">
+        <ion-icon name="options"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content>
-  <div class="movie-container">
-    <ion-card *ngFor="let movie of currentMovies">
-      <img [src]="movie.poster" alt="Affiche de {{ movie.title }}">
-      <ion-card-header>
-        <ion-card-title>{{ movie.title }}</ion-card-title>
-        <ion-card-subtitle>Date de sortie: {{ movie.releaseDate | date:'shortDate' }}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <p>{{ movie.description }}</p>
-        <ion-button expand="full" color="light" (click)="openMovieDetails(movie)" class="bordure" >Voir Détails</ion-button>
-        <div class="like-dislike-buttons">
-          <ion-button (click)="likeMovie(movie)" color="success" fill="clear" class="bordure">👍</ion-button>
-          <ion-button (click)="dislikeMovie(movie)" color="danger" fill="clear">👎</ion-button>
-          <ion-button (click)="setNotification(movie)" fill="clear" color="danger">🔔 Notifier</ion-button>
+<ion-content class="streaming-content" [fullscreen]="true">
+  
+  <!-- Hero Section Premium -->
+  <div class="hero-banner" [style.background-image]="'url(' + featuredMovie.backdrop + ')'">
+    <div class="hero-overlay"></div>
+    
+    <div class="hero-content">
+      <div class="hero-badges">
+        <span class="featured-badge">
+          <ion-icon name="star"></ion-icon>
+          Film vedette
+        </span>
+        <span class="new-badge" *ngIf="featuredMovie.isNew">
+          <ion-icon name="flash"></ion-icon>
+          Nouveau
+        </span>
+      </div>
+      
+      <h1 class="movie-title">{{ featuredMovie.title }}</h1>
+      
+      <div class="movie-meta">
+        <div class="rating-section">
+          <div class="stars">
+            <ion-icon *ngFor="let star of getStarRating(featuredMovie.rating)" [name]="star" class="star"></ion-icon>
+          </div>
+          <span class="rating-text">{{ featuredMovie.rating }}/10</span>
         </div>
-      </ion-card-content>
-    </ion-card>
-
-    <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
-      <ng-template>
-        <ion-header>
-          <ion-toolbar>
-            <ion-title>{{ selectedMovie.title }}</ion-title>
-            <ion-buttons slot="end">
-              <ion-button (click)="closeModal()">Fermer</ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
-        <ion-content>
-          <img [src]="selectedMovie.poster" alt="Affiche de {{ selectedMovie.title }}">
-          <p>{{ selectedMovie.description }}</p>
-        </ion-content>
-      </ng-template>
-    </ion-modal>
+        <span class="separator">•</span>
+        <span class="year">{{ featuredMovie.releaseDate | date:'yyyy' }}</span>
+        <span class="separator">•</span>
+        <span class="duration">{{ featuredMovie.duration }}</span>
+      </div>
+      
+      <div class="genre-tags">
+        <span class="genre-tag" *ngFor="let genre of featuredMovie.genre">{{ genre }}</span>
+      </div>
+      
+      <p class="movie-description">{{ featuredMovie.description }}</p>
+      
+      <div class="hero-actions">
+        <ion-button class="primary-btn" (click)="playTrailer(featuredMovie)" *ngIf="featuredMovie.trailer">
+          <ion-icon name="play" slot="start"></ion-icon>
+          Regarder la bande-annonce
+        </ion-button>
+        <ion-button fill="outline" class="secondary-btn" (click)="openMovieDetails(featuredMovie)">
+          <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+          Plus d'infos
+        </ion-button>
+        <div class="quick-actions">
+          <ion-button fill="clear" class="action-btn" [class.active]="featuredMovie.liked" (click)="likeMovie(featuredMovie)">
+            <ion-icon [name]="featuredMovie.liked ? 'heart' : 'heart-outline'"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" class="action-btn" (click)="setNotification(featuredMovie)">
+            <ion-icon name="bookmark-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" class="action-btn">
+            <ion-icon name="share-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Filtres Simples -->
+  <div class="filters-section">
+    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="selectCategory(selectedCategory)">
+      <ion-segment-button value="all">
+        <ion-label>Tous</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="trending">
+        <ion-label>Tendances</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="new">
+        <ion-label>Nouveautés</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Tendances -->
+  <div class="content-section" *ngIf="selectedCategory === 'all' || selectedCategory === 'trending'">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="trending-up" class="section-icon"></ion-icon>
+        Tendances du moment
+      </h2>
+      <p class="section-subtitle">Les films les plus populaires cette semaine</p>
+    </div>
+    
+    <div class="movies-grid">
+      <div class="movie-card" *ngFor="let movie of trendingMovies; let i = index" 
+           (click)="openMovieDetails(movie)"
+           [style.animation-delay]="(i * 0.1) + 's'">
+        <div class="card-image">
+          <img [src]="movie.poster" [alt]="movie.title" class="movie-poster">
+          <div class="movie-overlay">
+            <ion-button fill="clear" class="play-btn" (click)="playTrailer(movie); $event.stopPropagation()" *ngIf="movie.trailer">
+              <ion-icon name="play"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="card-badges">
+            <span class="rating-badge">⭐ {{ movie.rating }}</span>
+            <span class="trending-badge" *ngIf="movie.isTrending">🔥</span>
+          </div>
+        </div>
+        <div class="movie-info">
+          <h3 class="movie-title">{{ movie.title }}</h3>
+          <p class="movie-year">{{ movie.releaseDate | date:'yyyy' }}</p>
+          <div class="movie-genres">{{ movie.genre.slice(0, 2).join(' • ') }}</div>
+          <div class="card-actions">
+            <ion-button fill="clear" size="small" class="like-btn" [class.active]="movie.liked" (click)="likeMovie(movie, $event)">
+              <ion-icon [name]="movie.liked ? 'heart' : 'heart-outline'"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" class="bookmark-btn" (click)="setNotification(movie, $event)">
+              <ion-icon name="bookmark-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nouveautés -->
+  <div class="content-section" *ngIf="selectedCategory === 'all' || selectedCategory === 'new'">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="flash" class="section-icon"></ion-icon>
+        Nouvelles sorties
+      </h2>
+      <p class="section-subtitle">Les derniers films ajoutés cette semaine</p>
+    </div>
+    
+    <div class="movies-grid">
+      <div class="movie-card" *ngFor="let movie of newReleases; let i = index" 
+           (click)="openMovieDetails(movie)"
+           [style.animation-delay]="(i * 0.1) + 's'">
+        <div class="card-image">
+          <img [src]="movie.poster" [alt]="movie.title" class="movie-poster">
+          <div class="movie-overlay">
+            <ion-button fill="clear" class="play-btn" (click)="playTrailer(movie); $event.stopPropagation()" *ngIf="movie.trailer">
+              <ion-icon name="play"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="card-badges">
+            <span class="rating-badge">⭐ {{ movie.rating }}</span>
+            <span class="new-badge" *ngIf="movie.isNew">✨ NOUVEAU</span>
+          </div>
+        </div>
+        <div class="movie-info">
+          <h3 class="movie-title">{{ movie.title }}</h3>
+          <p class="movie-year">{{ movie.releaseDate | date:'yyyy' }}</p>
+          <div class="movie-genres">{{ movie.genre.slice(0, 2).join(' • ') }}</div>
+          <div class="card-actions">
+            <ion-button fill="clear" size="small" class="like-btn" [class.active]="movie.liked" (click)="likeMovie(movie, $event)">
+              <ion-icon [name]="movie.liked ? 'heart' : 'heart-outline'"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" class="bookmark-btn" (click)="setNotification(movie, $event)">
+              <ion-icon name="bookmark-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Premium -->
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()" class="premium-modal">
+    <ng-template>
+      <div class="modal-container">
+        <!-- Header avec image de fond -->
+        <div class="modal-header" [style.background-image]="'url(' + selectedMovie.backdrop + ')'">
+          <div class="modal-header-overlay"></div>
+          <ion-button fill="clear" class="close-btn" (click)="closeModal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+          
+          <!-- Player vidéo si trailer en cours -->
+          <div class="video-container" *ngIf="isTrailerPlaying && selectedMovie.trailer">
+            <video #videoPlayer [src]="selectedMovie.trailer" controls autoplay class="trailer-video"></video>
+          </div>
+        </div>
+        
+        <!-- Contenu du modal -->
+        <div class="modal-content">
+          <div class="movie-details">
+            <div class="movie-poster-section">
+              <img [src]="selectedMovie.poster" [alt]="selectedMovie.title" class="modal-poster">
+            </div>
+            
+            <div class="movie-info-section">
+              <h1 class="modal-title">{{ selectedMovie.title }}</h1>
+              
+              <div class="modal-meta">
+                <div class="rating-display">
+                  <div class="stars">
+                    <ion-icon *ngFor="let star of getStarRating(selectedMovie.rating)" [name]="star" class="star"></ion-icon>
+                  </div>
+                  <span class="rating-score">{{ selectedMovie.rating }}/10</span>
+                </div>
+                <span class="meta-separator">•</span>
+                <span class="duration">{{ selectedMovie.duration }}</span>
+                <span class="meta-separator">•</span>
+                <span class="year">{{ selectedMovie.releaseDate | date:'yyyy' }}</span>
+              </div>
+              
+              <div class="genre-pills">
+                <span class="genre-pill" *ngFor="let genre of selectedMovie.genre">{{ genre }}</span>
+              </div>
+              
+              <p class="modal-description">{{ selectedMovie.description }}</p>
+              
+              <div class="modal-actions">
+                <ion-button class="primary-action" (click)="playTrailer(selectedMovie)" *ngIf="selectedMovie.trailer && !isTrailerPlaying">
+                  <ion-icon name="play" slot="start"></ion-icon>
+                  Voir la bande-annonce
+                </ion-button>
+                
+                <ion-button fill="outline" class="secondary-action" (click)="setNotification(selectedMovie)">
+                  <ion-icon name="notifications-outline" slot="start"></ion-icon>
+                  Me notifier
+                </ion-button>
+                
+                <div class="interaction-buttons">
+                  <ion-button fill="clear" class="interaction-btn" [class.active]="selectedMovie.liked" (click)="likeMovie(selectedMovie)">
+                    <ion-icon [name]="selectedMovie.liked ? 'heart' : 'heart-outline'"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" class="interaction-btn">
+                    <ion-icon name="bookmark-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" class="interaction-btn">
+                    <ion-icon name="share-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

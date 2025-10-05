@@ -1,0 +1,166 @@
+<!-- Header compact et moderne -->
+<ion-header class="compact-header" [translucent]="true">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <!-- Top section avec tout en une ligne -->
+    <div class="header-main">
+      <div class="left-section">
+        <div class="app-logo">
+          <span class="logo-text">M</span>
+        </div>
+        <div class="greeting-compact">
+          <h1 class="greeting-text">Transactions</h1>
+          <p class="greeting-subtitle">Historique des paiements</p>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <ion-button fill="clear" class="notification-btn" routerLink="/notif">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <div
+            class="notification-badge"
+            [class.large-number]="notificationCount >= 10"
+            *ngIf="notificationCount > 0">
+            {{ notificationCount > 99 ? '99+' : notificationCount }}
+          </div>
+        </ion-button>
+
+        <div class="user-profile">
+          <img
+            [src]="getUserPhoto()"
+            [alt]="userName || 'Utilisateur'"
+            class="profile-image"
+            (error)="onImageError($event)"
+            loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <!-- Search bar simple -->
+    <div class="search-section">
+      <ion-searchbar
+        placeholder="Rechercher un service..."
+        class="simple-searchbar"
+        [debounce]="300">
+      </ion-searchbar>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+
+  <!-- Page de transactions simple et belle -->
+  <div class="transactions-container">
+    
+    <!-- Quick Overview Card -->
+    <div class="overview-card">
+      <div class="overview-content">
+        <div class="overview-icon">
+          <ion-icon name="card"></ion-icon>
+        </div>
+        <div class="overview-info">
+          <h2 class="overview-title">Mes Transactions</h2>
+          <p class="overview-subtitle">Historique de vos paiements</p>
+        </div>
+      </div>
+      <div class="overview-stats">
+        <div class="stat-item">
+          <span class="stat-value">12,500F</span>
+          <span class="stat-label">Ce mois</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistiques Section -->
+    <div class="transactions-section">
+      <h3 class="section-title">Aperçu</h3>
+      
+      <div class="stats-card">
+        <div class="stat-item-row">
+          <div class="stat-icon-wrapper red">
+            <ion-icon name="wallet"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Total dépensé</div>
+            <div class="stat-description">Ce mois-ci</div>
+          </div>
+          <div class="stat-value">12,500F</div>
+        </div>
+
+        <div class="stat-item-row">
+          <div class="stat-icon-wrapper blue">
+            <ion-icon name="trending-up"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Transactions</div>
+            <div class="stat-description">Total effectuées</div>
+          </div>
+          <div class="stat-value">8</div>
+        </div>
+
+        <div class="stat-item-row">
+          <div class="stat-icon-wrapper green">
+            <ion-icon name="leaf"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Économies</div>
+            <div class="stat-description">Réalisées ce mois</div>
+          </div>
+          <div class="stat-value">2,300F</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions récentes -->
+    <div class="transactions-section">
+      <h3 class="section-title">Transactions récentes</h3>
+      
+      <div class="transactions-card">
+        <div class="transaction-item">
+          <div class="transaction-icon netflix">
+            <ion-icon name="play-circle"></ion-icon>
+          </div>
+          <div class="transaction-content">
+            <div class="transaction-label">Netflix Premium</div>
+            <div class="transaction-description">Abonnement mensuel • 15 Jan 2024</div>
+          </div>
+          <div class="transaction-amount debit">-2,000F</div>
+        </div>
+
+        <div class="transaction-item">
+          <div class="transaction-icon spotify">
+            <ion-icon name="musical-notes"></ion-icon>
+          </div>
+          <div class="transaction-content">
+            <div class="transaction-label">Spotify Premium</div>
+            <div class="transaction-description">Abonnement mensuel • 12 Jan 2024</div>
+          </div>
+          <div class="transaction-amount debit">-800F</div>
+        </div>
+
+        <div class="transaction-item">
+          <div class="transaction-icon disney">
+            <ion-icon name="star"></ion-icon>
+          </div>
+          <div class="transaction-content">
+            <div class="transaction-label">Disney+ Premium</div>
+            <div class="transaction-description">Abonnement mensuel • 10 Jan 2024</div>
+          </div>
+          <div class="transaction-amount debit">-1,500F</div>
+        </div>
+
+        <div class="transaction-item">
+          <div class="transaction-icon refund">
+            <ion-icon name="arrow-up-circle"></ion-icon>
+          </div>
+          <div class="transaction-content">
+            <div class="transaction-label">Remboursement</div>
+            <div class="transaction-description">Annulation service • 08 Jan 2024</div>
+          </div>
+          <div class="transaction-amount credit">+1,200F</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

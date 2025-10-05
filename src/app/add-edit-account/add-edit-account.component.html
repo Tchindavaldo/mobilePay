@@ -1,34 +1,201 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>{{ isEdit ? 'Edit' : 'Add' }} Account</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="dismiss()">Fermer</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+<!-- Header Premium -->
+<ion-header class="premium-modal-header">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <div class="header-main">
+      <div class="header-info">
+        <h1 class="modal-title">
+          <ion-icon [name]="isEdit ? 'create' : 'add-circle'" class="title-icon"></ion-icon>
+          {{ isEdit ? 'Modifier le Compte' : 'Nouveau Compte' }}
+        </h1>
+        <p class="modal-subtitle">{{ isEdit ? 'Modifiez les informations de votre compte' : 'Ajoutez un nouveau compte de streaming' }}</p>
+      </div>
+      <ion-button fill="clear" class="close-btn" (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content>
-  <ion-item>
-    <ion-label position="floating">Nom du compte</ion-label>
-    <ion-input [(ngModel)]="account.name"></ion-input>
-  </ion-item>
+<ion-content class="premium-modal-content">
+  <!-- Progress Indicator -->
+  <div class="progress-section">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+    </div>
+    <p class="progress-text">Étape {{ currentStep }} sur 3</p>
+  </div>
 
-  <ion-item>
-    <ion-label position="floating">Type</ion-label>
-    <ion-select [(ngModel)]="account.type">
-      <ion-select-option value="Netflix">Netflix</ion-select-option>
-      <ion-select-option value="Spotify">Spotify</ion-select-option>
-      <ion-select-option value="Hulu">Hulu</ion-select-option>
-      <ion-select-option value="Disney+">Disney+</ion-select-option>
-    </ion-select>
-  </ion-item>
+  <!-- Step 1: Platform Selection -->
+  <div class="form-section" *ngIf="currentStep === 1">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="tv" class="section-icon"></ion-icon>
+        Choisissez la Plateforme
+      </h2>
+      <p class="section-subtitle">Sélectionnez le service de streaming</p>
+    </div>
 
-  <ion-item>
-    <ion-label>Status</ion-label>
-    <ion-toggle [(ngModel)]="account.status" checked="account.status === 'Active'"></ion-toggle>
-  </ion-item>
+    <div class="platform-grid">
+      <div class="platform-card" 
+           *ngFor="let platform of platforms" 
+           [class.selected]="account.type === platform.name"
+           (click)="selectPlatform(platform)">
+        <div class="platform-icon">
+          <ion-icon [name]="platform.icon"></ion-icon>
+        </div>
+        <h3 class="platform-name">{{ platform.name }}</h3>
+        <p class="platform-price">{{ platform.price }}</p>
+        <div class="selection-indicator">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <ion-button expand="full" (click)="saveAccount()">
-    {{ isEdit ? 'Save Changes' : 'Add Account' }}
-  </ion-button>
+  <!-- Step 2: Account Details -->
+  <div class="form-section" *ngIf="currentStep === 2">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="person" class="section-icon"></ion-icon>
+        Informations du Compte
+      </h2>
+      <p class="section-subtitle">Configurez les détails de votre compte</p>
+    </div>
+
+    <div class="form-fields">
+      <!-- Account Name -->
+      <div class="input-group">
+        <label class="input-label">
+          <ion-icon name="person-circle"></ion-icon>
+          Nom du Compte
+        </label>
+        <div class="input-container">
+          <ion-input 
+            [(ngModel)]="account.name" 
+            placeholder="Ex: Mon compte Netflix"
+            class="premium-input">
+          </ion-input>
+        </div>
+      </div>
+
+      <!-- Avatar Selection -->
+      <div class="input-group">
+        <label class="input-label">
+          <ion-icon name="image"></ion-icon>
+          Avatar du Compte
+        </label>
+        <div class="avatar-selection">
+          <div class="avatar-option" 
+               *ngFor="let avatar of avatars; let i = index"
+               [class.selected]="selectedAvatarIndex === i"
+               (click)="selectAvatar(i)">
+            <img [src]="avatar" [alt]="'Avatar ' + (i + 1)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Toggle -->
+      <div class="input-group">
+        <label class="input-label">
+          <ion-icon name="power"></ion-icon>
+          Statut du Compte
+        </label>
+        <div class="status-toggle">
+          <div class="toggle-container">
+            <ion-toggle 
+              [(ngModel)]="isAccountActive" 
+              (ionChange)="updateAccountStatus()"
+              class="premium-toggle">
+            </ion-toggle>
+            <div class="toggle-info">
+              <span class="toggle-status" [class.active]="isAccountActive">
+                {{ isAccountActive ? 'Actif' : 'Inactif' }}
+              </span>
+              <p class="toggle-description">
+                {{ isAccountActive ? 'Le compte est utilisable' : 'Le compte est suspendu' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Confirmation -->
+  <div class="form-section" *ngIf="currentStep === 3">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="checkmark-circle" class="section-icon"></ion-icon>
+        Confirmation
+      </h2>
+      <p class="section-subtitle">Vérifiez les informations avant de sauvegarder</p>
+    </div>
+
+    <div class="confirmation-card">
+      <div class="confirmation-header">
+        <div class="platform-preview">
+          <div class="platform-icon-large">
+            <ion-icon [name]="getSelectedPlatform()?.icon"></ion-icon>
+          </div>
+          <div class="platform-info">
+            <h3>{{ account.type }}</h3>
+            <p>{{ getSelectedPlatform()?.price }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="confirmation-details">
+        <div class="detail-row">
+          <span class="detail-label">Nom du compte</span>
+          <span class="detail-value">{{ account.name || 'Non défini' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Statut</span>
+          <span class="detail-value" [class.active]="isAccountActive" [class.inactive]="!isAccountActive">
+            <ion-icon [name]="isAccountActive ? 'checkmark-circle' : 'pause-circle'"></ion-icon>
+            {{ isAccountActive ? 'Actif' : 'Inactif' }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Avatar</span>
+          <div class="detail-avatar">
+            <img [src]="avatars[selectedAvatarIndex]" alt="Avatar sélectionné">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="navigation-section">
+    <div class="nav-buttons">
+      <ion-button 
+        fill="outline" 
+        class="nav-btn secondary-btn"
+        *ngIf="currentStep > 1"
+        (click)="previousStep()">
+        <ion-icon name="chevron-back" slot="start"></ion-icon>
+        Précédent
+      </ion-button>
+
+      <ion-button 
+        class="nav-btn primary-btn"
+        [disabled]="!canProceed()"
+        (click)="nextStep()"
+        *ngIf="currentStep < 3">
+        Suivant
+        <ion-icon name="chevron-forward" slot="end"></ion-icon>
+      </ion-button>
+
+      <ion-button 
+        class="nav-btn save-btn"
+        [disabled]="!canSave()"
+        (click)="saveAccount()"
+        *ngIf="currentStep === 3">
+        <ion-icon name="save" slot="start"></ion-icon>
+        {{ isEdit ? 'Sauvegarder' : 'Créer le Compte' }}
+      </ion-button>
+    </div>
+  </div>
 </ion-content>

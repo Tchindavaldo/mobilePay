@@ -9,12 +9,14 @@ import { StreamingAccount } from '../streaming-account.model';
   styleUrls: ['./compte.component.scss'],
 })
 export class CompteComponent  implements OnInit {
-
+  // Accounts grid toggle
+  showAccountsGrid: boolean = false;
  
-ngOnInit(): void {
+  ngOnInit(): void {
+    
+  }
   
-}
-accounts: StreamingAccount[] = [
+  accounts: StreamingAccount[] = [
   {
     id: 1,
     name: 'MICHAEL',
@@ -65,5 +67,25 @@ async editAccount(account: StreamingAccount) {
 // Delete an account
 deleteAccount(id: number) {
   this.accounts = this.accounts.filter(account => account.id !== id);
+}
+
+// Get active accounts count
+getActiveAccounts(): number {
+  return this.accounts.filter(account => account.status === 'Active').length;
+}
+
+// Get inactive accounts count
+getInactiveAccounts(): number {
+  return this.accounts.filter(account => account.status === 'Inactive').length;
+}
+
+// Toggle accounts grid view
+toggleAccountsView(): void {
+  this.showAccountsGrid = !this.showAccountsGrid;
+}
+
+// Navigation back method
+goBack(): void {
+  window.history.back();
 }
 }

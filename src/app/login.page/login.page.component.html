@@ -1,42 +1,106 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title></ion-title>
-  </ion-toolbar>
-</ion-header>
+<!-- Logo MobilePay -->
+<div class="app-logo">
+  <div class="logo-container">
+    <div class="logo-icon">
+      <span class="logo-text">M</span>
+    </div>
+    <span class="logo-name">MobilePay</span>
+  </div>
+</div>
 
-<ion-content class="ion-padding">
-  <div class="signup-container">
-    <h1>Bienvenue !</h1>
-    <p>Inscrivez-vous pour continuer</p>
-    
-    <!-- Formulaire d'inscription -->
-    <ion-item lines="none" class="input-item">
-      <ion-icon name="person-outline" slot="start"></ion-icon>
-      <ion-input placeholder="Nom complet" [(ngModel)]="user.name"></ion-input>
-    </ion-item>
+<!-- Login Page -->
+<ion-content class="login-content" fullscreen="true">
+  <div class="auth-container">
+    <!-- Background pattern -->
+    <div class="background-pattern"></div>
 
-    <ion-item lines="none" class="input-item">
-      <ion-icon name="mail-outline" slot="start"></ion-icon>
-      <ion-input type="email" placeholder="Email" [(ngModel)]="user.email"></ion-input>
-    </ion-item>
+    <div class="auth-content">
+      <div class="auth-header">
+        <div class="auth-icon">
+          <ion-icon name="tv-outline"></ion-icon>
+        </div>
+        <h1>Connexion</h1>
+        <p>Connectez-vous pour payer votre Netflix</p>
+      </div>
 
-    <ion-item lines="none" class="input-item">
-      <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-      <ion-input type="password" placeholder="Mot de passe" [(ngModel)]="user.password"></ion-input>
-    </ion-item>
+      <div class="auth-buttons" *ngIf="!showEmailForm && !showRegisterForm">
+        <ion-button expand="block" class="primary-button" (click)="showEmailLogin()">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          Connexion par Email
+        </ion-button>
+        <ion-button expand="block" fill="outline" class="outline-button" (click)="signInWithGoogle()">
+          <ion-icon name="logo-google" slot="start"></ion-icon>
+          Continuer avec Google
+        </ion-button>
+        <ion-button expand="block" fill="outline" class="outline-button" (click)="showPhoneAuth()">
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          Connexion par SMS
+        </ion-button>
+      </div>
 
-    <ion-item lines="none" class="input-item">
-      <ion-icon name="call-outline" slot="start"></ion-icon>
-      <ion-input type="tel" placeholder="Numéro de téléphone" [(ngModel)]="user.phone"></ion-input>
-    </ion-item>
+      <!-- Email Login Form -->
+      <div class="auth-form" *ngIf="showEmailForm && !showRegisterForm">
+        <ion-item class="auth-input">
+          <ion-input placeholder="Email" type="email" [(ngModel)]="user.email"></ion-input>
+        </ion-item>
+        <ion-item class="auth-input">
+          <ion-input placeholder="Mot de passe" type="password" [(ngModel)]="user.password"></ion-input>
+        </ion-item>
 
-    <!-- Bouton d'inscription -->
-    <ion-button expand="block" (click)="registerUser()"  class="register-btn">
-      S'inscrire
-    </ion-button>
+        <ion-button expand="block" class="primary-button" (click)="loginUser()">
+          Se connecter
+        </ion-button>
 
-    <div class="already-account">
-      <p>Vous avez déjà un compte ? <a [routerLink]="['/forms']">Connectez-vous</a></p>
+        <ion-button fill="clear" class="back-button" (click)="showEmailForm = false">
+          <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+          Retour
+        </ion-button>
+      </div>
+
+      <!-- Register Form -->
+      <div class="auth-form" *ngIf="showRegisterForm">
+        <ion-item class="auth-input">
+          <ion-input placeholder="Nom complet" [(ngModel)]="user.name"></ion-input>
+        </ion-item>
+        <ion-item class="auth-input">
+          <ion-input placeholder="Email" type="email" [(ngModel)]="user.email"></ion-input>
+        </ion-item>
+        <ion-item class="auth-input">
+          <ion-input placeholder="Numéro de téléphone" type="tel" [(ngModel)]="user.phone"></ion-input>
+        </ion-item>
+        <ion-item class="auth-input">
+          <ion-input placeholder="Mot de passe" type="password" [(ngModel)]="user.password"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" class="primary-button" (click)="registerUser()">
+          Créer mon compte
+        </ion-button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span>ou</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <ion-button expand="block" fill="outline" class="outline-button" (click)="registerWithGoogle()">
+          <ion-icon name="logo-google" slot="start"></ion-icon>
+          S'inscrire avec Google
+        </ion-button>
+      </div>
+
+      <div class="auth-footer" *ngIf="!showEmailForm && !showRegisterForm">
+        <p>Pas encore de compte ?</p>
+        <ion-button fill="clear" class="link-button" (click)="showRegister()">
+          Créer un compte
+        </ion-button>
+      </div>
+
+      <div class="auth-footer" *ngIf="showRegisterForm">
+        <p>Déjà un compte ?</p>
+        <ion-button fill="clear" class="link-button" (click)="backToMainLogin()">
+          Se connecter
+        </ion-button>
+      </div>
     </div>
   </div>
 </ion-content>

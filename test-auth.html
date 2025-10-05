@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MobilePay - Test Authentification</title>
+    
+    <!-- Ionic CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+    
+    <!-- Custom CSS pour les tests -->
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .test-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(220,38,38,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .onboarding-content {
+            --background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+        }
+
+        .onboarding-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .onboarding-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .onboarding-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-top: 40px;
+        }
+
+        .progress-container {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--ion-color-light);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: var(--ion-color-light);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .skip-button {
+            color: var(--ion-color-light);
+            --color: var(--ion-color-light);
+        }
+
+        .steps-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .step-content {
+            width: 100%;
+            text-align: center;
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 0.3s ease;
+        }
+
+        .step-content.hidden {
+            opacity: 0;
+            transform: translateX(100%);
+            position: absolute;
+        }
+
+        .step-illustration {
+            margin-bottom: 40px;
+        }
+
+        .icon-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .streaming-scene {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        .netflix-card {
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .netflix-logo {
+            color: #dc2626;
+            font-size: 32px;
+            font-weight: 900;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        .play-button {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .floating-icons {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .floating-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 10px;
+            left: 10px;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 20px;
+            right: 5px;
+            animation-delay: 1s;
+        }
+
+        .floating-icon:nth-child(3) {
+            bottom: 15px;
+            left: 20px;
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-10px) rotate(5deg); opacity: 1; }
+        }
+
+        /* Étape 2 - Paiements */
+        .payment-scene {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        .payment-cards {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .payment-card {
+            width: 60px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: cardFloat 2s ease-in-out infinite;
+        }
+
+        .payment-card.mtn {
+            background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
+            animation-delay: 0s;
+        }
+
+        .payment-card.orange {
+            background: linear-gradient(135deg, #ff6600 0%, #ff3300 100%);
+            animation-delay: 0.5s;
+        }
+
+        .card-logo {
+            font-size: 10px;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-signal {
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .security-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .security-icon {
+            color: white;
+            font-size: 20px;
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Étape 3 - Succès */
+        .success-scene {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        .success-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+            animation: successPulse 2s infinite;
+        }
+
+        .success-check {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .streaming-devices {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .device {
+            font-size: 20px;
+            animation: deviceBounce 1.5s ease-in-out infinite;
+        }
+
+        .device.phone { animation-delay: 0s; }
+        .device.laptop { animation-delay: 0.3s; }
+        .device.tv { animation-delay: 0.6s; }
+
+        .success-waves {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .wave {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 50%;
+            animation: waveExpand 2s ease-out infinite;
+        }
+
+        .wave:nth-child(1) { animation-delay: 0s; }
+        .wave:nth-child(2) { animation-delay: 0.7s; }
+        .wave:nth-child(3) { animation-delay: 1.4s; }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes deviceBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes waveExpand {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .step-title {
+            color: var(--ion-color-light);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .step-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .step-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 300px;
+        }
+
+        .dots-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--ion-color-light);
+            transform: scale(1.2);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .nav-button {
+            --border-radius: 12px;
+            height: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .prev-button {
+            flex: 0 0 auto;
+            --color: rgba(255, 255, 255, 0.7);
+        }
+
+        .next-button {
+            flex: 1;
+        }
+
+        .app-logo {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 900;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        .logo-name {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .page-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo MobilePay (affiché seulement sur les pages d'auth) -->
+    <div class="app-logo" id="app-logo" style="display: none;">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="logo-name">MobilePay</span>
+        </div>
+    </div>
+
+    <!-- Container principal -->
+    <div class="test-container">
+        <!-- Onboarding Stepper -->
+        <div id="onboarding" class="onboarding-content page-container">
+            <div class="onboarding-container">
+                <!-- Header avec progress bar -->
+                <div class="onboarding-header">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 33%"></div>
+                        </div>
+                        <span class="progress-text" id="progress-text">1 / 3</span>
+                    </div>
+                    
+                    <ion-button fill="clear" size="small" class="skip-button">
+                        Passer
+                    </ion-button>
+                </div>
+
+                <!-- Contenu principal -->
+                <div class="steps-container">
+                    <!-- Étape 1 -->
+                    <div class="step-content active" id="step-1">
+                        <div class="step-illustration">
+                            <div class="streaming-scene">
+                                <div class="netflix-card">
+                                    <div class="netflix-logo">N</div>
+                                    <div class="play-button">▶</div>
+                                </div>
+                                <div class="floating-icons">
+                                    <ion-icon name="play-circle" class="floating-icon"></ion-icon>
+                                    <ion-icon name="film-outline" class="floating-icon"></ion-icon>
+                                    <ion-icon name="tv-outline" class="floating-icon"></ion-icon>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-text">
+                            <h1 class="step-title">Bienvenue sur MobilePay</h1>
+                            <h2 class="step-subtitle">Votre passerelle vers Netflix</h2>
+                            <p class="step-description">Accédez instantanément à des milliers de films et séries. Payez votre abonnement Netflix en quelques clics avec MTN ou Orange Money.</p>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2 -->
+                    <div class="step-content hidden" id="step-2">
+                        <div class="step-illustration">
+                            <div class="payment-scene">
+                                <div class="payment-cards">
+                                    <div class="payment-card mtn">
+                                        <div class="card-logo">MTN</div>
+                                        <div class="card-signal">📶</div>
+                                    </div>
+                                    <div class="payment-card orange">
+                                        <div class="card-logo">Orange</div>
+                                        <div class="card-signal">📱</div>
+                                    </div>
+                                </div>
+                                <div class="security-badge">
+                                    <ion-icon name="shield-checkmark" class="security-icon"></ion-icon>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-text">
+                            <h1 class="step-title">Paiements Sécurisés</h1>
+                            <h2 class="step-subtitle">MTN & Orange Money</h2>
+                            <p class="step-description">Utilisez votre compte MTN Money ou Orange Money pour payer en toute sécurité. Vos données sont protégées et vos transactions cryptées.</p>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3 -->
+                    <div class="step-content hidden" id="step-3">
+                        <div class="step-illustration">
+                            <div class="success-scene">
+                                <div class="success-circle">
+                                    <ion-icon name="checkmark" class="success-check"></ion-icon>
+                                </div>
+                                <div class="streaming-devices">
+                                    <div class="device phone">📱</div>
+                                    <div class="device laptop">💻</div>
+                                    <div class="device tv">📺</div>
+                                </div>
+                                <div class="success-waves">
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-text">
+                            <h1 class="step-title">Activation Instantanée</h1>
+                            <h2 class="step-subtitle">Netflix prêt en 2 minutes</h2>
+                            <p class="step-description">Votre compte Netflix est activé immédiatement après le paiement. Profitez de vos films et séries sur tous vos appareils !</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicateurs de points -->
+                <div class="dots-indicator">
+                    <div class="dot active" onclick="goToStep(1)" id="dot-1"></div>
+                    <div class="dot" onclick="goToStep(2)" id="dot-2"></div>
+                    <div class="dot" onclick="goToStep(3)" id="dot-3"></div>
+                </div>
+
+                <!-- Boutons de navigation -->
+                <div class="navigation-buttons">
+                    <ion-button fill="clear" onclick="prevStep()" class="nav-button prev-button" id="prev-btn">
+                        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+                        Précédent
+                    </ion-button>
+
+                    <ion-button expand="block" onclick="nextStep()" class="nav-button next-button" color="danger" id="next-btn">
+                        <span id="next-text">Suivant</span>
+                        <ion-icon name="chevron-forward-outline" slot="end" id="next-icon"></ion-icon>
+                    </ion-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login (caché par défaut) -->
+        <div id="login" class="hidden page-container">
+            <ion-content class="login-content" fullscreen="true" style="--background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
+                <div style="padding: 20px; text-align: center; color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative;">
+
+                    <!-- Background pattern -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 70%, rgba(220, 38, 38, 0.1) 0%, transparent 50%); pointer-events: none;"></div>
+
+                    <div style="margin-bottom: 40px; position: relative; z-index: 1;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #1f2937 0%, #374151 100%); border-radius: 20px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border: 2px solid rgba(220, 38, 38, 0.2);">
+                            <ion-icon name="tv-outline" style="font-size: 40px; color: #dc2626;"></ion-icon>
+                        </div>
+                        <h1 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700;">Connexion</h1>
+                        <p style="margin: 0; opacity: 0.8; font-size: 16px;">Connectez-vous pour payer votre Netflix</p>
+                    </div>
+
+                    <div style="margin-bottom: 30px; position: relative; z-index: 1;">
+                        <ion-button expand="block" style="margin-bottom: 15px; --border-radius: 12px; height: 50px; --background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); --color: white; box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);">
+                            <ion-icon name="mail-outline" slot="start"></ion-icon>
+                            Connexion par Email
+                        </ion-button>
+                        <ion-button expand="block" fill="outline" style="margin-bottom: 15px; --border-radius: 12px; height: 50px; --border-color: rgba(255, 255, 255, 0.2); --color: white; --background: rgba(255, 255, 255, 0.05);">
+                            <ion-icon name="logo-google" slot="start"></ion-icon>
+                            Continuer avec Google
+                        </ion-button>
+                        <ion-button expand="block" fill="outline" style="--border-radius: 12px; height: 50px; --border-color: rgba(255, 255, 255, 0.2); --color: white; --background: rgba(255, 255, 255, 0.05);">
+                            <ion-icon name="call-outline" slot="start"></ion-icon>
+                            Connexion par SMS
+                        </ion-button>
+                    </div>
+
+                    <div style="position: relative; z-index: 1;">
+                        <p style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Pas encore de compte ?</p>
+                        <ion-button fill="clear" onclick="showRegister()" style="font-weight: 600; --color: #dc2626;">
+                            Créer un compte
+                        </ion-button>
+                    </div>
+                </div>
+            </ion-content>
+        </div>
+
+        <!-- Register (caché par défaut) -->
+        <div id="register" class="hidden page-container">
+            <ion-content class="register-content" fullscreen="true" style="--background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
+                <div style="padding: 20px; text-align: center; color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative;">
+
+                    <!-- Background pattern -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 70% 30%, rgba(220, 38, 38, 0.1) 0%, transparent 50%); pointer-events: none;"></div>
+
+                    <div style="margin-bottom: 30px; position: relative; z-index: 1;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #1f2937 0%, #374151 100%); border-radius: 20px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border: 2px solid rgba(220, 38, 38, 0.2);">
+                            <ion-icon name="person-add-outline" style="font-size: 40px; color: #dc2626;"></ion-icon>
+                        </div>
+                        <h1 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700;">Créer un compte</h1>
+                        <p style="margin: 0; opacity: 0.8; font-size: 16px;">Rejoignez MobilePay pour payer Netflix</p>
+                    </div>
+
+                    <div style="margin-bottom: 25px; position: relative; z-index: 1;">
+                        <div style="margin-bottom: 20px; text-align: left;">
+                            <ion-item style="--background: rgba(255,255,255,0.05); --border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <ion-input placeholder="Nom complet" style="--color: white; --placeholder-color: rgba(255,255,255,0.6);"></ion-input>
+                            </ion-item>
+                            <ion-item style="--background: rgba(255,255,255,0.05); --border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <ion-input placeholder="Email" type="email" style="--color: white; --placeholder-color: rgba(255,255,255,0.6);"></ion-input>
+                            </ion-item>
+                            <ion-item style="--background: rgba(255,255,255,0.05); --border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <ion-input placeholder="Numéro de téléphone" type="tel" style="--color: white; --placeholder-color: rgba(255,255,255,0.6);"></ion-input>
+                            </ion-item>
+                        </div>
+
+                        <ion-button expand="block" style="--border-radius: 12px; height: 50px; margin-bottom: 15px; --background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); --color: white; box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);">
+                            Créer mon compte
+                        </ion-button>
+
+                        <div style="display: flex; align-items: center; margin: 20px 0;">
+                            <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.2);"></div>
+                            <span style="margin: 0 15px; font-size: 14px; opacity: 0.6;">ou</span>
+                            <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.2);"></div>
+                        </div>
+
+                        <ion-button expand="block" fill="outline" style="--border-radius: 12px; height: 50px; --border-color: rgba(255, 255, 255, 0.2); --color: white; --background: rgba(255, 255, 255, 0.05);">
+                            <ion-icon name="logo-google" slot="start"></ion-icon>
+                            S'inscrire avec Google
+                        </ion-button>
+                    </div>
+
+                    <div style="position: relative; z-index: 1;">
+                        <p style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Déjà un compte ?</p>
+                        <ion-button fill="clear" onclick="showLogin()" style="font-weight: 600; --color: #dc2626;">
+                            Se connecter
+                        </ion-button>
+                    </div>
+                </div>
+            </ion-content>
+        </div>
+
+        <!-- Phone Auth (caché par défaut) -->
+        <div id="phone-auth" class="hidden page-container">
+            <ion-content class="phone-auth-content" fullscreen="true" style="--background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
+                <div style="padding: 20px; text-align: center; color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative;">
+
+                    <!-- Background pattern -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 20%, rgba(220, 38, 38, 0.1) 0%, transparent 50%); pointer-events: none;"></div>
+
+                    <div style="margin-bottom: 40px; position: relative; z-index: 1;">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #1f2937 0%, #374151 100%); border-radius: 25px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border: 2px solid rgba(220, 38, 38, 0.2);">
+                            <ion-icon name="chatbox-outline" style="font-size: 50px; color: #dc2626;"></ion-icon>
+                        </div>
+                        <h1 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700;">Code de vérification</h1>
+                        <p style="margin: 0; opacity: 0.8; font-size: 16px;">Entrez le code à 6 chiffres envoyé au<br><strong style="color: #dc2626;">+237 6XX XXX X78</strong></p>
+                    </div>
+
+                    <div style="margin-bottom: 30px; position: relative; z-index: 1;">
+                        <ion-item style="--background: rgba(255,255,255,0.05); --border-radius: 12px; margin-bottom: 25px; text-align: center; border: 2px solid rgba(220, 38, 38, 0.2);">
+                            <ion-input placeholder="000000" type="number" maxlength="6" style="--color: white; --placeholder-color: rgba(255,255,255,0.5); font-size: 28px; font-weight: 700; letter-spacing: 12px; text-align: center;"></ion-input>
+                        </ion-item>
+
+                        <ion-button expand="block" style="--border-radius: 12px; height: 50px; margin-bottom: 25px; --background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); --color: white; box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);">
+                            Vérifier le code
+                        </ion-button>
+
+                        <div style="margin-bottom: 25px;">
+                            <p style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Vous n'avez pas reçu le code ?</p>
+                            <ion-button fill="clear" style="font-weight: 600; --color: #dc2626;">
+                                Renvoyer dans 45s
+                            </ion-button>
+                        </div>
+
+                        <div style="display: flex; align-items: center; margin: 20px 0;">
+                            <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.2);"></div>
+                            <span style="margin: 0 15px; font-size: 14px; opacity: 0.6;">ou</span>
+                            <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.2);"></div>
+                        </div>
+
+                        <ion-button fill="outline" onclick="showLogin()" style="--border-radius: 12px; height: 45px; --border-color: rgba(255, 255, 255, 0.2); --color: white; --background: rgba(255, 255, 255, 0.05); margin-bottom: 10px;">
+                            <ion-icon name="create-outline" slot="start"></ion-icon>
+                            Changer de numéro
+                        </ion-button>
+                    </div>
+
+                    <div style="position: relative; z-index: 1;">
+                        <p style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Préférez-vous vous connecter par email ?</p>
+                        <ion-button fill="clear" onclick="showLogin()" style="font-weight: 600; --color: #dc2626;">
+                            Connexion par email
+                        </ion-button>
+                    </div>
+                </div>
+            </ion-content>
+        </div>
+    </div>
+
+    <!-- Ionic JS -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function showOnboarding() {
+            hideAll();
+            document.getElementById('onboarding').classList.remove('hidden');
+            document.getElementById('app-logo').style.display = 'none'; // Masquer le logo
+            currentStep = 1;
+            updateStepper();
+        }
+
+        function showLogin() {
+            console.log('Affichage de la page de connexion...');
+            hideAll();
+            const loginElement = document.getElementById('login');
+            console.log('Element login trouvé:', loginElement);
+            loginElement.classList.remove('hidden');
+            document.getElementById('app-logo').style.display = 'block'; // Afficher le logo
+            console.log('Classes après suppression de hidden:', loginElement.classList);
+        }
+
+        function showRegister() {
+            hideAll();
+            document.getElementById('register').classList.remove('hidden');
+            document.getElementById('app-logo').style.display = 'block'; // Afficher le logo
+        }
+
+        function showPhoneAuth() {
+            hideAll();
+            document.getElementById('phone-auth').classList.remove('hidden');
+            document.getElementById('app-logo').style.display = 'block'; // Afficher le logo
+        }
+
+        function hideAll() {
+            console.log('Masquage de toutes les pages...');
+            document.getElementById('onboarding').classList.add('hidden');
+            document.getElementById('login').classList.add('hidden');
+            document.getElementById('register').classList.add('hidden');
+            document.getElementById('phone-auth').classList.add('hidden');
+            console.log('Toutes les pages masquées');
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepper();
+            } else {
+                // Dernière étape, aller à la page de connexion
+                console.log('Redirection vers la page de connexion...');
+                showLogin();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepper();
+            }
+        }
+
+        function goToStep(step) {
+            if (step >= 1 && step <= totalSteps) {
+                currentStep = step;
+                updateStepper();
+            }
+        }
+
+        function updateStepper() {
+            // Mettre à jour les étapes
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepElement = document.getElementById(`step-${i}`);
+                const dotElement = document.getElementById(`dot-${i}`);
+
+                if (i === currentStep) {
+                    stepElement.classList.remove('hidden');
+                    stepElement.classList.add('active');
+                    dotElement.classList.add('active');
+                } else {
+                    stepElement.classList.add('hidden');
+                    stepElement.classList.remove('active');
+                    dotElement.classList.remove('active');
+                }
+            }
+
+            // Mettre à jour la progress bar
+            const progressPercentage = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-fill').style.width = progressPercentage + '%';
+            document.getElementById('progress-text').textContent = `${currentStep} / ${totalSteps}`;
+
+            // Mettre à jour les boutons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const nextText = document.getElementById('next-text');
+            const nextIcon = document.getElementById('next-icon');
+
+            // Bouton précédent
+            if (currentStep === 1) {
+                prevBtn.disabled = true;
+                prevBtn.style.opacity = '0.5';
+            } else {
+                prevBtn.disabled = false;
+                prevBtn.style.opacity = '1';
+            }
+
+            // Bouton suivant
+            if (currentStep === totalSteps) {
+                nextText.textContent = 'Let\'s go';
+                nextIcon.name = 'rocket-outline';
+            } else {
+                nextText.textContent = 'Suivant';
+                nextIcon.name = 'chevron-forward-outline';
+            }
+        }
+
+        // Initialiser avec l'onboarding
+        showOnboarding();
+    </script>
+</body>
+</html>

@@ -15,10 +15,16 @@ import { OnboardingPageComponent } from './onboarding.page/onboarding.page.compo
 import { JeuxComponent } from './jeux/jeux.component';
 import { SiteComponent } from './site/site.component';
 import { AchatsComponent } from './achats/achats.component';
+import { PhoneAuthComponent } from './phone-auth/phone-auth.component';
 
 const routes: Routes = [
   {
     path: '',
+    redirectTo: '/explication',
+    pathMatch: 'full'
+  },
+  {
+    path: 'tabs',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
   {
@@ -80,6 +86,10 @@ const routes: Routes = [
   {
     path: 'achats',
     component:AchatsComponent
+  },
+  {
+    path: 'phone-auth',
+    component: PhoneAuthComponent
   },
 ];
 @NgModule({

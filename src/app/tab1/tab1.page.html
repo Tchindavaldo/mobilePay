@@ -14,82 +14,125 @@
     </ion-fab-button>
   </ion-fab-list>
 </ion-fab> -->
-<!-- Boîte de dialogue de confirmation -->
-<div *ngIf="isDialogVisible" class="dialog">
-  <div class="dialog-content">
-    <span class="close" (click)="closeDialog()">&times;</span>
-    
-    <img style="width: 32%;" src="../../assets/character-2022531_1280.webp" alt="sad face" width="50px">
-    <h2>Êtes-vous sûr de vouloir vous désabonner ?</h2>
-    <div class="dialog-buttons">
-      <button class="no-button" (click)="closeDialog()">Non</button>
-      <button (click)="onStopCountdown()"  (click)="onUnsubscribe()" class="yes-button" (click)="confirmUnsubscribe()">Oui</button>
+<!-- Popup de désabonnement moderne et premium -->
+<div *ngIf="isDialogVisible" class="dialog-overlay" (click)="closeDialog()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <ion-icon name="close" class="close-icon" (click)="closeDialog()"></ion-icon>
+    </div>
+    <div class="dialog-body">
+      <div class="sad-emoji">💔</div>
+      <h2>Confirmer le désabonnement</h2>
+      <p>Vous êtes sur le point de perdre l'accès à tous vos contenus Netflix Premium. Cette action est irréversible.</p>
+    </div>
+    <div class="dialog-actions">
+      <ion-button fill="outline" (click)="closeDialog()">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Annuler
+      </ion-button>
+      <ion-button color="danger" (click)="confirmUnsubscribe()">
+        <ion-icon name="trash" slot="start"></ion-icon>
+        Désabonner
+      </ion-button>
     </div>
   </div>
 </div>
 
-<ion-header class="tete">
-  
-  <div class="menu">
-    <img src="../../assets/LOGO.jpg" alt="erreur">
-    <div class="souche">
-      <ion-searchbar></ion-searchbar>
-
-      <div class="partie">
- <ion-fab slot="fixed"  horizontal="end" [edge]="true">
-  <ion-fab-button style="    --background: #ff6969;    width: 40px;
-  height: 40px;
-  margin-top: -76px;margin-right: 18px;">
-    <ion-icon name="chevron-down-outline"></ion-icon>
-  </ion-fab-button>
-  <ion-fab-list side="bottom">
-    <ion-fab-button routerLink="/notif">
-      <ion-icon name="notifications" style="color: rgb(216, 0, 0)"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button routerLink="/tabs/tab3">
-      <ion-icon name="cog" style="color: rgb(216, 0, 0);"></ion-icon>
-     
-    </ion-fab-button>
-    <ion-fab-button routerLink="/tabs/tab2">
-      <img src="../../assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png" alt="">
-    </ion-fab-button>
-  </ion-fab-list>
-</ion-fab> 
-      </div>
-     
-      
-      
-      <!-- <div class="partie" >
-        <div class="profil" style="width: 40px;height: 40px; background-color:white ; border-radius: 50%; overflow: hidden;">
-         
-            <img style="width: 100%;height: 100%;" src="../../assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png" alt="">
-         
+<!-- Header compact et moderne -->
+<ion-header class="compact-header" [translucent]="true">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <!-- Top section avec tout en une ligne -->
+    <div class="header-main">
+      <div class="left-section">
+        <div class="app-logo">
+          <span class="logo-text">M</span>
         </div>
-      </div> -->
+        <div class="greeting-compact">
+          <h1 class="greeting-text">Accueil</h1>
+          <p class="greeting-subtitle">Bienvenue sur MobilPay</p>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <ion-button fill="clear" class="notification-btn" routerLink="/notif">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <div
+            class="notification-badge"
+            [class.large-number]="notificationCount >= 10"
+            *ngIf="notificationCount > 0">
+            {{ notificationCount > 99 ? '99+' : notificationCount }}
+          </div>
+        </ion-button>
+
+        <div class="user-profile" (click)="openProfileMenu()">
+          <img
+            [src]="getUserPhoto()"
+            [alt]="userName || 'Utilisateur'"
+            class="profile-image"
+            (error)="onImageError($event)"
+            (click)="debugUserData()"
+            loading="lazy">
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="rond">
-    <br><span style="padding: 8%;">  Hello michael, comment allez-vous</span><ion-toggle  color="danger" [checked]="true"></ion-toggle>
+
+    <!-- Search bar simple -->
+    <div class="search-section">
+      <ion-searchbar
+        placeholder="Rechercher un service..."
+        class="simple-searchbar"
+        [debounce]="300">
+      </ion-searchbar>
+    </div>
   </div>
 </ion-header>
-<ion-content >
+<ion-content class="main-content">
 
-  <div class="stiker" style="
-  height: 80px;
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  margin-right: 0px;
-  padding: 8%;
-  justify-content: space-between;
-  padding-top: 14px;
-">
-  <div class="stick" active><ion-icon name="happy-outline"></ion-icon></div>
-  <div class="stick" ><ion-icon name="sad-outline"></ion-icon></div>
-  <div class="stick"><ion-icon name="happy-outline"></ion-icon></div>
-  <div class="stick"><ion-icon name="sad-outline"></ion-icon></div>
-  <div class="stick"><ion-icon name="happy-outline"></ion-icon></div>
-</div>
+  <!-- Filter Chips Section -->
+  <div class="filter-chips-container">
+    <div class="chips-wrapper">
+      <ion-chip
+        class="filter-chip"
+        [class.active]="selectedFilter === 'all'"
+        (click)="selectFilter('all')">
+        <ion-icon name="apps-outline"></ion-icon>
+        <ion-label>Tous</ion-label>
+      </ion-chip>
+
+      <ion-chip
+        class="filter-chip"
+        [class.active]="selectedFilter === 'streaming'"
+        (click)="selectFilter('streaming')">
+        <ion-icon name="play-circle-outline"></ion-icon>
+        <ion-label>Streaming</ion-label>
+      </ion-chip>
+
+      <ion-chip
+        class="filter-chip"
+        [class.active]="selectedFilter === 'music'"
+        (click)="selectFilter('music')">
+        <ion-icon name="musical-notes-outline"></ion-icon>
+        <ion-label>Musique</ion-label>
+      </ion-chip>
+
+      <ion-chip
+        class="filter-chip"
+        [class.active]="selectedFilter === 'gaming'"
+        (click)="selectFilter('gaming')">
+        <ion-icon name="game-controller-outline"></ion-icon>
+        <ion-label>Gaming</ion-label>
+      </ion-chip>
+
+      <ion-chip
+        class="filter-chip"
+        [class.active]="selectedFilter === 'productivity'"
+        (click)="selectFilter('productivity')">
+        <ion-icon name="briefcase-outline"></ion-icon>
+        <ion-label>Productivité</ion-label>
+      </ion-chip>
+    </div>
+  </div>
 
 
   <div class="informations">
@@ -104,49 +147,226 @@
   
   </div>
     <div class="soustitre" style="color: gray;display: flex;justify-content: space-between;">Jours restant<span>jours</span></div>
-    <div class="statistique" >
-<div class="avancer" ></div>
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-track">
+          <div
+            class="progress-fill"
+            [style.width.%]="getProgressPercentage()">
+          </div>
+          <div class="progress-indicator" [style.left.%]="getProgressPercentage()">
+            <div class="indicator-dot" (click)="toggleTooltip()"></div>
+            <div class="indicator-tooltip" [class.show]="showTooltip">
+              {{ days }} jours restants
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="soustitre" style="    padding-top: 5%;color: gray;display: flex;justify-content: space-between;"> Plan:  {{ selectedPlanName }} <span >1 mois</span></div>
+    <div class="soustitre" style="padding-top: 3%;color: gray;display: flex;justify-content: space-between;"> Plan:  {{ selectedPlanName }} <span >1 mois</span></div>
     <div class="flex">
-      <ion-button  [routerLink]="['/pay']"  class="but" color="danger">
+      <ion-button [routerLink]="['/pay']" class="resubscribe-btn" color="danger">
         <ion-icon slot="end" name="flash-sharp"></ion-icon>
-        <span style="font-size: 10px;"  >Reabonner</span>
+        <span class="btn-text">Réabonner</span>
       </ion-button>
-      
-  
 
       <!-- Bouton Désabonner -->
-      <ion-button color="dark" fill="outline" (click)="showDialog()" (click)="resetNumbers()" >
+      <ion-button class="unsubscribe-btn" fill="outline" (click)="showDialog()" (click)="resetNumbers()">
         <ion-icon slot="end" name="flash-off-sharp"></ion-icon>
-        <span style="font-size: 10px;">Désabonner</span>
+        <span class="btn-text">Désabonner</span>
       </ion-button>
       
     </div>
-    </div><br><br>
-    <div class="tiret" style="height: 1px;background-color: gray;"></div>
-    <br>
-<div class="bonus">Mes plans</div>
-<br>
-    <div class="plan" >
-<div  class="bons" [routerLink]="['/plan']"><div style="width: 100%; height: 150px;background-color: black;border: 1px solid;border-radius: 10px;overflow: hidden;"><img src="../../assets/flyers netfliox.jpg" alt=""></div><div style="text-align: center;">Compte partager</div></div >
-<div  class="bons" style="display: flex;flex-wrap: wrap;justify-content: space-between;">
-  <div class="reduire" [routerLink]="['/compte']"><div class="photo"><img style="width: 34px;" src="../../assets/person_add_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div> <span style="padding-top: 20px;">Comptes</span> </div>
-  <div class="reduire" [routerLink]="['/support']"><div class="photo"><img style="width: 34px;" src="../../assets/perm_phone_msg_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;"  >Aide</span></div>
-  <div class="reduire" [routerLink]="['/actus']"><div class="photo"><img style="width: 34px;" src="../../assets/view_cozy_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Actus film</span></div>
-  <div class="reduire" [routerLink]="['/partage']"><div class="photo"><img style="width: 34px;" src="../../assets/share_24dp_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Patarger</span></div>
-</div >
     </div>
-    <br>
-    <div class="tiret" style="height: 1px;background-color: gray;"></div>
-<br>
-<div class="bonus">Autres services</div>
-<br>
-<div class="autre">
-  <div class="reseaux" (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/dessin.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Cinema</span></div>
-  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/jeux.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Jeux</span></div>
-  <div class="reseaux" (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/achats.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Achats</span></div>
-  <div class="reseaux"  (click)="presentToast('top')"><div class="photos"><img style="width: 34px;" src="../../assets/internet.svg" alt=""></div><div style="height: 5px;"></div><span style="padding-top: 20px;">Reseaux</span></div>
+
+    <!-- Séparateur discret -->
+    <div class="subtle-separator"></div>
+<!-- Section Services & Streaming -->
+<div class="section-header">
+  <h2 class="section-title">
+    <ion-icon name="play-circle" class="title-icon"></ion-icon>
+    Services & Streaming
+  </h2>
+  <p class="section-subtitle">Gérez vos abonnements et accédez à vos services</p>
+</div>
+
+<div class="services-grid">
+  <!-- Slider des services -->
+  <div class="featured-service">
+    <div class="services-slider">
+      <div class="slider-container" #sliderContainer>
+
+        <!-- Slide 1 - Netflix -->
+        <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 0">
+          <div class="slide-image">
+            <img src="../../assets/flyers netfliox.jpg" alt="Netflix">
+            <div class="slide-overlay">
+              <div class="slide-content">
+                <h3 class="slide-title">Netflix Premium</h3>
+                <p class="slide-subtitle">Compte partagé • 4 écrans</p>
+                <div class="slide-badges">
+                  <span class="price-badge">2000F</span>
+                  <span class="status-badge active">Actif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 - Disney+ -->
+        <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 1">
+          <div class="slide-image">
+            <img src="../../assets/disney.png" alt="Disney+">
+            <div class="slide-overlay">
+              <div class="slide-content">
+                <h3 class="slide-title">Disney+ Premium</h3>
+                <p class="slide-subtitle">Famille • 4 profils</p>
+                <div class="slide-badges">
+                  <span class="price-badge">1500F</span>
+                  <span class="status-badge inactive">Inactif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 - Spotify -->
+        <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 2">
+          <div class="slide-image">
+            <img src="../../assets/télécharger (10).jpeg" alt="Spotify">
+            <div class="slide-overlay">
+              <div class="slide-content">
+                <h3 class="slide-title">Spotify Premium</h3>
+                <p class="slide-subtitle">Musique illimitée</p>
+                <div class="slide-badges">
+                  <span class="price-badge">800F</span>
+                  <span class="status-badge active">Actif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Indicateurs de pagination -->
+    <div class="slider-pagination">
+      <div class="pagination-dot" [class.active]="currentSlide === 0" (click)="goToSlide(0)"></div>
+      <div class="pagination-dot" [class.active]="currentSlide === 1" (click)="goToSlide(1)"></div>
+      <div class="pagination-dot" [class.active]="currentSlide === 2" (click)="goToSlide(2)"></div>
+    </div>
+  </div>
+
+  <!-- Grille des services -->
+  <div class="services-actions">
+    <div class="action-card" [routerLink]="['/compte']">
+      <div class="action-icon">
+        <ion-icon name="people-outline"></ion-icon>
+      </div>
+      <span class="action-label">Comptes</span>
+    </div>
+
+    <div class="action-card" [routerLink]="['/support']">
+      <div class="action-icon">
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </div>
+      <span class="action-label">Aide</span>
+    </div>
+
+    <div class="action-card" [routerLink]="['/actus']">
+      <div class="action-icon">
+        <ion-icon name="film-outline"></ion-icon>
+      </div>
+      <span class="action-label">Actus film</span>
+    </div>
+
+    <div class="action-card" [routerLink]="['/partage']">
+      <div class="action-icon">
+        <ion-icon name="share-social-outline"></ion-icon>
+      </div>
+      <span class="action-label">Partager</span>
+    </div>
+  </div>
+</div>
+
+    <!-- Séparateur discret -->
+    <div class="subtle-separator"></div>
+<!-- Section Découvrir & Divertissement -->
+<div class="discover-section">
+  <div class="section-header">
+    <h2 class="section-title">
+      <ion-icon name="sparkles" class="title-icon"></ion-icon>
+      Découvrir & Divertissement
+    </h2>
+    <p class="section-subtitle">Explorez nos services de divertissement et plus encore</p>
+  </div>
+
+  <div class="discover-grid">
+    <!-- Cinéma -->
+    <div class="discover-card cinema-card" (click)="presentToast('top')">
+      <div class="card-background">
+        <div class="card-icon">
+          <ion-icon name="film-outline"></ion-icon>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Cinéma</h3>
+          <p class="card-description">Films & séries</p>
+        </div>
+        <div class="card-badge">
+          <ion-icon name="star"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gaming -->
+    <div class="discover-card gaming-card" (click)="presentToast('top')">
+      <div class="card-background">
+        <div class="card-icon">
+          <ion-icon name="game-controller-outline"></ion-icon>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Gaming</h3>
+          <p class="card-description">Jeux & consoles</p>
+        </div>
+        <div class="card-badge">
+          <ion-icon name="trophy"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shopping -->
+    <div class="discover-card shopping-card" (click)="presentToast('top')">
+      <div class="card-background">
+        <div class="card-icon">
+          <ion-icon name="bag-outline"></ion-icon>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Shopping</h3>
+          <p class="card-description">Achats en ligne</p>
+        </div>
+        <div class="card-badge">
+          <ion-icon name="flash"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Réseaux sociaux -->
+    <div class="discover-card social-card" (click)="presentToast('top')">
+      <div class="card-background">
+        <div class="card-icon">
+          <ion-icon name="people-outline"></ion-icon>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Social</h3>
+          <p class="card-description">Réseaux sociaux</p>
+        </div>
+        <div class="card-badge">
+          <ion-icon name="heart"></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- <ion-button (click)="startCountdown()">Démarrer le compte à rebours</ion-button> -->

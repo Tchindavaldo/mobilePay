@@ -1,1 +1,139 @@
+// Pill-Style Tab Bar
+.futuristic-tab-bar {
+  position: relative;
+  height: 75px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: none;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // Ensure Ionic tab defaults don't force blue on selected state
+  --color: rgba(255, 255, 255, 0.6);
+  --color-selected: #ffffff;
+  --background: transparent;
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+      rgba(220, 38, 38, 0.1) 0%,
+      rgba(239, 68, 68, 0.05) 50%,
+      rgba(220, 38, 38, 0.1) 100%);
+    opacity: 0.3;
+  }
+}
+
+// Individual tab styling
+.futuristic-tab {
+  position: relative;
+  z-index: 2;
+  background: transparent !important;
+  border: none !important;
+  flex: 1;
+  height: 55px;
+  margin: 0 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  // Match ripple/focus effects to red theme
+  --ripple-color: rgba(239, 68, 68, 0.35);
+  --background-focused: rgba(239, 68, 68, 0.08);
+
+  // Remove local background; rely on global slider
+
+  &.tab-selected .tab-icon,
+  &[aria-selected='true'] .tab-icon {
+    color: #ffffff !important;
+    transform: scale(1.1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  &.tab-selected .tab-label,
+  &[aria-selected='true'] .tab-label {
+    color: #ffffff !important;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  &:not(.tab-selected) {
+    .tab-icon {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .tab-label {
+      color: rgba(255, 255, 255, 0.6) !important;
+      font-weight: 500;
+    }
+
+    &:hover {
+      .tab-icon {
+        color: rgba(255, 255, 255, 0.9) !important;
+        transform: scale(1.05);
+      }
+
+      .tab-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+  }
+}
+
+// No global sliding indicator
+
+.tab-content {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px; // desktop pill minimum height
+  max-width: 100%;
+  padding: 6px 12px; // compact, consistent padding
+  box-sizing: border-box;
+  overflow: hidden; // prevent any visual overflow beyond rounded pill
+}
+
+.tab-icon {
+  font-size: 28px !important; // increased desktop icon size
+  margin-bottom: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-label {
+  font-size: 10px !important;
+  font-weight: 600;
+  margin: 0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: none;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .futuristic-tab-bar {
+    height: 70px;
+    padding: 10px 12px;
+  }
+
+  .futuristic-tab {
+    height: 50px;
+  }
+
+  .tab-icon {
+    font-size: 24px !important; // increased mobile icon size
+    margin-bottom: 3px;
+  }
+
+  .tab-content {
+    min-height: 36px; // mobile pill minimum height
+    max-width: 100%;
+    padding: 6px 10px;
+  }
+
+  .tab-label {
+    font-size: 9px !important;
+  }
+}

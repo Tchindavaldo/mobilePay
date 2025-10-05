@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../../firebase-config';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-
-
 
 @Component({
   selector: 'app-tab2',
@@ -12,33 +10,85 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements OnInit {
-
-  constructor(private router: Router, private alertController: AlertController) {}
-  ngOnInit() {
-  }
   user = {
     name: 'Michael Steve',
     bio: 'Passionné par les Films action aventures',
+    photoURL: '../../assets/31988.jpg',
     followers: 1250,
     posts: 50,
-    likes: 3400,
-    recentActivity: [
-      { description: 'A publié une nouvelle photo', date: new Date() },
-      { description: 'A aimé une publication', date: new Date() },
-      { description: 'A suivi un nouveau compte', date: new Date() }
-    ]
+    likes: 3400
   };
+
+  userName: string | null = null;
+  userPhoto: string | null = null;
+  notificationCount: number = 0;
+
+  constructor(private router: Router, private alertController: AlertController) {}
+  
+  ngOnInit() {
+    this.loadUserData();
+  }
+
+  loadUserData() {
+    const auth = getAuth(app);
+
+    const storedUserName = localStorage.getItem('userName');
+    const storedUserPhoto = localStorage.getItem('userPhoto');
+
+    if (storedUserName) {
+      this.userName = storedUserName;
+      this.userPhoto = storedUserPhoto;
+      this.user.name = storedUserName;
+      if (storedUserPhoto) {
+        this.user.photoURL = storedUserPhoto;
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        let fullName = user.displayName || user.email?.split('@')[0] || 'Utilisateur';
+        this.userName = fullName;
+        this.userPhoto = user.photoURL;
+        this.user.name = fullName;
+        if (user.photoURL) {
+          this.user.photoURL = user.photoURL;
+        }
+
+        localStorage.setItem('userName', fullName);
+        if (user.photoURL) {
+          localStorage.setItem('userPhoto', user.photoURL);
+        }
+      } else {
+        if (!this.userName) {
+          this.userName = 'Utilisateur';
+          this.userPhoto = null;
+        }
+      }
+    });
+  }
 
 
 
   editProfile() {
-    // Logique pour éditer le profil
     console.log('Édition du profil en cours...');
-    // Tu peux aussi naviguer vers une autre page pour l'édition du profil si nécessaire
   }
 
   changeProfilePicture() {
     console.log('Changer la photo de profil');
+  }
+
+  getUserPhoto(): string {
+    if (!this.userPhoto) {
+      const storedPhoto = localStorage.getItem('userPhoto');
+      if (storedPhoto) {
+        this.userPhoto = storedPhoto;
+      }
+    }
+    return this.userPhoto || 'assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png';
+  }
+
+  onImageError(event: any) {
+    event.target.src = 'assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png';
   }
 
   viewDetailedStats() {

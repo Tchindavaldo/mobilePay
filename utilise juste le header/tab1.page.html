@@ -1,0 +1,180 @@
+<!-- Boîte de dialogue de confirmation -->
+<div *ngIf="isDialogVisible" class="dialog-overlay">
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <ion-icon name="close" class="close-icon" (click)="closeDialog()"></ion-icon>
+    </div>
+    <div class="dialog-body">
+      <div class="sad-emoji">😔</div>
+      <h2>Êtes-vous sûr de vouloir vous désabonner ?</h2>
+      <p>Vous perdrez l'accès à tous vos contenus Netflix</p>
+    </div>
+    <div class="dialog-actions">
+      <ion-button fill="outline" color="medium" (click)="closeDialog()">
+        Annuler
+      </ion-button>
+      <ion-button color="danger" (click)="confirmUnsubscribe()">
+        Désabonner
+      </ion-button>
+    </div>
+  </div>
+</div>
+
+<!-- Header compact et moderne -->
+<ion-header class="compact-header" [translucent]="true">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <!-- Top section avec tout en une ligne -->
+    <div class="header-main">
+      <div class="left-section">
+        <div class="app-logo">
+          <span class="logo-text">M</span>
+        </div>
+        <div class="greeting-compact">
+          <h1 class="greeting-text">Salut {{ getFirstName() }} 👋</h1>
+          <p class="greeting-subtitle">{{ getTimeGreeting() }}</p>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <ion-button fill="clear" class="notification-btn" routerLink="/notif">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <div
+            class="notification-badge"
+            [class.large-number]="notificationCount >= 10"
+            *ngIf="notificationCount > 0">
+            {{ notificationCount > 99 ? '99+' : notificationCount }}
+          </div>
+        </ion-button>
+
+        <div class="user-profile" (click)="openProfileMenu()">
+          <img
+            [src]="getUserPhoto()"
+            [alt]="userName || 'Utilisateur'"
+            class="profile-image"
+            (error)="onImageError($event)"
+            (click)="debugUserData()"
+            loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <!-- Search bar intégrée -->
+    <div class="search-section">
+      <div class="search-container">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <ion-searchbar
+          placeholder="Rechercher un service..."
+          class="compact-searchbar"
+          [debounce]="300">
+        </ion-searchbar>
+        <ion-button fill="clear" class="filter-btn">
+          <ion-icon name="options-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-header>
+<ion-content class="ion-padding">
+  <!-- Section de bienvenue -->
+  <div class="welcome-section">
+    <h1>Bienvenue, {{ getFirstName() }}!</h1>
+    <p>Gérez vos abonnements Netflix facilement</p>
+  </div>
+
+  <!-- Carte principale Netflix -->
+  <ion-card class="netflix-card">
+    <ion-card-header>
+      <div class="card-header-content">
+        <img src="../../assets/flyers netfliox.jpg" alt="Netflix" class="netflix-logo">
+        <div class="plan-info">
+          <ion-card-title>Netflix {{ selectedPlanName }}</ion-card-title>
+          <ion-card-subtitle>Abonnement actif</ion-card-subtitle>
+        </div>
+        <div class="plan-badge">{{ selectedPlanName }}</div>
+      </div>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="subscription-info">
+        <div class="info-item">
+          <span class="label">Prix mensuel:</span>
+          <span class="value">{{ selectedPlanPrice }} F</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Temps restant:</span>
+          <span class="value" [class.warning]="days <= 7" [class.danger]="days <= 3">{{ days }} jours</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Progression:</span>
+          <span class="value">{{ getProgressPercentage() }}%</span>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+      </div>
+
+      <div class="action-buttons">
+        <ion-button expand="block" color="danger" [routerLink]="['/pay']">
+          <ion-icon name="flash" slot="start"></ion-icon>
+          Renouveler maintenant
+        </ion-button>
+        <ion-button expand="block" fill="outline" color="medium" (click)="showDialog()">
+          <ion-icon name="pause-circle-outline" slot="start"></ion-icon>
+          Suspendre l'abonnement
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Grille des actions rapides -->
+  <div class="quick-actions">
+    <h2>Actions rapides</h2>
+    <div class="actions-grid">
+      <div class="action-item" [routerLink]="['/compte']">
+        <ion-icon name="people-outline"></ion-icon>
+        <span>Mes Comptes</span>
+      </div>
+      <div class="action-item" [routerLink]="['/support']">
+        <ion-icon name="headset-outline"></ion-icon>
+        <span>Support</span>
+      </div>
+      <div class="action-item" [routerLink]="['/actus']">
+        <ion-icon name="newspaper-outline"></ion-icon>
+        <span>Actualités</span>
+      </div>
+      <div class="action-item" [routerLink]="['/partage']">
+        <ion-icon name="share-social-outline"></ion-icon>
+        <span>Partager</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services à venir -->
+  <div class="coming-soon">
+    <h2>Bientôt disponible</h2>
+    <div class="services-grid">
+      <div class="service-item" (click)="presentToast('top')">
+        <ion-icon name="film-outline"></ion-icon>
+        <span>Cinéma</span>
+        <div class="coming-badge">Soon</div>
+      </div>
+      <div class="service-item" (click)="presentToast('top')">
+        <ion-icon name="game-controller-outline"></ion-icon>
+        <span>Gaming</span>
+        <div class="coming-badge">Soon</div>
+      </div>
+      <div class="service-item" (click)="presentToast('top')">
+        <ion-icon name="storefront-outline"></ion-icon>
+        <span>Shopping</span>
+        <div class="coming-badge">Soon</div>
+      </div>
+      <div class="service-item" (click)="presentToast('top')">
+        <ion-icon name="people-circle-outline"></ion-icon>
+        <span>Social</span>
+        <div class="coming-badge">Soon</div>
+      </div>
+    </div>
+  </div>
+</ion-content>

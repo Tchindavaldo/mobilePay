@@ -1,9 +1,115 @@
-<ion-content>
-  <div style="text-align: center; margin-top: 20px;">
-    <span class="compteur" [style.color]="'#ff6969'" [style.fontSize.px]="36">
-      {{ days }}
-    </span>
-    <p>jours restants</p>
-    <ion-button (click)="startCountdown()">Démarrer le compte à rebours</ion-button>
+<!-- Onboarding Stepper -->
+<ion-content class="onboarding-content" fullscreen="true">
+  <div class="onboarding-container">
+    <!-- Header avec progress bar -->
+    <div class="onboarding-header">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+        </div>
+        <span class="progress-text">{{ currentStep }} / {{ totalSteps }}</span>
+      </div>
+
+      <ion-button fill="clear" size="small" class="skip-button" (click)="skipOnboarding()">
+        Passer
+      </ion-button>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="steps-container">
+      <!-- Étape 1 -->
+      <div class="step-content" [class.hidden]="currentStep !== 1">
+        <div class="step-illustration">
+          <div class="streaming-scene">
+            <div class="netflix-card">
+              <div class="netflix-logo">N</div>
+              <div class="play-button">▶</div>
+            </div>
+            <div class="floating-icons">
+              <ion-icon name="play-circle" class="floating-icon"></ion-icon>
+              <ion-icon name="film-outline" class="floating-icon"></ion-icon>
+              <ion-icon name="tv-outline" class="floating-icon"></ion-icon>
+            </div>
+          </div>
+        </div>
+        <div class="step-text">
+          <h1 class="step-title">Bienvenue sur MobilePay</h1>
+          <h2 class="step-subtitle">Votre passerelle vers Netflix</h2>
+          <p class="step-description">Accédez instantanément à des milliers de films et séries. Payez votre abonnement Netflix en quelques clics avec MTN ou Orange Money.</p>
+        </div>
+      </div>
+
+      <!-- Étape 2 -->
+      <div class="step-content" [class.hidden]="currentStep !== 2">
+        <div class="step-illustration">
+          <div class="payment-scene">
+            <div class="payment-cards">
+              <div class="payment-card mtn">
+                <div class="card-logo">MTN</div>
+                <div class="card-signal">📶</div>
+              </div>
+              <div class="payment-card orange">
+                <div class="card-logo">Orange</div>
+                <div class="card-signal">📱</div>
+              </div>
+            </div>
+            <div class="security-badge">
+              <ion-icon name="shield-checkmark" class="security-icon"></ion-icon>
+            </div>
+          </div>
+        </div>
+        <div class="step-text">
+          <h1 class="step-title">Paiements Sécurisés</h1>
+          <h2 class="step-subtitle">MTN & Orange Money</h2>
+          <p class="step-description">Utilisez votre compte MTN Money ou Orange Money pour payer en toute sécurité. Vos données sont protégées et vos transactions cryptées.</p>
+        </div>
+      </div>
+
+      <!-- Étape 3 -->
+      <div class="step-content" [class.hidden]="currentStep !== 3">
+        <div class="step-illustration">
+          <div class="success-scene">
+            <div class="success-circle">
+              <ion-icon name="checkmark" class="success-check"></ion-icon>
+            </div>
+            <div class="streaming-devices">
+              <div class="device phone">📱</div>
+              <div class="device laptop">💻</div>
+              <div class="device tv">📺</div>
+            </div>
+            <div class="success-waves">
+              <div class="wave"></div>
+              <div class="wave"></div>
+              <div class="wave"></div>
+            </div>
+          </div>
+        </div>
+        <div class="step-text">
+          <h1 class="step-title">Activation Instantanée</h1>
+          <h2 class="step-subtitle">Netflix prêt en 2 minutes</h2>
+          <p class="step-description">Votre compte Netflix est activé immédiatement après le paiement. Profitez de vos films et séries sur tous vos appareils !</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicateurs de points -->
+    <div class="dots-indicator">
+      <div class="dot" [class.active]="currentStep === 1" (click)="goToStep(1)"></div>
+      <div class="dot" [class.active]="currentStep === 2" (click)="goToStep(2)"></div>
+      <div class="dot" [class.active]="currentStep === 3" (click)="goToStep(3)"></div>
+    </div>
+
+    <!-- Boutons de navigation -->
+    <div class="navigation-buttons">
+      <ion-button fill="clear" (click)="prevStep()" class="nav-button prev-button" [disabled]="currentStep === 1">
+        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+        Précédent
+      </ion-button>
+
+      <ion-button expand="block" (click)="nextStep()" class="nav-button next-button" color="danger">
+        <span>{{ currentStep === totalSteps ? "Let's go" : "Suivant" }}</span>
+        <ion-icon [name]="currentStep === totalSteps ? 'rocket-outline' : 'chevron-forward-outline'" slot="end"></ion-icon>
+      </ion-button>
+    </div>
   </div>
 </ion-content>

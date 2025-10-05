@@ -1,64 +1,165 @@
-<ion-header>
-  <ion-toolbar >
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Partager l'application</ion-title>
-  </ion-toolbar>
+<!-- Header Premium -->
+<ion-header class="premium-share-header">
+  <div class="header-background"></div>
+  <div class="header-content">
+    <div class="header-main">
+      <ion-button fill="clear" class="back-btn" (click)="goBack()">
+        <ion-icon name="chevron-back" class="back-icon"></ion-icon>
+      </ion-button>
+      <div class="header-title-section">
+        <h1 class="page-title">Partage & Parrainage</h1>
+        <p class="page-subtitle">Invitez vos amis et gagnez des récompenses</p>
+      </div>
+      <div class="header-rewards">
+        <div class="rewards-indicator">
+          <ion-icon name="gift"></ion-icon>
+          <span>{{ totalRewards }}€</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- En-tête avec un message -->
-  <div class="share-header ion-text-center">
-    <ion-avatar class="share-avatar">
-      <img src="../../assets/illustration-concept-reunion-pitch_114360-6300.jpg" alt="Share Icon">
-    </ion-avatar>
-    <h2 class="share-title">Partagez et parrainez vos amis !</h2>
-    <p>Utilisez les boutons ci-dessous pour partager le lien de l'application ou votre code de parrainage.</p>
+<ion-content class="premium-share-content" [fullscreen]="true">
+  <!-- Section Principale Ultra-Compacte -->
+  <div class="main-share-section">
+    <!-- Stats Améliorées -->
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <ion-icon name="people"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ referralCount }}</span>
+          <span class="stat-label">Amis parrainés</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ pendingRewards }}</span>
+          <span class="stat-label">En attente</span>
+        </div>
+      </div>
+      <div class="stat-card primary">
+        <div class="stat-icon">
+          <ion-icon name="star"></ion-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ totalPoints }}</span>
+          <span class="stat-label">Points gagnés</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code de Parrainage Compact -->
+    <div class="code-section">
+      <div class="code-header">
+        <ion-icon name="ticket"></ion-icon>
+        <span>Votre Code de Parrainage</span>
+      </div>
+      <div class="code-container">
+        <div class="code-display-compact">
+          <span class="code-value-compact">{{ referralCode }}</span>
+          <span class="code-reward">1 point par ami</span>
+        </div>
+        <div class="code-actions-compact">
+          <ion-button size="small" class="copy-btn-compact" (click)="copyReferralCode()">
+            <ion-icon name="copy"></ion-icon>
+          </ion-button>
+          <ion-button size="small" fill="outline" class="qr-btn-compact" (click)="showQRCode()">
+            <ion-icon name="qr-code"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton de Partage Principal avec Dropdown -->
+    <div class="share-section">
+      <div class="share-header">
+        <ion-icon name="share-social"></ion-icon>
+        <span>Partager avec vos amis</span>
+      </div>
+      
+      <ion-button 
+        expand="block" 
+        class="main-share-btn" 
+        (click)="toggleShareDropdown()">
+        <ion-icon name="share" slot="start"></ion-icon>
+        Partager mon code
+        <ion-icon [name]="showShareDropdown ? 'chevron-up' : 'chevron-down'" slot="end"></ion-icon>
+      </ion-button>
+
+      <!-- Dropdown des Réseaux -->
+      <div class="share-dropdown" *ngIf="showShareDropdown">
+        <div class="share-option" (click)="shareViaWhatsApp()">
+          <ion-icon name="logo-whatsapp" class="whatsapp"></ion-icon>
+          <span>WhatsApp</span>
+        </div>
+        <div class="share-option" (click)="shareViaFacebook()">
+          <ion-icon name="logo-facebook" class="facebook"></ion-icon>
+          <span>Facebook</span>
+        </div>
+        <div class="share-option" (click)="shareViaTwitter()">
+          <ion-icon name="logo-twitter" class="twitter"></ion-icon>
+          <span>Twitter</span>
+        </div>
+        <div class="share-option" (click)="shareViaEmail()">
+          <ion-icon name="mail" class="email"></ion-icon>
+          <span>Email</span>
+        </div>
+        <div class="share-option" (click)="shareViaSMS()">
+          <ion-icon name="chatbubble" class="sms"></ion-icon>
+          <span>SMS</span>
+        </div>
+        <div class="share-option" (click)="shareAppLink()">
+          <ion-icon name="link" class="link"></ion-icon>
+          <span>Lien direct</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comment ça marche - Version Compacte -->
+    <div class="how-it-works-compact">
+      <div class="steps-compact">
+        <div class="step-compact">
+          <div class="step-num">1</div>
+          <span>Partagez votre code</span>
+        </div>
+        <div class="step-compact">
+          <div class="step-num">2</div>
+          <span>Ami s'inscrit</span>
+        </div>
+        <div class="step-compact">
+          <div class="step-num">3</div>
+          <span>Vous gagnez 1 point</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Code de parrainage -->
-  <ion-card class="share-card">
-    <ion-card-header>
-      <ion-card-subtitle>Votre code de parrainage</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label>CODE12345</ion-label>
-        <ion-button color="danger" fill="outline" slot="end" (click)="copyCode()">
-          Copier le code
-          <ion-icon  slot="end" name="copy-outline"></ion-icon>
+  <!-- QR Code Modal -->
+  <div class="qr-modal-overlay" *ngIf="showQR" (click)="hideQRCode()">
+    <div class="qr-modal" (click)="$event.stopPropagation()">
+      <div class="qr-header">
+        <h3>Code QR de Parrainage</h3>
+        <ion-button fill="clear" (click)="hideQRCode()">
+          <ion-icon name="close"></ion-icon>
         </ion-button>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Options de partage -->
-  <ion-list>
-    <ion-item button detail="false" (click)="shareViaWhatsApp()">
-      <ion-icon slot="start" name="logo-whatsapp" color="success"></ion-icon>
-      <ion-label>Partager via WhatsApp</ion-label>
-    </ion-item>
-
-    <ion-item button detail="false" (click)="shareViaFacebook()">
-      <ion-icon slot="start" name="logo-facebook" color="primary"></ion-icon>
-      <ion-label>Partager via Facebook</ion-label>
-    </ion-item>
-
-    <ion-item button detail="false" (click)="shareViaTwitter()">
-      <ion-icon slot="start" name="logo-twitter" color="tertiary"></ion-icon>
-      <ion-label>Partager via Twitter</ion-label>
-    </ion-item>
-
-    <ion-item button detail="false" (click)="shareViaEmail()">
-      <ion-icon slot="start" name="mail-outline" color="medium"></ion-icon>
-      <ion-label>Partager via Email</ion-label>
-    </ion-item>
-  </ion-list>
-
-  <!-- Bouton de partage général -->
-  <ion-button expand="block" color="danger" class="share-button" (click)="shareAppLink()">
-    <ion-icon name="share-social-outline" slot="start"></ion-icon>
-    Partager l'application
-  </ion-button>
+      </div>
+      <div class="qr-content">
+        <div class="qr-code-placeholder">
+          <ion-icon name="qr-code"></ion-icon>
+          <p>QR Code généré pour<br><strong>{{ referralCode }}</strong></p>
+        </div>
+        <p class="qr-description">Faites scanner ce code par vos amis pour qu'ils s'inscrivent directement avec votre code de parrainage</p>
+        <ion-button expand="block" (click)="downloadQR()">
+          <ion-icon name="download" slot="start"></ion-icon>
+          Télécharger le QR Code
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-content>

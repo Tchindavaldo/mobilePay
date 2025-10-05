@@ -32,4 +32,9 @@ export class NotificationService {
     this.notifications.push(notification);
     this.notificationsSubject.next(this.notifications);
   }
+
+  clearAllNotifications() {
+    this.notifications = [];
+    this.notificationsSubject.next(this.notifications);
+  }
 }
