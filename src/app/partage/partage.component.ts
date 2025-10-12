@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Share } from '@capacitor/share';
+// import { Share } from '@capacitor/share';
 
 @Component({
   selector: 'app-partage',
@@ -30,12 +30,24 @@ export class PartageComponent implements OnInit {
   }
 
   async shareAppLink() {
-    await Share.share({
-      title: 'Découvrez cette application incroyable !',
-      text: 'Téléchargez cette application avec mon code de parrainage CODE12345',
-      url: 'https://mobilpay.com',
-      dialogTitle: 'Partager l\'application',
-    });
+    // Utilisation de l'API Web Share native comme alternative à Capacitor Share
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Découvrez cette application incroyable !',
+          text: `Téléchargez cette application avec mon code de parrainage ${this.referralCode}`,
+          url: 'https://mobilpay.com',
+        });
+      } catch (err) {
+        console.log('Erreur lors du partage:', err);
+      }
+    } else {
+      // Fallback: copier dans le presse-papier
+      const textToCopy = `Découvrez MobilPay! Code: ${this.referralCode} - https://mobilpay.com`;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        alert('Lien copié dans le presse-papier!');
+      });
+    }
   }
 
   async shareViaWhatsApp() {

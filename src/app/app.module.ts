@@ -3,9 +3,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { reducers } from './services/store/indx';
 import { PayementComponent } from './payement/payement.component';
 import { NotificationComponent } from './notification/notification.component';
 import { SupportComponent } from './support/support.component';
@@ -18,8 +22,8 @@ import { FormulaireComponent } from './formulaire/formulaire.component';
 import { SplashPageComponent } from './splash.page/splash.page.component';
 import { LoginPageComponent } from './login.page/login.page.component';
 import { OnboardingPageComponent } from './onboarding.page/onboarding.page.component';
-import { CarouselModule } from 'ngx-bootstrap/carousel';
-import { MatTabsModule } from '@angular/material/tabs';
+// import { CarouselModule } from 'ngx-bootstrap/carousel';
+// import { MatTabsModule } from '@angular/material/tabs';
 import { JeuxComponent } from './jeux/jeux.component';
 import { AchatsComponent } from './achats/achats.component';
 import { SiteComponent } from './site/site.component';
@@ -29,13 +33,26 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+// import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 @NgModule({
   declarations: [AppComponent, PayementComponent,NotificationComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,FormsModule,CarouselModule.forRoot(),MatTabsModule, HttpClientModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideAnimationsAsync()],
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot(), 
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    // Configuration NgRx
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retient les 25 derniers états
+      logOnly: false, // Restreint l'extension en mode production
+    })
+  ],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] // Utilisé pour supporter les composants Ionic
 })

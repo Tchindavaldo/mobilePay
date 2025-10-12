@@ -17,10 +17,10 @@ export class InitSessionSocketService {
     if (socket.connected) {
       const user = await this.userStorage.get('user');
       
-      if (user?.uid) {
-        socket.emit('join_user', user.uid);
+      if (user?.id) {
+        socket.emit('join_user', user.id);
         console.log('🆔 Socket ID:', socket.id);
-        console.log('👤 Room UID:', user.uid);
+        console.log('👤 Room ID:', user.id);
         this.socketReady.next(true);
       }
     }
@@ -29,10 +29,10 @@ export class InitSessionSocketService {
     socket.on('connect', async () => {
       const user = await this.userStorage.get('user');
       
-      if (user?.uid) {
-        socket.emit('join_user', user.uid);
+      if (user?.id) {
+        socket.emit('join_user', user.id);
         console.log('🆔 Socket ID:', socket.id);
-        console.log('👤 Room UID:', user.uid);
+        console.log('👤 Room ID:', user.id);
         this.socketReady.next(true);
       }
     });

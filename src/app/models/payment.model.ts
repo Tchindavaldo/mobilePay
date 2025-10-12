@@ -3,8 +3,10 @@
 export interface PaymentRequest {
   numeroOM: string;
   email: string;
-  motDePasse: string;
+  motDePasse?: string;
   typeDePlan: PlanType;
+  userId: string; // User ID from storage for payment validation
+  amount: number; // Montant du paiement
 }
 
 export interface PaymentResponse {

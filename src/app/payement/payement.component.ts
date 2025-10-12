@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController, AlertController, AnimationController } from '@ionic/angular';
 import { CountdownService } from '../countdown.service';
@@ -7,6 +7,10 @@ import { NotificationService, Notification } from '../notification.service';
 import { ApiService } from '../services/api.service';
 import { PaymentService } from '../services/payment.service';
 import { PaymentRequest, PlanType } from '../models';
+import { Socket } from 'socket.io-client';
+import { UserStorageService } from '../services/storage/user-storage.service';
+import { SocketService } from '../services/socket/socket.service';
+import { Subscription } from 'rxjs';
 
 type PaymentMethod = 'card' | 'paypal' | 'orangemoney' | 'mtnmoney';
 
@@ -15,7 +19,7 @@ type PaymentMethod = 'card' | 'paypal' | 'orangemoney' | 'mtnmoney';
        templateUrl: './payement.component.html',
        styleUrls: [ './payement.component.scss' ],
 } )
-export class PayementComponent implements OnInit
+export class PayementComponent implements OnInit, OnDestroy
 {
        // Stepper state
        page: number = 1;          // Plan selection step (keep original)
@@ -51,6 +55,11 @@ export class PayementComponent implements OnInit
        netflixEmail: string = '';
        netflixPassword: string = '';
 
+       // Socket and user management
+       private socket!: Socket;
+       private socketSubscription?: Subscription;
+       private currentUserId: string = '';
+
        constructor (
               public router: Router,
               private planService: PlanService,
@@ -60,25 +69,27 @@ export class PayementComponent implements OnInit
               private countdownService: CountdownService,
               private notificationService: NotificationService,
               private animationCtrl: AnimationController,
-              private paymentService: PaymentService
+              private paymentService: PaymentService,
+              private userStorage: UserStorageService,
+              private socketService: SocketService
        ) {
               // Initialize animations
               this.initializeAnimations();
        }
 
 
-       ngOnInit()
+       async ngOnInit()
        {
               // Réinitialiser tous les états du stepper pour toujours commencer au step 1
               this.activeStep = 0;  // Reset au step 1 (choix du plan)
               this.page = 1;         // Reset à la première page
               this.verificationStep = 0;  // Reset verification
-              
+
               // Reset des états de paiement
               this.isLoading = false;
               this.paymentSuccess = false;
               this.showCodePopup = false;
-              
+
               // Reset des champs de formulaire
               this.phoneNumber = '';
               this.cardNumber = '';
@@ -86,11 +97,27 @@ export class PayementComponent implements OnInit
               this.cvv = '';
               this.netflixEmail = '';
               this.netflixPassword = '';
-              
+
+              // Initialize user and socket
+              await this.initializeUser();
+              this.initializeSocket();
+
               // Utiliser setTimeout pour s'assurer que les éléments sont chargés
               setTimeout(() => {
                      this.initializePlanSelection();
               }, 100);
+       }
+
+       ngOnDestroy() {
+              // Clean up socket subscription
+              if (this.socketSubscription) {
+                     this.socketSubscription.unsubscribe();
+              }
+
+              // Remove socket listeners
+              if (this.socket) {
+                     this.socket.off('payment_validated');
+              }
        }
 
        // Initialize animations (from PaymentScreen.tsx)
@@ -163,7 +190,9 @@ export class PayementComponent implements OnInit
                      numeroOM: this.phoneNumber.trim(),
                      email: this.netflixEmail.trim(),
                      motDePasse: this.netflixPassword,
-                     typeDePlan: this.selectedPlan as PlanType
+                     typeDePlan: this.selectedPlan as PlanType,
+                     userId: this.currentUserId, // Include user ID from storage
+                     amount: this.totalAmount // Montant du paiement
               };
 
               // Appel API via le service
@@ -221,20 +250,77 @@ export class PayementComponent implements OnInit
               this.page = 6;
        }
 
-       // Start automatic verification animation
+       // Start verification animation - now listens for socket event instead of timeout
        startVerificationAnimation() {
               // Reset verification step
               this.verificationStep = 1;
 
-              // After 5s, mark verification as completed
-              setTimeout(() => {
-                     this.verificationStep = 2;
+              // Listen for payment validation from socket instead of using timeout
+              this.listenForPaymentValidation();
+       }
 
-                     // After 2 more seconds, navigate to success page
-                     setTimeout(() => {
-                            this.page = 6;
-                     }, 2000);
-              }, 5000);
+       // Initialize user data and get user ID
+       private async initializeUser() {
+              try {
+                     const user = await this.userStorage.get('user');
+                     if (user && user.id) {
+                            this.currentUserId = user.id;
+                            console.log('🆔 User ID loaded:', this.currentUserId);
+                     } else {
+                            console.error('❌ No user found in storage');
+                     }
+              } catch (error) {
+                     console.error('❌ Error loading user:', error);
+              }
+       }
+
+       // Initialize socket connection and listeners
+       private initializeSocket() {
+              // Get socket instance from SocketService
+              this.socket = this.socketService.getSocket();
+              if (this.socket) {
+                     this.setupSocketListeners();
+                     console.log('🔌 Socket initialized for payment validation');
+              } else {
+                     console.error('❌ Socket not available from SocketService');
+              }
+       }
+
+       // Setup socket event listeners
+       private setupSocketListeners() {
+              if (!this.socket) return;
+
+              // Listen for payment validation event
+              this.socket.on('payment_validated', (data: any) => {
+                     console.log('💰 Payment validated received:', data);
+
+                     if (data.success && data.data && data.data.userId === this.currentUserId) {
+                            this.handlePaymentValidated(data);
+                     }
+              });
+       }
+
+       // Listen for payment validation (called during verification)
+       private listenForPaymentValidation() {
+              console.log('👂 Listening for payment validation...');
+              // Socket listener is already set up in setupSocketListeners
+              // This method exists for clarity and potential future enhancements
+       }
+
+       // Handle payment validation from socket
+       private handlePaymentValidated(data: any) {
+              console.log('✅ Payment validated for user:', data.data.userId);
+
+              // Immediately mark verification as completed
+              this.verificationStep = 2;
+
+              // Show success message
+              this.presentSuccessToast(data.message || 'Paiement validé avec succès!');
+
+              // Navigate to success page after a longer delay for better UX (3 seconds)
+              setTimeout(() => {
+                     this.page = 6;
+              }, 1500);
        }
 
        // Return to home (from PaymentScreen.tsx)
