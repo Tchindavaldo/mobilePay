@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { SocketService } from '../services/socket/socket.service';
 
 @Component({
   selector: 'app-tabs',
@@ -9,7 +11,17 @@ import { Router } from '@angular/router';
 export class TabsPage implements OnInit {
   selectedTab: string = 'tab1';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private platform: Platform,
+    private socketService: SocketService
+  ) {
+    // Initialiser les sockets au démarrage de l'application
+    this.platform.ready().then(() => {
+      console.log('🚀 Platform ready - Initialisation des sockets...');
+      this.socketService.initializeAllSockets();
+    });
+  }
 
   ngOnInit(): void {
     const url = this.router.url || '';

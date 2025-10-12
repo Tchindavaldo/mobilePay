@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController, AlertController } from '@ionic/angular'; // Import du ToastController et AlertController
+import { ToastController, AlertController, AnimationController } from '@ionic/angular';
 import { CountdownService } from '../countdown.service';
-import { PlanService } from '../plan.service'; // Assurez-vous d'importer le service
+import { PlanService } from '../plan.service';
 import { NotificationService, Notification } from '../notification.service';
 import { ApiService } from '../services/api.service';
+import { PaymentService } from '../services/payment.service';
+import { PaymentRequest, PlanType } from '../models';
+
+type PaymentMethod = 'card' | 'paypal' | 'orangemoney' | 'mtnmoney';
 
 @Component( {
        selector: 'app-payement',
@@ -13,47 +17,252 @@ import { ApiService } from '../services/api.service';
 } )
 export class PayementComponent implements OnInit
 {
+       // Stepper state
+       page: number = 1;          // Plan selection step (keep original)
+       activeStep: number = 1;    // Payment stepper (1-4 from PaymentScreen.tsx)
+       cardStep: number = 1;      // Card form sub-steps (1-2)
 
-       page: number = 1;          // Débute à la première page
-       isLoading: boolean = false; // Indique si la barre de progression doit être affichée
-       buffer: number = 0.06;      // Valeur de buffer initiale
-       progress: number = 0;       // Valeur de progression initiale
-       selectedPaymentMethod: string = ''; // Mode de paiement sélectionné
-       phoneNumber: string = ''; // Numéro de téléphone saisi
-       phoneNumberError: string = ''; // Message d'erreur pour le numéro
-       phoneNumberValid: boolean = false; // Validation du numéro
+       // Loading and animation states
+       isLoading: boolean = false;
+       showCodePopup: boolean = false;
+       paymentSuccess: boolean = false;
+       fadeAnim: any;
+       spinAnim: any;
+       buffer: number = 0.06;
+       progress: number = 0;
+       verificationStep: number = 0; // 0 = not started, 1 = verifying, 2 = confirmed
+
+       // Plan selection data
+       selectedPlan: string = 'premium'; // Default to premium plan
+       showPlanDetails: boolean = false;
+
+       // Payment data
+       selectedPaymentMethod: PaymentMethod = 'card';
+       cardNumber: string = '';
+       cardName: string = '';
+       expiryDate: string = '';
+       cvv: string = '';
+       saveCard: boolean = false;
+       phoneNumber: string = '';
+       phoneNumberError: string = '';
+       phoneNumberValid: boolean = false;
+       orderNumber: string = '';
+       totalAmount: number = 10.99; // Default to premium plan price
+       netflixEmail: string = '';
+       netflixPassword: string = '';
 
        constructor (
-
-              private router: Router,
+              public router: Router,
               private planService: PlanService,
               private apiService: ApiService,
               private toastController: ToastController,
               private alertController: AlertController,
               private countdownService: CountdownService,
               private notificationService: NotificationService,
-
-       ) { } // Injecte ToastController et AlertController
+              private animationCtrl: AnimationController,
+              private paymentService: PaymentService
+       ) {
+              // Initialize animations
+              this.initializeAnimations();
+       }
 
 
        ngOnInit()
        {
+              // Réinitialiser tous les états du stepper pour toujours commencer au step 1
+              this.activeStep = 0;  // Reset au step 1 (choix du plan)
+              this.page = 1;         // Reset à la première page
+              this.verificationStep = 0;  // Reset verification
+              
+              // Reset des états de paiement
+              this.isLoading = false;
+              this.paymentSuccess = false;
+              this.showCodePopup = false;
+              
+              // Reset des champs de formulaire
+              this.phoneNumber = '';
+              this.cardNumber = '';
+              this.expiryDate = '';
+              this.cvv = '';
+              this.netflixEmail = '';
+              this.netflixPassword = '';
+              
               // Utiliser setTimeout pour s'assurer que les éléments sont chargés
               setTimeout(() => {
                      this.initializePlanSelection();
               }, 100);
        }
 
+       // Initialize animations (from PaymentScreen.tsx)
+       initializeAnimations() {
+              // Animation setup would be handled in Angular/Ionic way
+              // For now, we'll use simple state management
+       }
+
+       // Format card number with spaces (from PaymentScreen.tsx)
+       formatCardNumber(text: string): string {
+              const cleaned = text.replace(/\s+/g, '');
+              const formatted = cleaned.replace(/(.{4})/g, '$1 ').trim();
+              return formatted;
+       }
+
+       // Handle card number input (from PaymentScreen.tsx)
+       handleCardNumberChange(text: string | null | undefined) {
+              if (!text) return;
+              const numericOnly = text.replace(/[^0-9]/g, '');
+              const truncated = numericOnly.slice(0, 16);
+              this.cardNumber = this.formatCardNumber(truncated);
+       }
+
+       // Handle expiry date input (from PaymentScreen.tsx)
+       handleExpiryDateChange(text: string | null | undefined) {
+              if (!text) return;
+              const numericOnly = text.replace(/[^0-9]/g, '');
+              if (numericOnly.length <= 2) {
+                     this.expiryDate = numericOnly;
+              } else {
+                     this.expiryDate = `${numericOnly.slice(0, 2)}/${numericOnly.slice(2, 4)}`;
+              }
+       }
+
+       // Handle CVV input (from PaymentScreen.tsx)
+       handleCvvChange(text: string | null | undefined) {
+              if (!text) return;
+              const numericOnly = text.replace(/[^0-9]/g, '');
+              this.cvv = numericOnly.slice(0, 4);
+       }
+
+       // Payment method selection (from PaymentScreen.tsx)
+       selectPaymentMethodNew(method: PaymentMethod) {
+              this.selectedPaymentMethod = method;
+       }
+
+       // Mobile money payment processing (from PaymentScreen.tsx)
+       processMobileMoneyPayment() {
+              // Validation des champs avec le service
+              if (!this.phoneNumber || !this.paymentService.validatePhoneNumber(this.phoneNumber)) {
+                     this.presentErrorToast('Veuillez entrer un numéro de téléphone valide');
+                     return;
+              }
+
+              if (!this.netflixEmail || !this.paymentService.validateEmail(this.netflixEmail)) {
+                     this.presentErrorToast('Veuillez entrer un email Netflix valide');
+                     return;
+              }
+
+              if (!this.netflixPassword) {
+                     this.presentErrorToast('Veuillez entrer votre mot de passe Netflix');
+                     return;
+              }
+
+              // Afficher le loader
+              this.isLoading = true;
+
+              // Préparer les données de paiement avec typage fort
+              const paymentData: PaymentRequest = {
+                     numeroOM: this.phoneNumber.trim(),
+                     email: this.netflixEmail.trim(),
+                     motDePasse: this.netflixPassword,
+                     typeDePlan: this.selectedPlan as PlanType
+              };
+
+              // Appel API via le service
+              this.paymentService.initiateMobileMoneyPayment(paymentData)
+                     .subscribe({
+                            next: (response) => {
+                                   this.isLoading = false;
+
+                                   // Afficher un message de succès
+                                   this.presentSuccessToast(
+                                          response.message || 'Paiement initié avec succès ! Vous allez recevoir une notification.'
+                                   );
+
+                                   // Passer à l'étape de confirmation (page 5) et démarrer l'animation
+                                   this.page = 5;
+                                   this.startVerificationAnimation();
+                            },
+                            error: (error) => {
+                                   this.isLoading = false;
+
+                                   // Afficher le message d'erreur
+                                   const errorMessage = error.error?.message || 'Une erreur est survenue lors du paiement. Veuillez réessayer.';
+                                   this.presentErrorToast(errorMessage);
+                            }
+                     });
+       }
+
+       // Card payment processing (from PaymentScreen.tsx)
+       processCardPayment() {
+              if (this.expiryDate && this.cvv) {
+                     this.isLoading = true;
+                     const generatedOrderNumber = `YU${Math.floor(100000 + Math.random() * 900000)}`;
+                     this.orderNumber = generatedOrderNumber;
+
+                     setTimeout(() => {
+                            this.isLoading = false;
+                            this.paymentSuccess = true;
+                            this.page = 5;
+                            this.startVerificationAnimation();
+                     }, 1500);
+              }
+       }
+
+       // Close code popup and proceed to confirmation (from PaymentScreen.tsx)
+       closeCodePopup() {
+              this.showCodePopup = false;
+              setTimeout(() => {
+                     this.page = 5;
+                     this.startVerificationAnimation();
+              }, 500);
+       }
+
+       // Navigate to receipt (from PaymentScreen.tsx)
+       goToReceipt() {
+              this.page = 6;
+       }
+
+       // Start automatic verification animation
+       startVerificationAnimation() {
+              // Reset verification step
+              this.verificationStep = 1;
+
+              // After 5s, mark verification as completed
+              setTimeout(() => {
+                     this.verificationStep = 2;
+
+                     // After 2 more seconds, navigate to success page
+                     setTimeout(() => {
+                            this.page = 6;
+                     }, 2000);
+              }, 5000);
+       }
+
+       // Return to home (from PaymentScreen.tsx)
+       returnToHomeNew() {
+              this.router.navigate(['/']);
+       }
+
+       // Navigate to activations tracking page
+       goToActivations() {
+              // Utiliser navigateByUrl pour forcer le changement de contexte depuis /pay vers /tabs
+              this.router.navigateByUrl('/tabs/activations');
+       }
+
+       // Helper method for template date formatting
+       getCurrentDate(): string {
+              return new Date().toLocaleDateString();
+       }
+
        initializePlanSelection()
        {
               const planOptions: NodeListOf<HTMLElement> = document.querySelectorAll( '.plan-option' );
               console.log('Plan options found:', planOptions.length);
-              
+
               if ( planOptions.length > 0 )
               {
                      // Supprimer toutes les classes active existantes
                      planOptions.forEach(option => option.classList.remove('active'));
-                     
+
                      const activeIndex = localStorage.getItem( 'activePlanIndex' );
                      const indexToActivate = activeIndex !== null ? parseInt( activeIndex ) : 3; // Premium par défaut
 
@@ -114,33 +323,30 @@ export class PayementComponent implements OnInit
               this.countdownService.startCountdown(); // Appeler la méthode du service
        }
 
+       goToNetflixCredentials() {
+              if (this.selectedPlan) {
+                     this.page = 1.5; // Nouvelle étape pour les identifiants
+                     // Mettre à jour le prix total selon le plan sélectionné
+                     const planInfo = this.paymentService.getPlanInfo(this.selectedPlan as PlanType);
+                     this.totalAmount = planInfo.price;
+              }
+       }
+
        async nextPage()
        {
-              // Validation pour l'étape 2 (choix du mode de paiement)
-              if (this.page === 2 && !this.selectedPaymentMethod) {
-                     this.presentErrorToast('Veuillez sélectionner un mode de paiement avant de continuer');
-                     this.highlightPaymentCards();
-                     return;
-              }
-
-              if ( this.page < 3 )
-              {
-                     this.page += 1;
-              } else
-              {
-                     // Vérifications finales avant le paiement
-                     if (!this.selectedPaymentMethod) {
-                            this.presentErrorToast('Veuillez sélectionner un mode de paiement');
-                            return;
+              if (this.page === 1.5) {
+                     // Transition from Netflix credentials to PaymentScreen.tsx stepper
+                     this.page = 2;
+                     this.activeStep = 1; // Start with payment method selection
+              } else if (this.page === 1) {
+                     this.goToNetflixCredentials();
+                     const activePlan = document.querySelector('.plan-option.active');
+                     if (activePlan) {
+                            const planPrice = activePlan.getAttribute('data-prix');
+                            if (planPrice) {
+                                   this.totalAmount = parseFloat(planPrice);
+                            }
                      }
-
-                     if (!this.phoneNumberValid) {
-                            this.presentErrorToast('Veuillez entrer un numéro de téléphone valide');
-                            return;
-                     }
-
-                     // Afficher le popup d'information avant de procéder
-                     await this.showProcessingAlert();
               }
        }
 
@@ -166,7 +372,7 @@ export class PayementComponent implements OnInit
                                           <div style="font-size: 1.25rem; font-weight: 800; color: #dc2626;">${this.getCurrentPlanPrice()}€<span style="font-size: 0.8rem; color: #64748b;">/mois</span></div>
                                    </div>
                             </div>
-                            
+
                             <div style="margin-bottom: 1rem;">
                                    <div style="padding: 0.5rem 0; border-bottom: 1px solid #f1f5f9;">
                                           <strong>📱 Numéro :</strong> ${this.phoneNumber}
@@ -178,7 +384,7 @@ export class PayementComponent implements OnInit
                                           <strong>⏱️ Traitement :</strong> 20-60 minutes
                                    </div>
                             </div>
-                            
+
                             <div style="background: rgba(34, 197, 94, 0.1); color: #16a34a; padding: 0.75rem; border-radius: 8px; font-weight: 600;">
                                    🛡️ Paiement sécurisé
                             </div>
@@ -213,7 +419,7 @@ export class PayementComponent implements OnInit
 
               this.showLoadingAndNavigate();
               this.startCountdownProcess();
-              
+
               // Émettre une notification
               const notification: Notification = {
                      title: 'Paiement en cours',
@@ -221,7 +427,7 @@ export class PayementComponent implements OnInit
                      image: '../../assets/LOGO.jpg',
                      time: new Date(),
               };
-              
+
               this.sendData();
               this.notificationService.addNotification( notification );
        }
@@ -234,6 +440,18 @@ export class PayementComponent implements OnInit
                      position: 'top',
                      color: 'danger',
                      cssClass: 'error-toast'
+              });
+              await toast.present();
+       }
+
+       // Toast de succès
+       async presentSuccessToast(message: string): Promise<void> {
+              const toast = await this.toastController.create({
+                     message: message,
+                     duration: 4000,
+                     position: 'top',
+                     color: 'success',
+                     cssClass: 'success-toast'
               });
               await toast.present();
        }
@@ -321,7 +539,7 @@ export class PayementComponent implements OnInit
                             const stepElement = document.getElementById(`step-${currentStep}`);
                             if (stepElement) {
                                    stepElement.classList.add('completed');
-                                   
+
                                    if (currentStep < 3) {
                                           const nextStepElement = document.getElementById(`step-${currentStep + 1}`);
                                           if (nextStepElement) {
@@ -418,36 +636,41 @@ export class PayementComponent implements OnInit
 
        // Méthode pour sélectionner un mode de paiement (sélection exclusive)
        selectPaymentMethod(method: string): void {
-              this.selectedPaymentMethod = method;
+              // Convert old method names to new PaymentMethod types
+              if (method === 'orange') {
+                     this.selectedPaymentMethod = 'orangemoney';
+              } else if (method === 'mtn') {
+                     this.selectedPaymentMethod = 'mtnmoney';
+              }
               this.phoneNumber = ''; // Reset du numéro lors du changement d'opérateur
               this.phoneNumberError = '';
               this.phoneNumberValid = false;
               console.log('Mode de paiement sélectionné:', method);
        }
 
-       // Validation du numéro de téléphone selon l'opérateur
+// ...
        validatePhoneNumber(): void {
               const number = this.phoneNumber.trim();
-              
+
               if (!number) {
                      this.phoneNumberError = '';
                      this.phoneNumberValid = false;
                      return;
               }
 
-              // Validation selon l'opérateur sélectionné
-              if (this.selectedPaymentMethod === 'orange') {
-                     this.validateOrangeNumber(number);
-              } else if (this.selectedPaymentMethod === 'mtn') {
-                     this.validateMTNNumber(number);
-              }
+               // Validation selon l'opérateur sélectionné
+               if (this.selectedPaymentMethod === 'orangemoney') {
+                      this.validateOrangeNumber(number);
+               } else if (this.selectedPaymentMethod === 'mtnmoney') {
+                      this.validateMTNNumber(number);
+               }
        }
 
        // Validation numéro Orange Money
        private validateOrangeNumber(number: string): void {
               // Préfixes Orange: 69, 66, 67, 68
               const orangePrefixes = ['69', '66', '67', '68'];
-              
+
               if (number.length !== 9) {
                      this.phoneNumberError = 'Le numéro doit contenir exactement 9 chiffres';
                      this.phoneNumberValid = false;
@@ -475,7 +698,7 @@ export class PayementComponent implements OnInit
        private validateMTNNumber(number: string): void {
               // Préfixes MTN: 65, 67, 24, 25, 54, 55
               const mtnPrefixes = ['65', '67', '24', '25', '54', '55'];
-              
+
               if (number.length !== 9) {
                      this.phoneNumberError = 'Le numéro doit contenir exactement 9 chiffres';
                      this.phoneNumberValid = false;
@@ -501,18 +724,18 @@ export class PayementComponent implements OnInit
 
        // Méthodes pour l'interface
        getOperatorName(): string {
-              return this.selectedPaymentMethod === 'orange' ? 'Orange Money' : 'MTN Money';
+              return this.selectedPaymentMethod === 'orangemoney' ? 'Orange Money' : 'MTN Money';
        }
 
        getOperatorLogo(): string {
-              return this.selectedPaymentMethod === 'orange' ? '../../assets/R.png' : '../../assets/th (1).jpeg';
+              return this.selectedPaymentMethod === 'orangemoney' ? '../../assets/R.png' : '../../assets/th (1).jpeg';
        }
 
        getPhonePlaceholder(): string {
-              if (this.selectedPaymentMethod === 'orange') {
-                     return 'Ex: 691234567 (Orange)';
-              } else if (this.selectedPaymentMethod === 'mtn') {
-                     return 'Ex: 651234567 (MTN)';
+              if (this.selectedPaymentMethod === 'orangemoney') {
+                     return '6XXXXXXXX';
+              } else if (this.selectedPaymentMethod === 'mtnmoney') {
+                     return '6XXXXXXXX';
               }
               return 'Numéro de téléphone';
        }
@@ -602,12 +825,172 @@ export class PayementComponent implements OnInit
                      {
                             console.log( 'Données envoyées avec succès:', response );
                      },
-                     ( error ) =>
-                     {
-                            console.error( 'Erreur lors de l\'envoi des données:', error );
-                     }
-              );
-       }
+                      (error) => {
+                             console.error('Erreur lors de l\'envoi des données:', error);
+                      }
+               );
+        }
 
+        // Stepper helper methods for unified PaymentScreen.tsx stepper
+
+        getStepperProgress(): number {
+               // Calculate progress percentage for unified stepper (6 steps total)
+               const currentStep = this.getCurrentStep();
+               return (currentStep / 6) * 100;
+        }
+
+        // Plan selection methods
+        selectPlan(plan: string): void {
+               this.selectedPlan = plan;
+               // Update total amount based on selected plan
+               switch (plan) {
+                      case 'mobile':
+                             this.totalAmount = 3.99;
+                             break;
+                      case 'basic':
+                             this.totalAmount = 4.99;
+                             break;
+                      case 'standard':
+                             this.totalAmount = 8.99;
+                             break;
+                      case 'premium':
+                             this.totalAmount = 10.99;
+                             break;
+                      default:
+                             this.totalAmount = 10.99;
+               }
+        }
+
+        togglePlanDetails(): void {
+               this.showPlanDetails = !this.showPlanDetails;
+        }
+
+        getPlanTitle(): string {
+               switch (this.selectedPlan) {
+                      case 'mobile':
+                             return 'Plan Mobile - Parfait pour les déplacements';
+                      case 'basic':
+                             return 'Plan Essentiel - Idéal pour débuter';
+                      case 'standard':
+                             return 'Plan Standard - Le meilleur rapport qualité-prix';
+                      case 'premium':
+                             return 'Plan Premium - L\'expérience ultime';
+                      default:
+                             return 'Sélectionnez un plan';
+               }
+        }
+
+        getPlanSummary(): string {
+               switch (this.selectedPlan) {
+                      case 'mobile':
+                             return 'Regardez sur votre téléphone et tablette avec une qualité 480p. Parfait pour les trajets et les petits écrans.';
+                      case 'basic':
+                             return 'Profitez de vos contenus en HD 720p sur tous vos appareils. Un excellent point de départ.';
+                      case 'standard':
+                             return 'Streaming Full HD 1080p sur 2 écrans simultanément. Idéal pour les couples et petites familles.';
+                      case 'premium':
+                             return 'Qualité 4K Ultra HD + HDR sur 4 écrans simultanés. L\'expérience premium pour toute la famille.';
+                      default:
+                             return '';
+               }
+        }
+
+        getPlanDevices(): string {
+               switch (this.selectedPlan) {
+                      case 'mobile':
+                             return 'Téléphone, tablette';
+                      case 'basic':
+                             return 'TV, ordinateur, téléphone, tablette';
+                      case 'standard':
+                             return 'TV, ordinateur, téléphone, tablette';
+                      case 'premium':
+                             return 'TV, ordinateur, téléphone, tablette';
+                      default:
+                             return '';
+                }
+        }
+
+        getPlanSimultaneous(): number {
+               switch (this.selectedPlan) {
+                      case 'mobile':
+                             return 1;
+                      case 'basic':
+                             return 1;
+                      case 'standard':
+                             return 2;
+                      case 'premium':
+                             return 4;
+                      default:
+                             return 1;
+               }
+        }
+
+        getPlanDownloads(): number {
+               switch (this.selectedPlan) {
+                      case 'mobile':
+                             return 1;
+                      case 'basic':
+                             return 1;
+                      case 'standard':
+                             return 2;
+                      case 'premium':
+                             return 6;
+                      default:
+                             return 1;
+               }
+        }
+
+        changeStep(step: number): void {
+               if (step === 1) {
+                      this.page = 1; // Plan selection
+               } else if (step === 2) {
+                      this.page = 1.5; // Netflix credentials
+               } else if (step === 3) {
+                      this.page = 2;
+                      this.activeStep = 1; // Payment method selection
+               } else if (step === 4) {
+                      this.page = 2;
+                      this.activeStep = 2; // Payment details
+               } else if (step === 5) {
+                      this.page = 5; // Confirmation
+               } else if (step === 6) {
+                      this.page = 6; // Receipt/Success
+               }
+        }
+
+        getCurrentStep(): number {
+               if (this.page === 1) {
+                      return 1; // Plan selection
+               } else if (this.page === 1.5) {
+                      return 2; // Netflix credentials
+               } else if (this.page === 2) {
+                      // Payment steps: activeStep 1 = step 3, activeStep 2-3 = step 4
+                      if (this.activeStep === 1) {
+                             return 3; // Payment method selection
+                      } else {
+                             return 4; // Payment details (Mobile Money, Card, PayPal)
+                      }
+               } else if (this.page === 5) {
+                      return 5; // Confirmation
+               } else if (this.page === 6) {
+                      return 6; // Receipt/Success
+               }
+               return 1;
+        }
+
+        getPlanResolutionShort(): string {
+               switch (this.selectedPlan) {
+                      case 'mobile':
+                             return '480p';
+                      case 'basic':
+                             return '720p HD';
+                      case 'standard':
+                             return '1080p Full HD';
+                      case 'premium':
+                             return '4K Ultra HD';
+                      default:
+                             return 'HD';
+               }
+        }
 
 }

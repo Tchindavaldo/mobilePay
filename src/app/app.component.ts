@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../firebase-config';
+import { AuthStateService } from './services/auth-state.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,10 @@ import { app } from '../firebase-config';
 export class AppComponent {
   private isNavigating = false;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authState: AuthStateService
+  ) {
     // Délai pour permettre à Angular de terminer l'initialisation
     setTimeout(() => {
       this.initializeAuth();
@@ -31,17 +35,25 @@ export class AppComponent {
 
       if (user) {
         // L'utilisateur est connecté
+        
+        // ⚠️ NE PAS rediriger si un login Google est en cours
+        // Le GoogleAuthService gère la redirection après les opérations backend
+        if (this.authState.isGoogleLoginActive()) {
+          console.log('🔒 Google login en cours - pas de redirection automatique');
+          return; // Sortir sans rediriger
+        }
+        
         if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/') {
           console.log('Redirecting authenticated user to tabs');
-          this.navigateWithFlag(['/tabs/tabs/tab1']);
+          this.navigateWithFlag(['/tabs/tab1']);
         }
       } else {
         // L'utilisateur n'est pas connecté
-        if (!hasSeenOnboarding && (currentUrl === '/' || currentUrl === '/tabs/tabs/tab1')) {
+        if (!hasSeenOnboarding && (currentUrl === '/' || currentUrl === '/tabs/tab1')) {
           // Première visite, montrer l'onboarding
           console.log('Redirecting to onboarding');
           this.navigateWithFlag(['/explication']);
-        } else if (currentUrl === '/tabs/tabs/tab1') {
+        } else if (currentUrl === '/tabs/tab1') {
           // Rediriger vers login si essaie d'accéder aux tabs sans être connecté
           console.log('Redirecting unauthenticated user to login');
           this.navigateWithFlag(['/login']);

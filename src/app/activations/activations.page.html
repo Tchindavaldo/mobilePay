@@ -1,0 +1,129 @@
+<!-- Pas de header - directement le contenu -->
+<ion-content [fullscreen]="true">
+
+  <!-- Page d'activations simple -->
+  <div class="activations-container">
+
+    <!-- Overview Card - Design exact de la page transactions -->
+    <div class="overview-card">
+      <div class="overview-content">
+        <div class="overview-icon">
+          <ion-icon name="sync-circle"></ion-icon>
+        </div>
+        <div class="overview-info">
+          <h2 class="overview-title">Mes Activations</h2>
+          <p class="overview-subtitle">Historique des activations </p>
+        </div>
+      </div>
+      <div class="overview-stats">
+        <div class="stat-item">
+          <span class="stat-value">{{ getTotalActivations() }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Aperçu avec stats dans le format transactions -->
+    <div class="transactions-section">
+      <h3 class="section-title">Aperçu</h3>
+
+      <div class="stats-card">
+        <div class="stat-item-row">
+          <div class="stat-icon-wrapper green">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Activées</div>
+            <div class="stat-description">Comptes actifs</div>
+          </div>
+          <div class="stat-value">{{ getActiveCount() }}</div>
+        </div>
+
+        <div class="stat-item-row">
+          <div class="stat-icon-wrapper orange">
+            <ion-icon name="hourglass"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">En cours</div>
+            <div class="stat-description">En traitement</div>
+          </div>
+          <div class="stat-value">{{ getPendingCount() }}</div>
+        </div>
+
+        <div class="stat-item-row">
+          <div class="stat-icon-wrapper red">
+            <ion-icon name="cash"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-label">Total dépensé</div>
+            <div class="stat-description">Ce mois-ci</div>
+          </div>
+          <div class="stat-value">{{ getTotalSpent() }}€</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des activations dans le format stats -->
+    <div class="transactions-section">
+      <div class="section-header">
+        <h3 class="section-title">Historique des activations</h3>
+        <ion-button fill="clear" size="small" class="filter-btn">
+          <ion-icon name="funnel-outline" slot="start"></ion-icon>
+          Filtrer
+        </ion-button>
+      </div>
+
+      <!-- Message si aucune activation -->
+      <div class="empty-state" *ngIf="filteredActivations.length === 0">
+        <div class="empty-icon">
+          <ion-icon name="list-outline"></ion-icon>
+        </div>
+        <h3>Aucune activation trouvée</h3>
+        <p>Vos activations apparaîtront ici</p>
+      </div>
+
+      <!-- Liste des activations en format stat-item-row -->
+      <div class="stats-card" *ngIf="filteredActivations.length > 0">
+        <div
+          class="stat-item-row activation-row"
+          *ngFor="let activation of filteredActivations"
+          (click)="viewActivationDetails(activation)">
+
+          <div class="stat-icon-wrapper"
+            [ngClass]="{
+              'green': activation.status === 'active',
+              'orange': activation.status === 'pending'
+            }">
+            <ion-icon
+              [name]="activation.status === 'active' ? 'checkmark-circle' : 'hourglass'">
+            </ion-icon>
+          </div>
+
+          <div class="stat-content">
+            <div class="stat-label">{{ activation.plan }}</div>
+            <div class="stat-description">
+              {{ activation.email }} • {{ activation.date }}
+              <span *ngIf="activation.status === 'pending'" class="pending-time">
+                • {{ activation.estimatedTime }}
+              </span>
+            </div>
+          </div>
+
+          <div class="stat-value-group">
+            <div class="stat-value">{{ activation.amount }}</div>
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-active': activation.status === 'active',
+                'status-pending': activation.status === 'pending'
+              }">
+              {{ activation.status === 'active' ? 'Activé' : 'En cours' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

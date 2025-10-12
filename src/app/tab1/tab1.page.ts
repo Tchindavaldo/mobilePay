@@ -12,8 +12,8 @@ import {
 import { CountdownService } from '../countdown.service';
 import { PlanService } from '../plan.service';
 import { NotificationService, Notification } from '../notification.service';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { app } from '../../firebase-config';
+import { UserStorageService } from '../services/storage/user-storage.service';
+import { UserDataService } from '../services/user/data/user-data.service';
 
 @Component({
   selector: 'app-tab1',
@@ -36,10 +36,13 @@ export class Tab1Page implements OnInit {
 
   constructor(
     private alertController: AlertController,
-    private toastController: ToastController, private userService: UserService, // Ajout du ToastController
+    private toastController: ToastController,
+    private userService: UserService,
     private countdownService: CountdownService,
     private planService: PlanService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private userStorage: UserStorageService,
+    private userData: UserDataService
   ) {
     addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, ionDocument, globe });
     
@@ -173,48 +176,30 @@ export class Tab1Page implements OnInit {
 
   days: number = 0; // L'état initial est 0
 
-  loadUserData() {
-    const auth = getAuth(app);
-
-    // D'abord, essayer de récupérer depuis localStorage
-    const storedUserName = localStorage.getItem('userName');
-    const storedUserPhoto = localStorage.getItem('userPhoto');
-
-    if (storedUserName) {
-      console.log('Loading user data from localStorage:', storedUserName);
-      console.log('Loading user photo from localStorage:', storedUserPhoto);
-      this.userName = storedUserName;
-      this.userPhoto = storedUserPhoto;
-    }
-
-    // Ensuite, écouter les changements d'état d'authentification
-    onAuthStateChanged(auth, (user) => {
+  async loadUserData() {
+    try {
+      // Récupérer l'utilisateur depuis notre UserStorageService centralisé
+      const user = await this.userStorage.get('user');
+      
       if (user) {
-        console.log('User data loaded from Firebase:', user);
-
+        console.log('✅ User chargé depuis UserStorageService:', user);
+        
         // Récupérer le nom complet ou l'email
-        let fullName = user.displayName || user.email?.split('@')[0] || 'Utilisateur';
-
-        console.log('Full name from Firebase:', fullName);
-        this.userName = fullName;
-        this.userPhoto = user.photoURL;
-
-        // Sauvegarder dans localStorage pour la prochaine fois
-        localStorage.setItem('userName', fullName);
-        if (user.photoURL) {
-          localStorage.setItem('userPhoto', user.photoURL);
-        }
-
-        console.log('UserName set to:', this.userName);
+        this.userName = user.displayName || user.email?.split('@')[0] || 'Utilisateur';
+        this.userPhoto = user.photoURL || null;
+        
+        console.log('👤 UserName affiché:', this.userName);
+        console.log('📸 UserPhoto affichée:', this.userPhoto);
       } else {
-        console.log('No user found in Firebase');
-        // Ne pas effacer les données si elles existent déjà
-        if (!this.userName) {
-          this.userName = 'Utilisateur';
-          this.userPhoto = null;
-        }
+        console.log('⚠️ Aucun utilisateur trouvé dans le storage');
+        this.userName = 'Utilisateur';
+        this.userPhoto = null;
       }
-    });
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement des données utilisateur:', error);
+      this.userName = 'Utilisateur';
+      this.userPhoto = null;
+    }
   }
 
   loadNotificationCount() {
@@ -269,15 +254,7 @@ export class Tab1Page implements OnInit {
   }
 
   getUserPhoto(): string {
-    // Si pas de photo, essayer de recharger depuis localStorage
-    if (!this.userPhoto) {
-      const storedPhoto = localStorage.getItem('userPhoto');
-      if (storedPhoto) {
-        this.userPhoto = storedPhoto;
-        console.log('Photo loaded from localStorage:', storedPhoto);
-      }
-    }
-
+    // Retourner la photo de l'utilisateur ou l'image par défaut
     return this.userPhoto || 'assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png';
   }
 

@@ -1,4 +1,3 @@
-
 <!-- Header premium style sous-pages -->
 <ion-header class="compact-header" [translucent]="true">
   <div class="header-background"></div>
@@ -14,22 +13,69 @@
         </div>
       </div>
       <div class="right-section">
-        <div class="step-indicator">
+        <div class="step-indicator" *ngIf="page === 1">
           <span class="current-step">{{ page }}</span>
-          <span class="total-steps">/3</span>
+          <span class="total-steps">/5</span>
+        </div>
+        <div class="step-indicator" *ngIf="page === 1.5">
+          <span class="current-step">2</span>
+          <span class="total-steps">/5</span>
+        </div>
+        <div class="step-indicator" *ngIf="page > 1.5">
+          <span class="current-step">{{ activeStep + 2 }}</span>
+          <span class="total-steps">/5</span>
         </div>
       </div>
     </div>
-    
-    <!-- Barre de progression moderne -->
-    <div class="progress-section">
-      <div class="progress-track">
-        <div class="progress-fill" [style.width.%]="(page / 3) * 100"></div>
+
+    <!-- Stepper PaymentScreen.tsx unifié - Affiché sur toutes les pages -->
+    <div class="payment-stepper-container">
+      <div class="payment-progress-bar">
+        <div class="progress-fill" [style.width.%]="getStepperProgress()"></div>
       </div>
-      <div class="steps-labels">
-        <span [class.active]="page >= 1">Plan</span>
-        <span [class.active]="page >= 2">Paiement</span>
-        <span [class.active]="page >= 3">Confirmation</span>
+      <div class="payment-steps-container">
+        <div class="step-item">
+          <div class="step-circle" [class.active]="getCurrentStep() >= 1">
+            <ion-icon *ngIf="getCurrentStep() > 1" name="checkmark"></ion-icon>
+            <span *ngIf="getCurrentStep() <= 1" class="step-number" [class.active]="getCurrentStep() >= 1">1</span>
+          </div>
+          <span class="step-label" [class.active]="getCurrentStep() >= 1">Plan</span>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" [class.active]="getCurrentStep() >= 2">
+            <ion-icon *ngIf="getCurrentStep() > 2" name="checkmark"></ion-icon>
+            <span *ngIf="getCurrentStep() <= 2" class="step-number" [class.active]="getCurrentStep() >= 2">2</span>
+          </div>
+          <span class="step-label" [class.active]="getCurrentStep() >= 2">Netflix</span>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" [class.active]="getCurrentStep() >= 3">
+            <ion-icon *ngIf="getCurrentStep() > 3" name="checkmark"></ion-icon>
+            <span *ngIf="getCurrentStep() <= 3" class="step-number" [class.active]="getCurrentStep() >= 3">3</span>
+          </div>
+          <span class="step-label" [class.active]="getCurrentStep() >= 3">Méthode</span>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" [class.active]="getCurrentStep() >= 4">
+            <ion-icon *ngIf="getCurrentStep() > 4" name="checkmark"></ion-icon>
+            <span *ngIf="getCurrentStep() <= 4" class="step-number" [class.active]="getCurrentStep() >= 4">4</span>
+          </div>
+          <span class="step-label" [class.active]="getCurrentStep() >= 4">Détails</span>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" [class.active]="getCurrentStep() >= 5">
+            <ion-icon *ngIf="getCurrentStep() > 5" name="checkmark"></ion-icon>
+            <span *ngIf="getCurrentStep() <= 5" class="step-number" [class.active]="getCurrentStep() >= 5">5</span>
+          </div>
+          <span class="step-label" [class.active]="getCurrentStep() >= 5">Confirmation</span>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" [class.active]="getCurrentStep() >= 6">
+            <ion-icon *ngIf="getCurrentStep() > 6" name="checkmark"></ion-icon>
+            <span *ngIf="getCurrentStep() <= 6" class="step-number" [class.active]="getCurrentStep() >= 6">6</span>
+          </div>
+          <span class="step-label" [class.active]="getCurrentStep() >= 6">Reçu</span>
+        </div>
       </div>
     </div>
   </div>
@@ -39,250 +85,650 @@
 
 
   <!-- Contenu des pages avec design moderne -->
-  <div class="payment-container">
-    
+  <!-- <div class="payment-container " [hidden]="page !== 1"> -->
+
     <!-- Étape 1: Sélection du plan -->
     <div class="page-content" [hidden]="page !== 1">
-      <div class="section-header">
-        <h2 class="section-title">Sélectionnez l'offre qui vous convient</h2>
-      </div>
 
-      <!-- Plans horizontaux améliorés -->
-      <div class="plans-horizontal">
-        <div class="plan-option clickable-div mobile" data-plan="mobil" data-prix="03.99" data-qualite="Moyen" data-resolution="480p" data-support="Mobile phone, tablet" data-appareils="1" data-telechargement="1">
-          <div class="plan-icon">
-            <ion-icon name="phone-portrait"></ion-icon>
+
+      <!-- Nouveau design 4 cartes (2x2) -->
+      <div class="plans-container">
+        <div class="plan-card mobile" [class.selected]="selectedPlan === 'mobile'" (click)="selectPlan('mobile')">
+          <div class="plan-card-header">
+            <div class="plan-icon">
+              <ion-icon name="phone-portrait"></ion-icon>
+            </div>
+            <div class="plan-badge" *ngIf="selectedPlan === 'mobile'">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
           </div>
-          <div class="plan-content">
-            <div class="plan-name">Mobile</div>
+          <div class="plan-card-content">
+            <h3 class="plan-title">Mobile</h3>
+            <div class="plan-price">3,99 €</div>
             <div class="plan-resolution">480p</div>
           </div>
-          <div class="plan-check">
-            <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+
+        <div class="plan-card basic" [class.selected]="selectedPlan === 'basic'" (click)="selectPlan('basic')">
+          <div class="plan-card-header">
+            <div class="plan-icon">
+              <ion-icon name="tv"></ion-icon>
+            </div>
+            <div class="plan-badge" *ngIf="selectedPlan === 'basic'">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
+          </div>
+          <div class="plan-card-content">
+            <h3 class="plan-title">Essentiel</h3>
+            <div class="plan-price">4,99 €</div>
+            <div class="plan-resolution">720p HD</div>
           </div>
         </div>
 
-        <div class="plan-option clickable-div basic" data-plan="basic" data-prix="04.99" data-qualite="Bien" data-resolution="720p (HD)" data-support="TV, computer, mobile phone, tablet" data-appareils="1" data-telechargement="1">
-          <div class="plan-icon">
-            <ion-icon name="tv"></ion-icon>
+        <div class="plan-card standard" [class.selected]="selectedPlan === 'standard'" (click)="selectPlan('standard')">
+          <div class="plan-card-header">
+            <div class="plan-icon">
+              <ion-icon name="desktop"></ion-icon>
+            </div>
+            <div class="plan-badge" *ngIf="selectedPlan === 'standard'">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
           </div>
-          <div class="plan-content">
-            <div class="plan-name">Essentiel</div>
-            <div class="plan-resolution">720p</div>
-          </div>
-          <div class="plan-check">
-            <ion-icon name="checkmark-circle"></ion-icon>
-          </div>
-        </div>
-
-        <div class="plan-option clickable-div standard" data-plan="standard" data-prix="08.99" data-qualite="Très bien" data-resolution="1080p (Full HD)" data-support="TV, computer, mobile phone, tablet" data-appareils="2" data-telechargement="2">
-          <div class="plan-icon">
-            <ion-icon name="desktop"></ion-icon>
-          </div>
-          <div class="plan-content">
-            <div class="plan-name">Standard</div>
-            <div class="plan-resolution">1080p</div>
-          </div>
-          <div class="plan-check">
-            <ion-icon name="checkmark-circle"></ion-icon>
+          <div class="plan-card-content">
+            <h3 class="plan-title">Standard</h3>
+            <div class="plan-price">8,99 €</div>
+            <div class="plan-resolution">1080p Full HD</div>
           </div>
         </div>
 
-        <div class="plan-option clickable-div premium" data-plan="premium" data-prix="10.99" data-qualite="Excellent" data-resolution="4K (Ultra HD) + HDR" data-support="TV, computer, mobile phone, tablet" data-appareils="4" data-telechargement="6">
-          <div class="plan-icon">
-            <ion-icon name="diamond"></ion-icon>
+        <div class="plan-card premium" [class.selected]="selectedPlan === 'premium'" (click)="selectPlan('premium')">
+          <div class="plan-card-header">
+            <div class="plan-icon">
+              <ion-icon name="diamond"></ion-icon>
+            </div>
+            <div class="plan-badge popular" *ngIf="selectedPlan !== 'premium'">
+              <ion-icon name="star"></ion-icon>
+              <span>Populaire</span>
+            </div>
+            <div class="plan-badge selected" *ngIf="selectedPlan === 'premium'">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
           </div>
-          <div class="plan-content">
-            <div class="plan-name">Premium</div>
+          <div class="plan-card-content">
+            <h3 class="plan-title">Premium</h3>
+            <div class="plan-price">10,99 €</div>
             <div class="plan-resolution">4K + HDR</div>
           </div>
-          <div class="plan-check">
-            <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Informations dynamiques du plan sélectionné -->
+      <div class="plan-info-section" *ngIf="selectedPlan">
+        <div class="plan-info-header" (click)="togglePlanDetails()">
+          <h4>{{ getPlanTitle() }}</h4>
+          <ion-icon [name]="showPlanDetails ? 'chevron-up' : 'chevron-down'"></ion-icon>
+        </div>
+
+        <div class="plan-info-content" [class.expanded]="showPlanDetails">
+          <div class="plan-info-summary">
+            <p>{{ getPlanSummary() }}</p>
+          </div>
+
+          <div class="plan-info-details" *ngIf="showPlanDetails">
+            <div class="detail-item">
+              <ion-icon name="tv-outline"></ion-icon>
+              <span>{{ getPlanDevices() }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="people-outline"></ion-icon>
+              <span>{{ getPlanSimultaneous() }} écran(s) simultané(s)</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="download-outline"></ion-icon>
+              <span>{{ getPlanDownloads() }} téléchargement(s)</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="musical-notes-outline"></ion-icon>
+              <span>Audio spatial inclus</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Détails du plan sélectionné comme l'image -->
-      <div class="plan-details">
-        <div class="price-section">
-          <div class="price-label">Abonnement mensuel</div>
-          <div class="price-value" id="info-div1">9,99 $US</div>
+      <!-- Bouton Continuer -->
+      <div class="continue-button" *ngIf="selectedPlan" (click)="goToNetflixCredentials()">
+        <div class="continue-gradient">
+          <span class="continue-button-text">Continuer</span>
+          <ion-icon name="arrow-forward"></ion-icon>
         </div>
-        
-        <div class="details-table">
-          <div class="detail-row">
-            <span class="detail-label">Qualité vidéo et audio</span>
-            <span class="detail-value" id="info-div2">Optimale</span>
+      </div>
+      </div>
+    <!-- </div> -->
+
+    <!-- Nouvelle étape: Identifiants Netflix -->
+    <div class="page-content" [hidden]="page !== 1.5">
+      <!-- Résumé du plan sélectionné -->
+      <div class="plan-summary-card">
+        <div class="summary-main">
+          <div class="summary-left">
+            <div class="summary-badge">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>Sélectionné</span>
+            </div>
+            <div class="plan-name-summary">{{ getPlanTitle().split(' - ')[0] }}</div>
+            <div class="plan-features">
+              <span class="feature-item">
+                <ion-icon name="tv"></ion-icon>
+                {{ getPlanResolutionShort() }}
+              </span>
+              <span class="feature-separator">•</span>
+              <span class="feature-item">
+                <ion-icon name="people"></ion-icon>
+                {{ getPlanSimultaneous() }} écran(s)
+              </span>
+            </div>
           </div>
-          <div class="detail-row">
-            <span class="detail-label">Résolution</span>
-            <span class="detail-value" id="info-div3">4K (Ultra HD) + HDR</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Audio spatial (son immersif)</span>
-            <span class="detail-value">Compris</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Appareils pris en charge</span>
-            <span class="detail-value" id="info-div4">TV, ordinateur, smartphone, tablette</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Appareils que les personnes de votre foyer peuvent regarder en même temps</span>
-            <span class="detail-value" id="info-div5">4</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Appareils autorisés pour le téléchargement</span>
-            <span class="detail-value" id="info-div6">6</span>
+          <div class="summary-right">
+            <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+            <div class="price-period">par mois</div>
+            <div class="billing-info">Facturation mensuelle</div>
           </div>
         </div>
-        
-        <div class="plan-note">
-          <p>La disponibilité de la HD (720p), de la Full HD (1080p), de l'Ultra HD (4K) et de la HDR dépend de votre connexion Internet et des capacités de l'appareil. Tous les contenus ne sont pas disponibles dans toutes les résolutions. Pour plus d'informations, consultez nos Conditions d'utilisation.</p>
+      </div>
+
+      <!-- Section des identifiants Netflix -->
+      <div class="netflix-credentials-container">
+        <div class="credentials-header">
+          <h3>Identifiants Netflix</h3>
+          <p>Entrez vos informations de connexion Netflix</p>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">
+            <ion-icon name="mail"></ion-icon>
+            Email Netflix
+          </label>
+          <ion-input type="email" placeholder="email@example.com" [(ngModel)]="netflixEmail"></ion-input>
+          <div class="input-hint">
+            <ion-icon name="information-circle"></ion-icon>
+            <span>Entrez l'email de votre compte Netflix</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">
+            <ion-icon name="lock-closed"></ion-icon>
+            Mot de passe Netflix
+          </label>
+          <ion-input type="password" placeholder="Mot de passe" [(ngModel)]="netflixPassword"></ion-input>
+          <div class="input-hint">
+            <ion-icon name="shield-checkmark"></ion-icon>
+            <span>Votre mot de passe est sécurisé et chiffré</span>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <div class="back-button" (click)="page = 1">
+            <span class="back-button-text">Retour</span>
+          </div>
+          <div class="pay-button" [class.disabled]="!netflixEmail || !netflixPassword" (click)="nextPage()">
+            <div class="pay-gradient">
+              <span class="pay-button-text">Continuer</span>
+              <ion-icon name="arrow-forward"></ion-icon>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Étape 2: Mode de paiement -->
-    <div class="page-content" [hidden]="page !== 2">
-      <div class="section-header">
-        <h2 class="section-title">
-          <ion-icon name="card" class="title-icon"></ion-icon>
-          Mode de paiement
-        </h2>
-        <p class="section-subtitle">Choisissez votre méthode de paiement préférée</p>
-      </div>
-
-      <div class="payment-methods">
-        <div class="payment-card" [class.selected]="selectedPaymentMethod === 'orange'" (click)="selectPaymentMethod('orange')">
-          <div class="payment-header">
-            <div class="payment-logo">
-              <img src="../../assets/R.png" alt="Orange Money">
+    <!-- PaymentScreen.tsx Steps - Step 1: Payment Method Selection -->
+    <div class="page-content" [hidden]="page !== 2 || activeStep !== 1">
+      <!-- Résumé du plan sélectionné -->
+      <div class="plan-summary-card">
+        <div class="summary-main">
+          <div class="summary-left">
+            <div class="summary-badge">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>Sélectionné</span>
+            </div>
+            <div class="plan-name-summary">{{ getPlanTitle().split(' - ')[0] }}</div>
+            <div class="plan-features">
+              <span class="feature-item">
+                <ion-icon name="tv"></ion-icon>
+                {{ getPlanResolutionShort() }}
+              </span>
+              <span class="feature-separator">•</span>
+              <span class="feature-item">
+                <ion-icon name="people"></ion-icon>
+                {{ getPlanSimultaneous() }} écran(s)
+              </span>
             </div>
           </div>
-          <div class="payment-content">
-            <h3 class="payment-title">Orange Money</h3>
-            <p class="payment-description">Paiement mobile rapide et fiable</p>
-            <div class="payment-features">
-              <div class="feature-item">
-                <ion-icon name="checkmark-circle"></ion-icon>
-                <span>Vérifié</span>
-              </div>
-              <div class="feature-item">
-                <ion-icon name="time"></ion-icon>
-                <span>Rapide</span>
-              </div>
-            </div>
-          </div>
-          <div class="payment-selector">
-            <ion-checkbox class="custom-checkbox" [checked]="selectedPaymentMethod === 'orange'" disabled></ion-checkbox>
+          <div class="summary-right">
+            <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+            <div class="price-period">par mois</div>
+            <div class="billing-info">Facturation mensuelle</div>
           </div>
         </div>
+      </div>
 
-        <div class="payment-card" [class.selected]="selectedPaymentMethod === 'mtn'" (click)="selectPaymentMethod('mtn')">
-          <div class="payment-header">
-            <div class="payment-logo">
-              <img src="../../assets/th (1).jpeg" alt="MTN Money">
-            </div>
+      <div class="payment-methods-container">
+        <!-- Titre supprimé pour gagner de l'espace -->
+
+        <div class="payment-method" [class.selected]="selectedPaymentMethod === 'card'" (click)="selectPaymentMethodNew('card')">
+          <div class="payment-method-icon">
+            <ion-icon name="card-outline" [color]="selectedPaymentMethod === 'card' ? 'danger' : 'medium'"></ion-icon>
           </div>
-          <div class="payment-content">
-            <h3 class="payment-title">MTN Money</h3>
-            <p class="payment-description">Paiement mobile rapide et fiable</p>
-            <div class="payment-features">
-              <div class="feature-item">
-                <ion-icon name="checkmark-circle"></ion-icon>
-                <span>Vérifié</span>
-              </div>
-              <div class="feature-item">
-                <ion-icon name="time"></ion-icon>
-                <span>Rapide</span>
-              </div>
-            </div>
+          <div class="payment-method-info">
+            <div class="payment-method-title">Carte bancaire</div>
+            <div class="payment-method-subtitle">Visa, Mastercard, CB</div>
           </div>
-          <div class="payment-selector">
-            <ion-checkbox class="custom-checkbox" [checked]="selectedPaymentMethod === 'mtn'" disabled></ion-checkbox>
+          <ion-icon *ngIf="selectedPaymentMethod === 'card'" name="checkmark-circle" color="danger"></ion-icon>
+        </div>
+
+        <div class="payment-method" [class.selected]="selectedPaymentMethod === 'paypal'" (click)="selectPaymentMethodNew('paypal')">
+          <div class="payment-method-icon">
+            <ion-icon name="logo-paypal" [color]="selectedPaymentMethod === 'paypal' ? 'danger' : 'medium'"></ion-icon>
+          </div>
+          <div class="payment-method-info">
+            <div class="payment-method-title">PayPal</div>
+            <div class="payment-method-subtitle">Paiement sécurisé en ligne</div>
+          </div>
+          <ion-icon *ngIf="selectedPaymentMethod === 'paypal'" name="checkmark-circle" color="danger"></ion-icon>
+        </div>
+
+        <div class="payment-method" [class.selected]="selectedPaymentMethod === 'orangemoney'" (click)="selectPaymentMethodNew('orangemoney')">
+          <div class="payment-method-icon">
+            <ion-icon name="phone-portrait-outline" [color]="selectedPaymentMethod === 'orangemoney' ? 'danger' : 'medium'"></ion-icon>
+          </div>
+          <div class="payment-method-info">
+            <div class="payment-method-title">Orange Money</div>
+            <div class="payment-method-subtitle">Paiement mobile rapide et sécurisé</div>
+          </div>
+          <ion-icon *ngIf="selectedPaymentMethod === 'orangemoney'" name="checkmark-circle" color="danger"></ion-icon>
+        </div>
+
+        <div class="payment-method" [class.selected]="selectedPaymentMethod === 'mtnmoney'" (click)="selectPaymentMethodNew('mtnmoney')">
+          <div class="payment-method-icon">
+            <ion-icon name="phone-portrait-outline" [color]="selectedPaymentMethod === 'mtnmoney' ? 'danger' : 'medium'"></ion-icon>
+          </div>
+          <div class="payment-method-info">
+            <div class="payment-method-title">MTN Mobile Money</div>
+            <div class="payment-method-subtitle">Paiement mobile rapide et sécurisé</div>
+          </div>
+          <ion-icon *ngIf="selectedPaymentMethod === 'mtnmoney'" name="checkmark-circle" color="danger"></ion-icon>
+        </div>
+
+        <div class="button-group">
+          <div class="back-button" (click)="page = 1.5">
+            <span class="back-button-text">Retour</span>
+          </div>
+          <div class="pay-button" [class.disabled]="!selectedPaymentMethod" (click)="activeStep = 2">
+            <div class="pay-gradient">
+              <span class="pay-button-text">Continuer</span>
+              <ion-icon name="arrow-forward"></ion-icon>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Étape 3: Confirmation -->
-    <div class="page-content" [hidden]="page !== 3">
-      <ion-progress-bar *ngIf="isLoading" [buffer]="buffer" [value]="progress" color="danger"></ion-progress-bar>
-      
-      <div class="section-header">
-        <h2 class="section-title">
-          <ion-icon name="checkmark-circle" class="title-icon"></ion-icon>
-          Confirmation
-        </h2>
-        <p class="section-subtitle">Finalisez votre abonnement {{ getSelectedPlanName() }}</p>
-      </div>
+    <!-- PaymentScreen.tsx Steps - Step 2: Payment Details -->
+    <div class="page-content" [hidden]="page !== 2 || activeStep !== 2">
+      <!-- Mobile Money Form -->
+      <div *ngIf="selectedPaymentMethod === 'orangemoney' || selectedPaymentMethod === 'mtnmoney'" class="mobile-money-container">
+        <!-- Résumé du plan sélectionné -->
+        <div class="plan-summary-card">
+          <div class="summary-main">
+            <div class="summary-left">
+              <div class="summary-badge">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Sélectionné</span>
+              </div>
+              <div class="plan-name-summary">{{ getPlanTitle().split(' - ')[0] }}</div>
+              <div class="plan-features">
+                <span class="feature-item">
+                  <ion-icon name="tv"></ion-icon>
+                  {{ getPlanResolutionShort() }}
+                </span>
+                <span class="feature-separator">•</span>
+                <span class="feature-item">
+                  <ion-icon name="people"></ion-icon>
+                  {{ getPlanSimultaneous() }} écran(s)
+                </span>
+              </div>
+            </div>
+            <div class="summary-right">
+              <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+              <div class="price-period">par mois</div>
+              <div class="billing-info">Facturation mensuelle</div>
+            </div>
+          </div>
+        </div>
 
-      <!-- Interface simplifiée -->
-      <div class="simple-confirmation">
-        
-        <!-- Carte unique avec plan + saisie numéro -->
-        <div class="summary-box-integrated">
-          <div class="plan-header">
-            <div class="plan-info">
-              <h3>{{ getSelectedPlanName() }}</h3>
-              <span class="resolution">{{ getSelectedPlanResolution() }}</span>
+        <div class="mobile-money-card">
+          <div class="mobile-money-gradient" [class.orange]="selectedPaymentMethod === 'orangemoney'" [class.mtn]="selectedPaymentMethod === 'mtnmoney'">
+            <div class="mobile-money-header">
+              <div class="card-chip"></div>
+              <ion-icon name="phone-portrait-outline"></ion-icon>
             </div>
-            <div class="price-info">
-              <span class="price">{{ getCurrentPlanPrice() }}€</span>
-              <span class="period">/ mois</span>
+
+            <div class="mobile-money-body">
+              <div class="mobile-money-label">Numéro associé</div>
+              <div class="mobile-money-value">{{ phoneNumber || '•••• •••• ••••' }}</div>
             </div>
-          </div>
-          
-          <div class="payment-method-simple">
-            <img [src]="getOperatorLogo()" [alt]="getOperatorName()" class="operator-logo">
-            <span class="operator-text">Paiement via {{ getOperatorName() }}</span>
-          </div>
-          
-          <!-- Saisie du numéro intégrée -->
-          <div class="phone-input-integrated">
-            <label class="phone-label">Numéro {{ getOperatorName() }}</label>
-            <div class="input-container-integrated">
-              <ion-input 
-                type="tel" 
-                [(ngModel)]="phoneNumber"
-                (ionInput)="validatePhoneNumber()"
-                [placeholder]="getPhonePlaceholder()"
-                class="integrated-phone-input"
-                maxlength="9">
-              </ion-input>
-              <ion-icon 
-                [name]="phoneNumberValid ? 'checkmark-circle' : 'phone-portrait'" 
-                [class]="phoneNumberValid ? 'success-icon' : 'phone-icon'"
-                class="input-icon-integrated">
-              </ion-icon>
-            </div>
-            
-            <!-- Message de validation compact -->
-            <div class="validation-integrated" *ngIf="phoneNumberError || phoneNumberValid">
-              <div class="message-integrated" [class.error]="phoneNumberError" [class.success]="phoneNumberValid">
-                <ion-icon [name]="phoneNumberError ? 'alert-circle' : 'checkmark-circle'"></ion-icon>
-                <span>{{ phoneNumberError || 'Numéro valide ✓' }}</span>
+
+            <div class="mobile-money-footer">
+              <div class="card-info">
+                <div class="card-label">Code USSD</div>
+                <div class="card-value">{{ selectedPaymentMethod === 'orangemoney' ? '#233#' : '*126#' }}</div>
+              </div>
+              <div class="card-info">
+                <div class="card-label">Service</div>
+                <div class="card-value">{{ selectedPaymentMethod === 'orangemoney' ? 'Orange Money' : 'MTN MoMo' }}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Informations essentielles -->
-        <div class="essential-info">
-          <div class="info-item">
-            <ion-icon name="calendar-outline"></ion-icon>
-            <span>Début : {{ getStartDate() }}</span>
-          </div>
-          <div class="info-item">
-            <ion-icon name="refresh-outline"></ion-icon>
-            <span>Renouvellement automatique</span>
-          </div>
-          <div class="info-item total-item">
-            <ion-icon name="card-outline"></ion-icon>
-            <span><strong>Total : {{ getCurrentPlanPrice() }}€/mois</strong></span>
+        <div class="input-group">
+          <label class="input-label">
+            <ion-icon name="call"></ion-icon>
+            Numéro de téléphone
+          </label>
+          <ion-input type="tel" placeholder="Ex: +237 6XX XXX XXX" [(ngModel)]="phoneNumber"></ion-input>
+          <div class="input-hint">
+            <ion-icon name="information-circle"></ion-icon>
+            <span>Entrez le numéro associé à votre compte {{ selectedPaymentMethod === 'orangemoney' ? 'Orange Money' : 'MTN Mobile Money' }}</span>
           </div>
         </div>
 
+        <div class="button-group">
+          <div class="back-button" (click)="activeStep = 1">
+            <span class="back-button-text">Retour</span>
+          </div>
+          <div class="pay-button" [class.disabled]="!phoneNumber" (click)="processMobileMoneyPayment()">
+            <div class="pay-gradient">
+              <span class="pay-button-text">Payer {{ totalAmount.toFixed(2) }}€</span>
+              <ion-icon name="lock-closed"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PayPal Form -->
+      <div *ngIf="selectedPaymentMethod === 'paypal'" class="mobile-money-container">
+        <!-- Résumé du plan sélectionné -->
+        <div class="plan-summary-card">
+          <div class="summary-main">
+            <div class="summary-left">
+              <div class="summary-badge">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Sélectionné</span>
+              </div>
+              <div class="plan-name-summary">{{ getPlanTitle().split(' - ')[0] }}</div>
+              <div class="plan-features">
+                <span class="feature-item">
+                  <ion-icon name="tv"></ion-icon>
+                  {{ getPlanResolutionShort() }}
+                </span>
+                <span class="feature-separator">•</span>
+                <span class="feature-item">
+                  <ion-icon name="people"></ion-icon>
+                  {{ getPlanSimultaneous() }} écran(s)
+                </span>
+              </div>
+            </div>
+            <div class="summary-right">
+              <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+              <div class="price-period">par mois</div>
+              <div class="billing-info">Facturation mensuelle</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-money-card">
+          <div class="mobile-money-gradient paypal">
+            <div class="mobile-money-header">
+              <div class="card-chip"></div>
+              <ion-icon name="logo-paypal"></ion-icon>
+            </div>
+
+            <div class="mobile-money-body">
+              <div class="mobile-money-label">Compte PayPal</div>
+              <div class="mobile-money-value">Paiement sécurisé</div>
+            </div>
+
+            <div class="mobile-money-footer">
+              <div class="card-info">
+                <div class="card-label">Sécurité</div>
+                <div class="card-value">Protection acheteur</div>
+              </div>
+              <div class="card-info">
+                <div class="card-label">Service</div>
+                <div class="card-value">PayPal</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="paypal-info">
+          <p>Vous serez redirigé vers PayPal pour finaliser votre paiement de manière sécurisée.</p>
+        </div>
+
+        <div class="button-group">
+          <div class="back-button" (click)="activeStep = 1">
+            <span class="back-button-text">Retour</span>
+          </div>
+          <div class="pay-button" (click)="processPayment()">
+            <div class="pay-gradient">
+              <span class="pay-button-text">Payer avec PayPal {{ totalAmount.toFixed(2) }}€</span>
+              <ion-icon name="logo-paypal"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Form -->
+      <div *ngIf="selectedPaymentMethod === 'card'" class="card-form-container">
+        <!-- Résumé du plan sélectionné -->
+        <div class="plan-summary-card">
+          <div class="summary-main">
+            <div class="summary-left">
+              <div class="summary-badge">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                <span>Sélectionné</span>
+              </div>
+              <div class="plan-name-summary">{{ getPlanTitle().split(' - ')[0] }}</div>
+              <div class="plan-features">
+                <span class="feature-item">
+                  <ion-icon name="tv"></ion-icon>
+                  {{ getPlanResolutionShort() }}
+                </span>
+                <span class="feature-separator">•</span>
+                <span class="feature-item">
+                  <ion-icon name="people"></ion-icon>
+                  {{ getPlanSimultaneous() }} écran(s)
+                </span>
+              </div>
+            </div>
+            <div class="summary-right">
+              <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+              <div class="price-period">par mois</div>
+              <div class="billing-info">Facturation mensuelle</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Preview -->
+        <div class="card-preview">
+          <div class="card-gradient">
+            <div class="card-header">
+              <div class="card-chip"></div>
+              <ion-icon name="wifi-outline"></ion-icon>
+            </div>
+            <div class="card-number-preview">{{ cardNumber || '•••• •••• •••• ••••' }}</div>
+            <div class="card-footer">
+              <div class="card-info">
+                <div class="card-label">NOM DU TITULAIRE</div>
+                <div class="card-value">{{ cardName || 'Votre Nom' }}</div>
+              </div>
+              <div class="card-info">
+                <div class="card-label">EXPIRE</div>
+                <div class="card-value">{{ expiryDate || 'MM/YY' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Step 1: Number and Name -->
+        <div *ngIf="cardStep === 1">
+          <div class="input-group">
+            <label class="input-label">Numéro de carte</label>
+            <ion-input type="text" placeholder="1234 5678 9012 3456" [(ngModel)]="cardNumber" (ionInput)="handleCardNumberChange($event.detail.value)" maxlength="19"></ion-input>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Nom du titulaire</label>
+            <ion-input type="text" placeholder="Prénom Nom" [(ngModel)]="cardName"></ion-input>
+          </div>
+
+          <div class="button-group">
+            <div class="back-button" (click)="activeStep = 1">
+              <span class="back-button-text">Retour</span>
+            </div>
+            <div class="pay-button" [class.disabled]="!cardNumber || !cardName" (click)="cardStep = 2">
+              <div class="pay-gradient">
+                <span class="pay-button-text">Suivant</span>
+                <ion-icon name="arrow-forward"></ion-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Step 2: Expiry and CVV -->
+        <div *ngIf="cardStep === 2">
+          <div class="input-row">
+            <div class="input-group">
+              <label class="input-label">Date d'expiration</label>
+              <ion-input type="text" placeholder="MM/YY" [(ngModel)]="expiryDate" (ionInput)="handleExpiryDateChange($event.detail.value)" maxlength="5"></ion-input>
+            </div>
+            <div class="input-group">
+              <label class="input-label">CVV</label>
+              <ion-input type="password" placeholder="123" [(ngModel)]="cvv" (ionInput)="handleCvvChange($event.detail.value)" maxlength="4"></ion-input>
+            </div>
+          </div>
+
+          <div class="save-card-option" (click)="saveCard = !saveCard">
+            <div class="checkbox" [class.checked]="saveCard">
+              <ion-icon *ngIf="saveCard" name="checkmark"></ion-icon>
+            </div>
+            <span class="save-card-text">Enregistrer cette carte pour mes prochains achats</span>
+          </div>
+
+          <div class="button-group">
+            <div class="back-button" (click)="cardStep = 1">
+              <span class="back-button-text">Retour</span>
+            </div>
+            <div class="pay-button" [class.disabled]="!expiryDate || !cvv" (click)="processCardPayment()">
+              <div class="pay-gradient">
+                <span class="pay-button-text">Payer {{ totalAmount.toFixed(2) }}€</span>
+                <ion-icon name="lock-closed"></ion-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PaymentScreen.tsx Steps - Step 3: Confirmation -->
+    <div class="page-content" [hidden]="page !== 2 || activeStep !== 3">
+      <div class="confirmation-container">
+        <div class="success-icon-container">
+          <div class="success-icon-gradient">
+            <ion-icon name="checkmark" class="success-icon"></ion-icon>
+          </div>
+        </div>
+
+        <h2 class="confirmation-title">Paiement réussi !</h2>
+        <p class="confirmation-subtitle">Votre commande a été confirmée et sera expédiée dans les plus brefs délais.</p>
+
+        <ion-button expand="block" (click)="goToReceipt()" class="continue-button">
+          <span>Voir le récapitulatif</span>
+          <ion-icon name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- PaymentScreen.tsx Steps - Step 4: Receipt -->
+    <div class="page-content" [hidden]="page !== 2 || activeStep !== 4">
+      <div class="confirmation-container">
+        <div class="order-summary">
+          <h3 class="order-summary-title">Récapitulatif de la commande</h3>
+
+          <div class="order-detail">
+            <span class="order-detail-label">Numéro de commande</span>
+            <span class="order-detail-value">#{{ orderNumber }}</span>
+          </div>
+
+          <div class="order-detail">
+            <span class="order-detail-label">Date</span>
+            <span class="order-detail-value">{{ getCurrentDate() }}</span>
+          </div>
+
+          <div class="order-detail">
+            <span class="order-detail-label">Méthode de paiement</span>
+            <span class="order-detail-value">
+              {{ selectedPaymentMethod === 'card' ? 'Carte bancaire' :
+                 selectedPaymentMethod === 'paypal' ? 'PayPal' :
+                 selectedPaymentMethod === 'orangemoney' ? 'Orange Money' : 'MTN Mobile Money' }}
+            </span>
+          </div>
+
+          <div class="order-detail">
+            <span class="order-detail-label">Montant total</span>
+            <span class="order-detail-value">{{ totalAmount.toFixed(2) }}€</span>
+          </div>
+        </div>
+
+        <ion-button expand="block" (click)="returnToHomeNew()" class="return-button">
+          Retour à l'accueil
+        </ion-button>
+
+        <ion-button fill="clear" expand="block" (click)="router.navigate(['/suivie'])" class="track-order-button">
+          Suivre ma commande
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Code Confirmation Popup (from PaymentScreen.tsx) -->
+    <div *ngIf="showCodePopup" class="popup-overlay">
+      <div class="popup-container">
+        <div class="popup-header">
+          <h3 class="popup-title">Confirmer le paiement 💰 🔒</h3>
+        </div>
+        <div class="popup-body">
+          <p class="popup-text">
+            Composez le code
+            <span class="popup-code">{{ selectedPaymentMethod === 'orangemoney' ? ' #233# ' : ' *126# ' }}</span>
+            puis entrez votre code secret pour valider votre transaction sur Yuunna.
+          </p>
+        </div>
+        <div class="popup-footer">
+          <ion-button expand="block" (click)="closeCodePopup()" class="popup-button">
+            J'ai compris
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay (from PaymentScreen.tsx) -->
+    <div *ngIf="isLoading" class="loader-overlay">
+      <div class="loader-container">
+        <div class="spinner-animation">
+          <ion-icon name="sync-outline" [color]="selectedPaymentMethod === 'orangemoney' ? 'warning' : 'primary'"></ion-icon>
+        </div>
+        <p class="loader-text">Traitement en cours...</p>
       </div>
     </div>
 
@@ -295,13 +741,13 @@
         <h2>Validation requise</h2>
         <p>Suivez les instructions pour finaliser votre paiement</p>
       </div>
-      
+
       <div class="operator-section">
         <div class="operator-card">
           <img [src]="getOperatorLogo()" [alt]="getOperatorName()" class="operator-logo-large">
           <h3>{{ getOperatorName() }}</h3>
         </div>
-        
+
         <div class="instruction-steps">
           <div class="step-item">
             <div class="step-number">1</div>
@@ -310,7 +756,7 @@
               <div class="ussd-code-display">{{ getUSSDCode() }}</div>
             </div>
           </div>
-          
+
           <div class="step-item">
             <div class="step-number">2</div>
             <div class="step-content">
@@ -318,7 +764,7 @@
               <p>Validez la transaction sur votre téléphone</p>
             </div>
           </div>
-          
+
           <div class="step-item">
             <div class="step-number">3</div>
             <div class="step-content">
@@ -328,14 +774,14 @@
           </div>
         </div>
       </div>
-      
+
       <div class="validation-footer">
         <div class="security-info">
           <ion-icon name="shield-checkmark"></ion-icon>
           <span>Transaction sécurisée par {{ getOperatorName() }}</span>
         </div>
       </div>
-      
+
       <div class="validation-buttons">
         <ion-button fill="outline" (click)="page = 3" color="medium">
           Retour
@@ -355,37 +801,26 @@
           <div class="spinner-glow"></div>
         </div>
         <h2>Traitement en cours...</h2>
-        <p>Veuillez patienter pendant que nous traitons votre paiement</p>
+        <p>Veuillez Composez le #150*50# et entrer votre code secret pour valider votre paiement</p>
       </div>
-      
+
       <div class="processing-steps">
-        <div class="process-step active" id="step-1">
+        <div class="process-step" [class.active]="verificationStep >= 1" [class.completed]="verificationStep > 1" id="step-1">
           <div class="step-icon">
-            <ion-icon name="card"></ion-icon>
+            <ion-icon [name]="verificationStep > 1 ? 'checkmark-circle' : 'card'"></ion-icon>
           </div>
           <span>Vérification du paiement</span>
         </div>
-        
-        <div class="process-step" id="step-2">
-          <div class="step-icon">
-            <ion-icon name="sync"></ion-icon>
-          </div>
-          <span>Activation du compte</span>
-        </div>
-        
-        <div class="process-step" id="step-3">
+
+        <div class="process-step" [class.active]="verificationStep >= 2" id="step-2">
           <div class="step-icon">
             <ion-icon name="checkmark-circle"></ion-icon>
           </div>
           <span>Confirmation</span>
         </div>
       </div>
-      
+
       <div class="processing-info">
-        <div class="info-row">
-          <ion-icon name="time"></ion-icon>
-          <span>Temps estimé : <span id="countdown">60</span> secondes</span>
-        </div>
         <div class="info-row">
           <ion-icon name="shield-checkmark"></ion-icon>
           <span>Transaction sécurisée</span>
@@ -401,58 +836,43 @@
           <div class="success-glow"></div>
         </div>
       </div>
-      
+
       <div class="success-content">
         <h2>🎉 Paiement réussi !</h2>
-        <p>Votre abonnement {{ getSelectedPlanName() }} a été activé avec succès</p>
-        
+        <p>après 1h si votre compte n'ai pas activé veuillez contactez le service client au <br> 696 08 00 87 / 698 17 89 25</p>
+
+        <div class="activation-badge">
+          <ion-icon name="sync-circle" color="success"></ion-icon>
+          <span>activation du compte en cours</span>
+        </div>
+
         <div class="success-details">
           <div class="detail-item">
             <ion-icon name="tv"></ion-icon>
-            <span>Plan {{ getSelectedPlanName() }} activé</span>
+            <span>Plan {{ getSelectedPlanName() }} </span>
           </div>
           <div class="detail-item">
             <ion-icon name="calendar"></ion-icon>
             <span>Valide jusqu'au {{ getEndDate() }}</span>
           </div>
-          <div class="detail-item">
+          <!-- <div class="detail-item">
             <ion-icon name="refresh"></ion-icon>
             <span>Renouvellement automatique</span>
-          </div>
+          </div> -->
         </div>
       </div>
-      
+
       <div class="success-actions">
-        <ion-button expand="block" (click)="returnToHome()" color="success" size="large">
+        <ion-button (click)="goToActivations()" class="activation-button" size="default">
+          <ion-icon name="list-outline" slot="start"></ion-icon>
+          Suivi
+        </ion-button>
+        <ion-button (click)="returnToHome()" fill="outline" class="home-button" size="default">
           <ion-icon name="home" slot="start"></ion-icon>
-          Retour à l'accueil
+          Accueil
         </ion-button>
       </div>
     </div>
 
-    <!-- Boutons de navigation -->
-    <div class="navigation-buttons" *ngIf="page <= 3">
-      <!-- Bouton Précédent -->
-      <ion-button 
-        *ngIf="page > 1"
-        fill="outline" 
-        (click)="previousPage()" 
-        color="medium"
-        class="prev-button">
-        <ion-icon name="arrow-back" slot="start"></ion-icon>
-        Précédent
-      </ion-button>
-      
-      <!-- Bouton Suivant -->
-      <ion-button 
-        expand="block" 
-        (click)="nextPage()" 
-        color="danger"
-        class="next-button"
-        [disabled]="page === 3 && (!phoneNumberValid || !selectedPaymentMethod)">
-        <ion-icon [name]="page === 3 ? 'card' : 'arrow-forward'" slot="end"></ion-icon>
-        {{ page === 3 ? 'Réabonner maintenant' : 'Suivant' }}
-      </ion-button>
-    </div>
-  </div>
+    <!-- Anciens boutons de navigation supprimés - remplacés par les boutons intégrés dans chaque étape -->
 </ion-content>

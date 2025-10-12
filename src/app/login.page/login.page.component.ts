@@ -149,55 +149,83 @@ export class LoginPageComponent implements OnInit {
 
   async signInWithGoogle() {
     const loading = await this.loadingController.create({
-      message: 'Connexion avec Google...',
-      spinner: 'crescent'
+      message: '🔐 Connexion avec Google...',
+      spinner: 'crescent',
+      backdropDismiss: false // Empêcher de fermer le loader en cliquant à côté
     });
     await loading.present();
 
     try {
+      // Étape 1 : Authentification Firebase/Google
+      console.log('🔐 Début de l\'authentification Google...');
+      
       const user = await this.googleAuthService.signInWithGoogle();
+      // Note : signInWithGoogle() attend déjà la fin de toutes les opérations :
+      // - Firebase Auth
+      // - Backend GET/POST
+      // - Storage local
+      // - UserDataService
 
       if (user) {
-        await loading.dismiss();
-
+        // Tout est terminé avec succès !
+        console.log('✓ Connexion complète réussie !');
+        
+        // Mettre à jour le message du loader avant de rediriger
+        loading.message = '✓ Connexion réussie ! Redirection...';
+        
         // Ajouter une notification
         const notification: Notification = {
           title: 'Connexion Google',
-          message: `Vous êtes connecté avec Google.`,
+          message: `Bienvenue ${user.displayName || user.email} !`,
           image: user.photoURL || '../../assets/LOGO.jpg',
           time: new Date(),
         };
         this.notificationService.addNotification(notification);
 
-        // Rediriger immédiatement vers l'application
-        console.log('Google auth success, redirecting to tabs');
+        // Petite pause pour montrer le message de succès
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Dismiss le loader
+        await loading.dismiss();
+        
+        // Rediriger vers l'application
+        console.log('Redirection vers /tabs/tab1...');
+        const navigationSuccess = await this.router.navigate(['/tabs/tab1']);
+        
+        if (!navigationSuccess) {
+          console.error('Navigation failed, trying alternative route');
+          window.location.href = '/tabs/tab1';
+        }
 
-        // Utiliser setTimeout pour s'assurer que la redirection se fait
-        setTimeout(() => {
-          this.router.navigate(['/tabs/tabs/tab1']).then(success => {
-            console.log('Navigation success:', success);
-            if (!success) {
-              console.error('Navigation failed, trying alternative route');
-              window.location.href = '/tabs/tabs/tab1';
-            }
-          });
-        }, 100);
-
-        // Afficher l'alerte après la redirection (optionnel)
-        setTimeout(() => {
-          this.alertController.create({
-            header: 'Connexion réussie',
+        // Afficher l'alerte de bienvenue après la redirection
+        setTimeout(async () => {
+          const alert = await this.alertController.create({
+            header: '🎉 Connexion réussie',
             message: `Bienvenue ${user.displayName || user.email} !`,
             buttons: ['OK']
-          }).then(alert => alert.present());
-        }, 1000);
+          });
+          await alert.present();
+        }, 500);
+      } else {
+        // Aucun utilisateur retourné (ne devrait pas arriver)
+        await loading.dismiss();
+        
+        const alert = await this.alertController.create({
+          header: 'Erreur',
+          message: 'Impossible de récupérer les informations utilisateur.',
+          buttons: ['OK']
+        });
+        await alert.present();
       }
     } catch (error: any) {
+      // Une erreur s'est produite (Firebase, Backend, ou autre)
+      console.error('❌ Erreur lors de la connexion:', error);
+      
       await loading.dismiss();
 
       const alert = await this.alertController.create({
-        header: 'Erreur de connexion',
-        message: error.message || 'Impossible de se connecter avec Google.',
+        header: '❌ Erreur de connexion',
+        message: error.message || 'Impossible de se connecter avec Google. Vérifiez votre connexion et réessayez.',
         buttons: ['OK']
       });
       await alert.present();

@@ -91,6 +91,10 @@ const routes: Routes = [
     path: 'phone-auth',
     component: PhoneAuthComponent
   },
+  {
+    path: 'activations',
+    loadChildren: () => import('./activations/activations.module').then( m => m.ActivationsPageModule)
+  },
 ];
 @NgModule({
   imports: [
