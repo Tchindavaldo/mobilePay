@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import axios, { AxiosInstance } from 'axios';
+import { environment } from '../../environments/environment';
 
 @Injectable( {
        providedIn: 'root',
@@ -7,7 +8,7 @@ import axios, { AxiosInstance } from 'axios';
 export class ApiService
 {
        private axiosInstance: AxiosInstance;
-       private endpoint = 'http://localhost:3000/api/fill-form'; // Endpoint complet
+       private endpoint = `${environment.apiUrl}/api/fill-form`; // Endpoint depuis environment
 
 
        constructor ()

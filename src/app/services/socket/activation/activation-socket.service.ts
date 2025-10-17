@@ -86,19 +86,37 @@ export class ActivationSocketService implements OnDestroy {
       this.handleActivationStatusChanged(data);
     });
 
-    console.log('👂 Listeners d\'activation configurés');
+    // Écouter la validation du paiement
+    this.socket.on('payment_validated', (data: any) => {
+      console.log('📡 Paiement validé reçu:', data);
+      this.handlePaymentValidated(data);
+    });
+
+    // Écouter le succès de l'abonnement
+    this.socket.on('subscription_success', (data: any) => {
+      console.log('📡 Abonnement réussi reçu:', data);
+      this.handleSubscriptionSuccess(data);
+    });
+
+    // Écouter les erreurs d'abonnement
+    this.socket.on('subscription_error', (data: any) => {
+      console.log('📡 Erreur d\'abonnement reçue:', data);
+      this.handleSubscriptionError(data);
+    });
+
+    console.log('👂 Listeners d\'activation configurés (7 événements)');
   }
 
   /**
    * Gère les mises à jour d'activation (seulement si la liste n'est pas null)
    */
   private async handleActivationUpdate(data: any): Promise<void> {
-    if (!data || !data.activation) {
+    if (!data || !data.data) {
       console.warn('⚠️ Données d\'activation invalides:', data);
       return;
     }
 
-    const activation: PlanActivation = data.activation;
+    const activation: PlanActivation = data.data;
     
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (activation.userId === this.currentUserId) {
@@ -123,12 +141,12 @@ export class ActivationSocketService implements OnDestroy {
    * Gère les nouvelles activations créées (seulement si la liste n'est pas null)
    */
   private async handleActivationCreated(data: any): Promise<void> {
-    if (!data || !data.activation) {
+    if (!data || !data.data) {
       console.warn('⚠️ Données de nouvelle activation invalides:', data);
       return;
     }
 
-    const activation: PlanActivation = data.activation;
+    const activation: PlanActivation = data.data;
     
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (activation.userId === this.currentUserId) {
@@ -184,14 +202,16 @@ export class ActivationSocketService implements OnDestroy {
    * Gère les changements de statut d'activation (seulement si la liste n'est pas null)
    */
   private async handleActivationStatusChanged(data: any): Promise<void> {
-    if (!data || !data.activationId || !data.status) {
+    if (!data || !data.data || !data.newStatus) {
       console.warn('⚠️ Données de changement de statut invalides:', data);
       return;
     }
 
-    const activationId: string = data.activationId;
-    const newStatus: string = data.status;
-    const userId: string = data.userId;
+    const activation = data.data;
+    const activationId: string = activation.id;
+    const newStatus: string = data.newStatus;
+    const previousStatus: string = data.previousStatus;
+    const userId: string = activation.userId;
     
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (userId === this.currentUserId) {
@@ -205,13 +225,126 @@ export class ActivationSocketService implements OnDestroy {
         return;
       }
       
-      console.log('✅ Changement de statut d\'activation pour l\'utilisateur actuel:', activationId, 'nouveau statut:', newStatus);
+      console.log(`✅ Changement de statut: ${previousStatus} → ${newStatus} pour:`, activationId);
       
-      // Mettre à jour le statut dans le store
+      // Mettre à jour l'activation complète dans le store avec toutes les données reçues
       this.planActivationService.updatePlanActivation(activationId, {
+        ...activation,
         status: newStatus as any,
+        updatedAt: activation.dateModification || new Date().toISOString()
+      });
+    }
+  }
+
+  /**
+   * Gère la validation du paiement
+   */
+  private async handlePaymentValidated(data: any): Promise<void> {
+    if (!data || !data.data) {
+      console.warn('⚠️ Données de paiement invalidées:', data);
+      return;
+    }
+
+    const paymentData = data.data;
+    const userId: string = paymentData.userId;
+    const planActivationId: string = paymentData.planActivationId;
+    
+    // Vérifier si le paiement appartient à l'utilisateur actuel
+    if (userId === this.currentUserId) {
+      // Vérifier que la liste est initialisée avant de modifier
+      const currentActivations = await this.planActivationService.getPlanActivations().pipe(
+        take(1)
+      ).toPromise();
+      
+      if (currentActivations === null) {
+        console.warn('⚠️ Validation de paiement ignorée: liste non initialisée');
+        return;
+      }
+      
+      console.log('✅ Paiement validé pour l\'utilisateur actuel:', planActivationId);
+      
+      // Mettre à jour l'activation dans le store
+      this.planActivationService.updatePlanActivation(planActivationId, {
+        status: 'pending' as any, // Reste en pending jusqu'à l'activation Netflix
         updatedAt: new Date().toISOString()
       });
+    }
+  }
+
+  /**
+   * Gère le succès de l'abonnement Netflix
+   */
+  private async handleSubscriptionSuccess(data: any): Promise<void> {
+    if (!data || !data.data || !data.data.activation) {
+      console.warn('⚠️ Données de succès d\'abonnement invalides:', data);
+      return;
+    }
+
+    const activation: PlanActivation = data.data.activation;
+    
+    // Vérifier si l'activation appartient à l'utilisateur actuel
+    if (activation.userId === this.currentUserId) {
+      // Vérifier que la liste est initialisée avant de modifier
+      const currentActivations = await this.planActivationService.getPlanActivations().pipe(
+        take(1)
+      ).toPromise();
+      
+      if (currentActivations === null) {
+        console.warn('⚠️ Succès d\'abonnement ignoré: liste non initialisée');
+        return;
+      }
+      
+      console.log('✅ Abonnement Netflix activé avec succès pour:', activation.id);
+      
+      // Vérifier si l'activation existe déjà
+      const existingActivation = currentActivations?.find(a => a.id === activation.id);
+      
+      if (existingActivation) {
+        // Mettre à jour l'activation existante
+        this.planActivationService.updatePlanActivation(activation.id, activation);
+      } else {
+        // Ajouter la nouvelle activation en haut de la liste
+        this.planActivationService.addPlanActivation(activation);
+      }
+    }
+  }
+
+  /**
+   * Gère les erreurs d'abonnement Netflix
+   */
+  private async handleSubscriptionError(data: any): Promise<void> {
+    if (!data || !data.data) {
+      console.warn('⚠️ Données d\'erreur d\'abonnement invalides:', data);
+      return;
+    }
+
+    const errorData = data.data;
+    const userId: string = errorData.userId;
+    const planActivationId: string = errorData.planActivationId;
+    const errorMessage: string = data.error || data.message;
+    
+    // Vérifier si l'erreur appartient à l'utilisateur actuel
+    if (userId === this.currentUserId) {
+      // Vérifier que la liste est initialisée avant de modifier
+      const currentActivations = await this.planActivationService.getPlanActivations().pipe(
+        take(1)
+      ).toPromise();
+      
+      if (currentActivations === null) {
+        console.warn('⚠️ Erreur d\'abonnement ignorée: liste non initialisée');
+        return;
+      }
+      
+      console.error('❌ Erreur d\'abonnement Netflix pour:', planActivationId, errorMessage);
+      
+      // Mettre à jour l'activation dans le store avec le statut d'échec
+      this.planActivationService.updatePlanActivation(planActivationId, {
+        status: 'cancelled' as any, // Marquer comme annulé en cas d'erreur
+        updatedAt: new Date().toISOString()
+      });
+      
+      // Optionnel: Définir une erreur dans le store
+      this.planActivationService.setError(errorMessage);
     }
   }
 

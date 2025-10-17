@@ -103,9 +103,9 @@
             </div>
           </div>
           <div class="plan-card-content">
-            <h3 class="plan-title">Mobile</h3>
-            <div class="plan-price">3,99 €</div>
-            <div class="plan-resolution">480p</div>
+            <h3 class="plan-title">{{ plans.mobile.name }}</h3>
+            <div class="plan-price">{{ plans.mobile.price }} {{ plans.mobile.currency }}</div>
+            <div class="plan-resolution">{{ plans.mobile.resolution }}</div>
           </div>
         </div>
 
@@ -119,9 +119,9 @@
             </div>
           </div>
           <div class="plan-card-content">
-            <h3 class="plan-title">Essentiel</h3>
-            <div class="plan-price">4,99 €</div>
-            <div class="plan-resolution">720p HD</div>
+            <h3 class="plan-title">{{ plans.basic.name }}</h3>
+            <div class="plan-price">{{ plans.basic.price }} {{ plans.basic.currency }}</div>
+            <div class="plan-resolution">{{ plans.basic.resolution }}</div>
           </div>
         </div>
 
@@ -135,9 +135,9 @@
             </div>
           </div>
           <div class="plan-card-content">
-            <h3 class="plan-title">Standard</h3>
-            <div class="plan-price">8,99 €</div>
-            <div class="plan-resolution">1080p Full HD</div>
+            <h3 class="plan-title">{{ plans.standard.name }}</h3>
+            <div class="plan-price">{{ plans.standard.price }} {{ plans.standard.currency }}</div>
+            <div class="plan-resolution">{{ plans.standard.resolution }}</div>
           </div>
         </div>
 
@@ -155,9 +155,9 @@
             </div>
           </div>
           <div class="plan-card-content">
-            <h3 class="plan-title">Premium</h3>
-            <div class="plan-price">10,99 €</div>
-            <div class="plan-resolution">4K + HDR</div>
+            <h3 class="plan-title">{{ plans.premium.name }}</h3>
+            <div class="plan-price">{{ plans.premium.price }} {{ plans.premium.currency }}</div>
+            <div class="plan-resolution">{{ plans.premium.resolution }}</div>
           </div>
         </div>
       </div>
@@ -229,7 +229,7 @@
             </div>
           </div>
           <div class="summary-right">
-            <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+            <div class="plan-price-summary">{{ totalAmount }} {{ getCurrency() }}</div>
             <div class="price-period">par mois</div>
             <div class="billing-info">Facturation mensuelle</div>
           </div>
@@ -305,7 +305,7 @@
             </div>
           </div>
           <div class="summary-right">
-            <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+            <div class="plan-price-summary">{{ totalAmount }} {{ getCurrency() }}</div>
             <div class="price-period">par mois</div>
             <div class="billing-info">Facturation mensuelle</div>
           </div>
@@ -399,7 +399,7 @@
               </div>
             </div>
             <div class="summary-right">
-              <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+              <div class="plan-price-summary">{{ totalAmount }} {{ getCurrency() }}</div>
               <div class="price-period">par mois</div>
               <div class="billing-info">Facturation mensuelle</div>
             </div>
@@ -421,7 +421,7 @@
             <div class="mobile-money-footer">
               <div class="card-info">
                 <div class="card-label">Code USSD</div>
-                <div class="card-value">{{ selectedPaymentMethod === 'orangemoney' ? '#233#' : '*126#' }}</div>
+                <div class="card-value">{{ selectedPaymentMethod === 'orangemoney' ? '#150#' : '*126#' }}</div>
               </div>
               <div class="card-info">
                 <div class="card-label">Service</div>
@@ -436,7 +436,10 @@
             <ion-icon name="call"></ion-icon>
             Numéro de téléphone
           </label>
-          <ion-input type="tel" placeholder="Ex: +237 6XX XXX XXX" [(ngModel)]="phoneNumber"></ion-input>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="padding: 0.75rem 1rem; background: #cf0000; border-radius: 8px; font-weight: 600; color: white;">+237</div>
+            <ion-input type="tel" placeholder="6XX XXX XXX" [(ngModel)]="phoneNumber" style="flex: 1;"></ion-input>
+          </div>
           <div class="input-hint">
             <ion-icon name="information-circle"></ion-icon>
             <span>Entrez le numéro associé à votre compte {{ selectedPaymentMethod === 'orangemoney' ? 'Orange Money' : 'MTN Mobile Money' }}</span>
@@ -449,7 +452,7 @@
           </div>
           <div class="pay-button" [class.disabled]="!phoneNumber" (click)="processMobileMoneyPayment()">
             <div class="pay-gradient">
-              <span class="pay-button-text">Payer {{ totalAmount.toFixed(2) }}€</span>
+              <span class="pay-button-text">Payer {{ totalAmount }} {{ getCurrency() }}</span>
               <ion-icon name="lock-closed"></ion-icon>
             </div>
           </div>
@@ -480,7 +483,7 @@
               </div>
             </div>
             <div class="summary-right">
-              <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+              <div class="plan-price-summary">{{ totalAmount }} {{ getCurrency() }}</div>
               <div class="price-period">par mois</div>
               <div class="billing-info">Facturation mensuelle</div>
             </div>
@@ -522,7 +525,7 @@
           </div>
           <div class="pay-button" (click)="processPayment()">
             <div class="pay-gradient">
-              <span class="pay-button-text">Payer avec PayPal {{ totalAmount.toFixed(2) }}€</span>
+              <span class="pay-button-text">Payer avec PayPal {{ totalAmount }} {{ getCurrency() }}</span>
               <ion-icon name="logo-paypal"></ion-icon>
             </div>
           </div>
@@ -553,7 +556,7 @@
               </div>
             </div>
             <div class="summary-right">
-              <div class="plan-price-summary">{{ totalAmount.toFixed(2) }}€</div>
+              <div class="plan-price-summary">{{ totalAmount }} {{ getCurrency() }}</div>
               <div class="price-period">par mois</div>
               <div class="billing-info">Facturation mensuelle</div>
             </div>
@@ -632,7 +635,7 @@
             </div>
             <div class="pay-button" [class.disabled]="!expiryDate || !cvv" (click)="processCardPayment()">
               <div class="pay-gradient">
-                <span class="pay-button-text">Payer {{ totalAmount.toFixed(2) }}€</span>
+                <span class="pay-button-text">Payer {{ totalAmount }} {{ getCurrency() }}</span>
                 <ion-icon name="lock-closed"></ion-icon>
               </div>
             </div>
@@ -687,7 +690,7 @@
 
           <div class="order-detail">
             <span class="order-detail-label">Montant total</span>
-            <span class="order-detail-value">{{ totalAmount.toFixed(2) }}€</span>
+            <span class="order-detail-value">{{ totalAmount }} {{ getCurrency() }}</span>
           </div>
         </div>
 

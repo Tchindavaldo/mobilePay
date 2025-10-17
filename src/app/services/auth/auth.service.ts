@@ -4,6 +4,7 @@ import { UserStorageService } from '../storage/user-storage.service';
 import { UserDataService } from '../user/data/user-data.service';
 import { GetUserService } from '../user/requests/get-user.service';
 import { CreateUserService, CreateUserDto } from '../user/requests/create-user.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,7 @@ export class AuthService {
   private async initializeGoogleAuth() {
     try {
       await GoogleAuth.initialize({
-        clientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com', // À remplacer
+        clientId: environment.googleClientId,
         scopes: ['profile', 'email'],
         grantOfflineAccess: true,
       });

@@ -52,8 +52,9 @@ export class PaymentService {
    * @returns true si valide
    */
   validatePhoneNumber(phoneNumber: string): boolean {
-    // Format: +237 6XX XXX XXX ou similaire
-    const phoneRegex = /^\+?[0-9]{10,15}$/;
+    // Format: 6XX XXX XXX (9 chiffres sans préfixe) ou +237 6XX XXX XXX (12 chiffres avec préfixe)
+    // Accepte aussi les numéros internationaux (10-15 chiffres)
+    const phoneRegex = /^\+?[0-9]{9,15}$/;
     return phoneRegex.test(phoneNumber.replace(/\s/g, ''));
   }
 

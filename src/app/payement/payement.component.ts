@@ -11,6 +11,7 @@ import { Socket } from 'socket.io-client';
 import { UserStorageService } from '../services/storage/user-storage.service';
 import { SocketService } from '../services/socket/socket.service';
 import { Subscription } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 type PaymentMethod = 'card' | 'paypal' | 'orangemoney' | 'mtnmoney';
 
@@ -51,7 +52,7 @@ export class PayementComponent implements OnInit, OnDestroy
        phoneNumberError: string = '';
        phoneNumberValid: boolean = false;
        orderNumber: string = '';
-       totalAmount: number = 10.99; // Default to premium plan price
+       totalAmount: number = 0; // Will be initialized in ngOnInit
        netflixEmail: string = '';
        netflixPassword: string = '';
 
@@ -59,6 +60,22 @@ export class PayementComponent implements OnInit, OnDestroy
        private socket!: Socket;
        private socketSubscription?: Subscription;
        private currentUserId: string = '';
+
+       // Expose environment plans to template
+       get plans() {
+              return environment.plans;
+       }
+
+       // Get specific plan details
+       getPlanDetails(planKey: string) {
+              return environment.plans[planKey as keyof typeof environment.plans];
+       }
+
+       // Get currency for selected plan
+       getCurrency(): string {
+              const planConfig = environment.plans[this.selectedPlan as keyof typeof environment.plans];
+              return planConfig ? planConfig.currency : environment.plans.premium.currency;
+       }
 
        constructor (
               public router: Router,
@@ -80,6 +97,9 @@ export class PayementComponent implements OnInit, OnDestroy
 
        async ngOnInit()
        {
+              // Initialize totalAmount from environment (must be done here to ensure environment is loaded)
+              this.totalAmount = environment.plans.premium.price;
+
               // Réinitialiser tous les états du stepper pour toujours commencer au step 1
               this.activeStep = 0;  // Reset au step 1 (choix du plan)
               this.page = 1;         // Reset à la première page
@@ -164,11 +184,30 @@ export class PayementComponent implements OnInit, OnDestroy
               this.selectedPaymentMethod = method;
        }
 
+       // Format phone number with default prefix from environment
+       getFullPhoneNumber(): string {
+              let cleanNumber = this.phoneNumber.trim();
+              
+              // Enlever le préfixe +237 si l'utilisateur l'a tapé manuellement
+              if (cleanNumber.startsWith('+237')) {
+                     cleanNumber = cleanNumber.substring(4); // Enlever "+237"
+              } else if (cleanNumber.startsWith('237')) {
+                     cleanNumber = cleanNumber.substring(3); // Enlever "237"
+              } else if (cleanNumber.startsWith('+')) {
+                     cleanNumber = cleanNumber.substring(1); // Enlever le "+" seul
+              }
+              
+              // Ajouter le préfixe par défaut de l'environnement
+              return `${environment.defaultPhonePrefix}${cleanNumber}`;
+       }
+
        // Mobile money payment processing (from PaymentScreen.tsx)
        processMobileMoneyPayment() {
               // Validation des champs avec le service
-              if (!this.phoneNumber || !this.paymentService.validatePhoneNumber(this.phoneNumber)) {
-                     this.presentErrorToast('Veuillez entrer un numéro de téléphone valide');
+              // Vérifier que le numéro n'est pas vide et a au moins 9 chiffres (format camerounais)
+              const cleanPhone = this.phoneNumber.replace(/\s/g, '').replace(/\+/g, '').replace(/237/g, '');
+              if (!this.phoneNumber || cleanPhone.length < 9 || !this.paymentService.validatePhoneNumber(this.phoneNumber)) {
+                     this.presentErrorToast('Veuillez entrer un numéro de téléphone valide (9 chiffres)');
                      return;
               }
 
@@ -187,13 +226,21 @@ export class PayementComponent implements OnInit, OnDestroy
 
               // Préparer les données de paiement avec typage fort
               const paymentData: PaymentRequest = {
-                     numeroOM: this.phoneNumber.trim(),
+                     numeroOM: this.getFullPhoneNumber(), // Utilise le préfixe +237 de l'environnement
                      email: this.netflixEmail.trim(),
                      motDePasse: this.netflixPassword,
                      typeDePlan: this.selectedPlan as PlanType,
                      userId: this.currentUserId, // Include user ID from storage
                      amount: this.totalAmount // Montant du paiement
               };
+
+              // 🔑 LOG DU MOT DE PASSE ET DES DONNÉES
+              console.log('🔑 Mot de passe Netflix:', this.netflixPassword);
+              console.log('📧 Email Netflix:', this.netflixEmail);
+              console.log('📱 Numéro de téléphone complet:', this.getFullPhoneNumber());
+              console.log('💳 Montant:', this.totalAmount, this.getCurrency());
+              console.log('📦 Plan sélectionné:', this.selectedPlan);
+              console.log('📊 Données complètes de paiement:', paymentData);
 
               // Appel API via le service
               this.paymentService.initiateMobileMoneyPayment(paymentData)
@@ -412,9 +459,11 @@ export class PayementComponent implements OnInit, OnDestroy
        goToNetflixCredentials() {
               if (this.selectedPlan) {
                      this.page = 1.5; // Nouvelle étape pour les identifiants
-                     // Mettre à jour le prix total selon le plan sélectionné
-                     const planInfo = this.paymentService.getPlanInfo(this.selectedPlan as PlanType);
-                     this.totalAmount = planInfo.price;
+                     // Mettre à jour le prix total selon le plan sélectionné depuis environment
+                     const planConfig = environment.plans[this.selectedPlan as keyof typeof environment.plans];
+                     if (planConfig) {
+                            this.totalAmount = planConfig.price;
+                     }
               }
        }
 
@@ -426,13 +475,8 @@ export class PayementComponent implements OnInit, OnDestroy
                      this.activeStep = 1; // Start with payment method selection
               } else if (this.page === 1) {
                      this.goToNetflixCredentials();
-                     const activePlan = document.querySelector('.plan-option.active');
-                     if (activePlan) {
-                            const planPrice = activePlan.getAttribute('data-prix');
-                            if (planPrice) {
-                                   this.totalAmount = parseFloat(planPrice);
-                            }
-                     }
+                     // totalAmount is already set by selectPlan() from environment
+                     // No need to read from DOM attributes
               }
        }
 
@@ -455,7 +499,7 @@ export class PayementComponent implements OnInit, OnDestroy
                             <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
                                    <div style="display: flex; justify-content: space-between; align-items: center;">
                                           <div style="font-weight: 700; color: #1e293b;">${this.getSelectedPlanName()}</div>
-                                          <div style="font-size: 1.25rem; font-weight: 800; color: #dc2626;">${this.getCurrentPlanPrice()}€<span style="font-size: 0.8rem; color: #64748b;">/mois</span></div>
+                                          <div style="font-size: 1.25rem; font-weight: 800; color: #dc2626;">${this.getCurrentPlanPrice()} ${this.getCurrency()}<span style="font-size: 0.8rem; color: #64748b;">/mois</span></div>
                                    </div>
                             </div>
 
@@ -496,9 +540,10 @@ export class PayementComponent implements OnInit, OnDestroy
 
        // Traitement final du paiement
        processPayment(): void {
-              const activePlanElement = document.querySelector( '.plan-option.active' );
-              const planName = activePlanElement?.getAttribute( 'data-plan' ) || '';
-              const planPrice = activePlanElement?.getAttribute( 'data-prix' ) || '';
+              // Utiliser le plan sélectionné et le montant depuis l'environnement (déjà définis)
+              const planConfig = environment.plans[this.selectedPlan as keyof typeof environment.plans];
+              const planName = planConfig ? planConfig.name : this.selectedPlan;
+              const planPrice = this.totalAmount.toString();
 
               // Mettre à jour le service avec le plan sélectionné
               this.planService.updateSelectedPlan( planName, planPrice );
@@ -564,7 +609,7 @@ export class PayementComponent implements OnInit, OnDestroy
               const planName = this.getSelectedPlanName();
               const resolutions: { [key: string]: string } = {
                      'Mobile': '480p',
-                     'Essentiel': '720p HD',
+                     'Basic': '720p HD',
                      'Standard': '1080p Full HD',
                      'Premium': '4K Ultra HD + HDR'
               };
@@ -827,14 +872,15 @@ export class PayementComponent implements OnInit, OnDestroy
        }
 
        getCurrentPlanPrice(): string {
-              const activePlanElement = document.querySelector('.plan-option.active');
-              return activePlanElement?.getAttribute('data-prix') || '9.99';
+              // Retourner le totalAmount actuel qui vient de l'environnement
+              return this.totalAmount.toString();
        }
 
        // Méthode améliorée pour mettre à jour les informations du plan
        updatePlanInfo( planElement: HTMLElement ): void
        {
-              const prix = planElement.getAttribute( 'data-prix' );
+              // Utiliser totalAmount qui vient déjà de l'environnement
+              const prix = this.totalAmount;
               const qualite = planElement.getAttribute( 'data-qualite' );
               const resolution = planElement.getAttribute( 'data-resolution' );
               const support = planElement.getAttribute( 'data-support' );
@@ -843,8 +889,8 @@ export class PayementComponent implements OnInit, OnDestroy
 
               // Mise à jour du prix avec formatage
               const priceElement = document.getElementById( 'info-div1' ) as HTMLElement;
-              if (priceElement && prix) {
-                     priceElement.textContent = `${prix}€`;
+              if (priceElement) {
+                     priceElement.textContent = `${prix} ${this.getCurrency()}`;
               }
 
               // Mise à jour de la qualité
@@ -928,22 +974,13 @@ export class PayementComponent implements OnInit, OnDestroy
         // Plan selection methods
         selectPlan(plan: string): void {
                this.selectedPlan = plan;
-               // Update total amount based on selected plan
-               switch (plan) {
-                      case 'mobile':
-                             this.totalAmount = 3.99;
-                             break;
-                      case 'basic':
-                             this.totalAmount = 4.99;
-                             break;
-                      case 'standard':
-                             this.totalAmount = 8.99;
-                             break;
-                      case 'premium':
-                             this.totalAmount = 10.99;
-                             break;
-                      default:
-                             this.totalAmount = 10.99;
+               // Update total amount based on selected plan from environment
+               const planConfig = environment.plans[plan as keyof typeof environment.plans];
+               if (planConfig) {
+                      this.totalAmount = planConfig.price;
+               } else {
+                      // Fallback to premium if plan not found
+                      this.totalAmount = environment.plans.premium.price;
                }
         }
 
@@ -956,7 +993,7 @@ export class PayementComponent implements OnInit, OnDestroy
                       case 'mobile':
                              return 'Plan Mobile - Parfait pour les déplacements';
                       case 'basic':
-                             return 'Plan Essentiel - Idéal pour débuter';
+                             return 'Plan Basic - Idéal pour débuter';
                       case 'standard':
                              return 'Plan Standard - Le meilleur rapport qualité-prix';
                       case 'premium':

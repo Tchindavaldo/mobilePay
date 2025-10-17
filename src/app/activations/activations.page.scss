@@ -98,8 +98,17 @@ ion-content {
 
 .overview-subtitle {
   color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 400;
   margin: 0;
+  
+  &.overview-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
 }
 
 .overview-stats {
@@ -316,6 +325,11 @@ ion-content {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
   }
+
+  &.red {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+  }
 }
 
 .stat-content {
@@ -380,6 +394,132 @@ ion-content {
       color: #d97706;
       border: 1px solid rgba(245, 158, 11, 0.3);
     }
+
+    &.status-expired {
+      background: rgba(239, 68, 68, 0.15);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+  }
+}
+
+// Overlay simple
+.simple-details-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.simple-details-card {
+  background: #ffffff;
+  padding: 0;
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+
+  // Header avec gradient
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    z-index: 0;
+  }
+
+  .simple-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+    z-index: 2;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+  }
+
+  // Content wrapper
+  > div:not(.simple-close) {
+    position: relative;
+    z-index: 1;
+    padding: 40px 28px 28px;
+  }
+
+  .simple-item {
+    margin-bottom: 20px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    strong {
+      display: block;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    
+    span {
+      display: block;
+      font-size: 17px;
+      color: #ffffff;
+      font-weight: 600;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      word-break: break-all;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.22);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+      }
+    }
   }
 }
 
@@ -395,6 +535,27 @@ ion-content {
   ion-icon {
     font-size: 14px;
     color: #94a3b8;
+  }
+}
+
+.activation-password {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+
+  ion-icon {
+    font-size: 16px;
+    color: #dc2626;
+  }
+
+  span {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: 1px;
   }
 }
 
