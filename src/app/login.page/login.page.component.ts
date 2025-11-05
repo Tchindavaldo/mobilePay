@@ -148,6 +148,33 @@ export class LoginPageComponent implements OnInit {
   }
 
   async signInWithGoogle() {
+    // TEMPORAIRE : Désactivation de l'authentification Google
+    // Redirection directe vers l'accueil
+    console.log('⚠️ Connexion Google temporairement désactivée - Redirection directe');
+    
+    const loading = await this.loadingController.create({
+      message: 'Redirection...',
+      spinner: 'crescent',
+      duration: 500
+    });
+    await loading.present();
+
+    // Ajouter une notification
+    const notification: Notification = {
+      title: 'Connexion',
+      message: 'Connexion Google temporairement désactivée',
+      image: '../../assets/LOGO.jpg',
+      time: new Date(),
+    };
+    this.notificationService.addNotification(notification);
+
+    // Rediriger vers l'accueil après un court délai
+    setTimeout(async () => {
+      await loading.dismiss();
+      this.router.navigate(['/tabs/tab1']);
+    }, 500);
+
+    /* CODE ORIGINAL DÉSACTIVÉ TEMPORAIREMENT
     const loading = await this.loadingController.create({
       message: '🔐 Connexion avec Google...',
       spinner: 'crescent',
@@ -230,6 +257,7 @@ export class LoginPageComponent implements OnInit {
       });
       await alert.present();
     }
+    */
   }
 
   async registerWithGoogle() {
