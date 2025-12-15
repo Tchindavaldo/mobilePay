@@ -1,26 +1,32 @@
-<!-- Header moderne et compact -->
-<ion-header class="modern-header" [translucent]="true">
-  <div class="header-background"></div>
-  <div class="header-content">
-    <div class="header-main">
-      <ion-button fill="clear" class="back-btn" routerLink="/tabs/tab1">
-        <ion-icon name="chevron-back" class="back-icon"></ion-icon>
-      </ion-button>
-      
-      <div class="header-title-section">
-        <h1 class="page-title">Notifications</h1>
-        <p class="page-subtitle" *ngIf="unreadNotifications > 0">{{ unreadNotifications }} nouvelle(s) notification(s)</p>
-        <p class="page-subtitle" *ngIf="unreadNotifications === 0">Aucune nouvelle notification</p>
+<ion-content [fullscreen]="true">
+  <!-- Overview Card pour Notifications -->
+  <div class="overview-card">
+    <div class="overview-content">
+      <div class="overview-icon">
+        <ion-icon name="notifications"></ion-icon>
       </div>
-
-      <ion-button fill="clear" class="clear-all-btn" (click)="clearAllNotifications()" *ngIf="notifications.length > 0">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
+      <div class="overview-info">
+        <h2 class="overview-title">Mes Notifications</h2>
+        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications > 0">{{ unreadNotifications }} nouvelle(s)</p>
+        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications === 0">À jour</p>
+      </div>
+    </div>
+    <div class="overview-stats">
+      <div class="stat-item">
+        <span class="stat-value">{{ notifications.length }}</span>
+        <span class="stat-label">Total</span>
+      </div>
     </div>
   </div>
-</ion-header>
 
-<ion-content class="notifications-content">
+  <!-- Bouton Effacer tout -->
+  <div class="clear-all-section" *ngIf="notifications.length > 0">
+    <ion-button fill="clear" class="clear-all-btn" (click)="clearAllNotifications()">
+      <ion-icon name="trash-outline"></ion-icon>
+      Effacer tout
+    </ion-button>
+  </div>
+
   <!-- Message vide si aucune notification -->
   <div class="empty-state" *ngIf="notifications.length === 0">
     <div class="empty-icon">
