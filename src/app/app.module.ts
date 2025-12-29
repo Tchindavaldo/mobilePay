@@ -11,7 +11,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { reducers } from './services/store/indx';
 import { PayementComponent } from './payement/payement.component';
-import { NotificationComponent } from './notification/notification.component';
 import { SupportComponent } from './support/support.component';
 import { PartageComponent } from './partage/partage.component';
 import { CompteComponent } from './compte/compte.component';
@@ -37,7 +36,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @NgModule({
-  declarations: [AppComponent, PayementComponent,NotificationComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent],
+  declarations: [AppComponent, PayementComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent],
   imports: [
     BrowserModule, 
     IonicModule.forRoot(), 

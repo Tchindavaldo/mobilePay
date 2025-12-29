@@ -14,7 +14,7 @@
       </div>
 
       <div class="right-section">
-        <ion-button fill="clear" class="notification-btn" routerLink="/notif">
+        <ion-button fill="clear" class="notification-btn" routerLink="/tabs/tab2">
           <ion-icon name="notifications-outline"></ion-icon>
           <div class="notification-badge" [class.large-number]="notificationCount >= 10" *ngIf="notificationCount > 0">
             {{ notificationCount > 99 ? '99+' : notificationCount }}

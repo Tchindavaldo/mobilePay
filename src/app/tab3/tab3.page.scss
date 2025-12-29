@@ -1,3 +1,109 @@
+// Content Styles
+ion-content {
+  --background: #f8fafc;
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  position: relative;
+  z-index: 3;
+  padding-top: 0;
+  padding-bottom: 40px;
+  min-height: 100vh;
+}
+
+// Settings Wrapper - pour le padding avec header fixe
+.settings-wrapper {
+  padding-top: 140px;
+}
+
+// Overview Card Styles - FIXED HEADER
+.overview-card {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  margin: 16px;
+  padding: 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.25);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: calc(100% - 32px);
+  margin: 16px;
+  z-index: 100;
+  overflow: hidden;
+  animation: slideInDown 0.5s ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overview-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.overview-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  ion-icon {
+    font-size: 32px;
+    color: white;
+  }
+}
+
+.overview-info {
+  flex: 1;
+}
+
+.overview-title {
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.overview-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+}
+
 // Compact Header Styles (EXACT COPY from tab1)
 .compact-header {
   --background: transparent;
@@ -311,99 +417,6 @@
   }
 }
 
-// Profile Quick Card
-.profile-quick-card {
-  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
-  margin: 16px;
-  padding: 20px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.25);
-  position: relative;
-  overflow: hidden;
-  animation: slideInDown 0.5s ease-out;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
-}
-
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.profile-quick-content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex: 1;
-  position: relative;
-  z-index: 2;
-}
-
-.profile-avatar-large {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.profile-info {
-  flex: 1;
-}
-
-.profile-name {
-  color: white;
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 4px 0;
-}
-
-.profile-email {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
-  margin: 0;
-}
-
-.edit-profile-btn {
-  --color: white;
-  --background: rgba(255, 255, 255, 0.2);
-  --border-radius: 12px;
-  width: 44px;
-  height: 44px;
-  backdrop-filter: blur(10px);
-  position: relative;
-  z-index: 2;
-
-  ion-icon {
-    font-size: 22px;
-  }
-}
-
 // Settings Sections
 .settings-section {
   margin-bottom: 24px;
@@ -694,20 +707,6 @@
 
 // Responsive
 @media (max-width: 768px) {
-  .profile-quick-card {
-    margin: 12px;
-    padding: 16px;
-  }
-
-  .profile-avatar-large {
-    width: 56px;
-    height: 56px;
-  }
-
-  .profile-name {
-    font-size: 18px;
-  }
-
   .settings-card {
     margin: 0 12px 10px 12px;
   }

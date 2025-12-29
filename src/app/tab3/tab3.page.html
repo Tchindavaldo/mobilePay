@@ -1,71 +1,21 @@
-<!-- Header compact et moderne -->
-<ion-header class="compact-header" [translucent]="true">
-  <div class="header-background"></div>
-  <div class="header-content">
-    <!-- Top section avec tout en une ligne -->
-    <div class="header-main">
-      <div class="left-section">
-        <div class="app-logo">
-          <span class="logo-text">M</span>
-        </div>
-        <div class="greeting-compact">
-          <h1 class="greeting-text">Paramètres</h1>
-          <p class="greeting-subtitle">Personnalisez votre app</p>
-        </div>
-      </div>
-
-      <div class="right-section">
-        <ion-button fill="clear" class="notification-btn" routerLink="/notif">
-          <ion-icon name="notifications-outline"></ion-icon>
-          <div
-            class="notification-badge"
-            [class.large-number]="notificationCount >= 10"
-            *ngIf="notificationCount > 0">
-            {{ notificationCount > 99 ? '99+' : notificationCount }}
-          </div>
-        </ion-button>
-
-        <div class="user-profile">
-          <img
-            [src]="getUserPhoto()"
-            [alt]="userName || 'Utilisateur'"
-            class="profile-image"
-            (error)="onImageError($event)"
-            loading="lazy">
-        </div>
-      </div>
-    </div>
-
-    <!-- Search bar simple -->
-    <div class="search-section">
-      <ion-searchbar
-        placeholder="Rechercher un service..."
-        class="simple-searchbar"
-        [debounce]="300">
-      </ion-searchbar>
-    </div>
-  </div>
-</ion-header>
-
 <ion-content class="main-content settings-content">
   
-  <!-- Profile Quick View Card -->
-  <div class="profile-quick-card">
-    <div class="profile-quick-content">
-      <div class="profile-avatar-large">
-        <img [src]="getUserPhoto()" alt="Profile" (error)="onImageError($event)">
+  <!-- Overview Card pour Paramètres - FIXED HEADER -->
+  <div class="overview-card">
+    <div class="overview-content">
+      <div class="overview-icon">
+        <ion-icon name="settings"></ion-icon>
       </div>
-      <div class="profile-info">
-        <h2 class="profile-name">{{ userName || 'Utilisateur' }}</h2>
-        <p class="profile-email">{{ userEmail || 'email@example.com' }}</p>
+      <div class="overview-info">
+        <h2 class="overview-title">Paramètres</h2>
+        <p class="overview-subtitle">Personnalisez votre app</p>
       </div>
     </div>
-    <ion-button fill="clear" class="edit-profile-btn" routerLink="/tabs/tab2">
-      <ion-icon name="create-outline"></ion-icon>
-    </ion-button>
   </div>
 
-  <!-- Général Section -->
+  <!-- Content Wrapper pour le padding -->
+  <div class="settings-wrapper">
+    <!-- Général Section -->
   <div class="settings-section">
     <h3 class="section-title">Général</h3>
     
@@ -268,10 +218,11 @@
     </div>
   </div>
 
-  <!-- App Version Footer -->
-  <div class="app-footer">
-    <p class="app-version">MobilPay v1.0.0</p>
-    <p class="copyright">© 2025 MobilPay. Tous droits réservés.</p>
+    <!-- App Version Footer -->
+    <div class="app-footer">
+      <p class="app-version">MobilPay v1.0.0</p>
+      <p class="copyright">© 2025 MobilPay. Tous droits réservés.</p>
+    </div>
   </div>
   
 </ion-content>
