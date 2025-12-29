@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://98.93.27.18:80',
+  apiUrl: 'http://44.222.96.175:80',
   googleClientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
 
   // Configuration des plans Netflix (modifiable facilement)
