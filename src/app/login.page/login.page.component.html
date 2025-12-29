@@ -47,6 +47,11 @@
           <ion-input placeholder="Mot de passe" type="password" [(ngModel)]="user.password"></ion-input>
         </ion-item>
 
+        <div class="error-message-box" *ngIf="errorMessage">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
         <ion-button expand="block" class="primary-button" (click)="loginUser()">
           Se connecter
         </ion-button>
@@ -71,6 +76,11 @@
         <ion-item class="auth-input">
           <ion-input placeholder="Mot de passe" type="password" [(ngModel)]="user.password"></ion-input>
         </ion-item>
+
+        <div class="error-message-box" *ngIf="errorMessage">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
 
         <ion-button expand="block" class="primary-button" (click)="registerUser()">
           Créer mon compte

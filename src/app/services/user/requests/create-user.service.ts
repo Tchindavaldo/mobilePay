@@ -9,20 +9,21 @@ export interface CreateUserDto {
   displayName?: string;
   photoURL?: string;
   phoneNumber?: string;
-  
+  password?: string;
+
   // Tokens d'authentification
   accessToken?: string;
   refreshToken?: string;
   expirationTime?: number;
-  
+
   // Informations de vérification
   emailVerified?: boolean;
   isAnonymous?: boolean;
-  
+
   // Provider info
   providerId?: string;
   providerData?: any[];  // Données des providers (Google, etc.)
-  
+
   // Métadonnées temporelles
   metadata?: {
     createdAt?: string;
@@ -30,7 +31,7 @@ export interface CreateUserDto {
     lastSignInTime?: string;
     creationTime?: string;
   };
-  
+
   // Tenant (si applicable)
   tenantId?: string | null;
 }
@@ -39,7 +40,7 @@ export interface CreateUserDto {
 export class CreateUserService {
   private apiUrl = environment.apiUrl;
 
-  constructor() {}
+  constructor() { }
 
   /**
    * Crée un nouvel utilisateur dans la base de données
@@ -51,11 +52,11 @@ export class CreateUserService {
       const response = await axios.post(
         `${this.apiUrl}/api/users/`,
         userData,
-        { 
-          headers: { 
+        {
+          headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true' 
-          } 
+            'ngrok-skip-browser-warning': 'true'
+          }
         }
       );
       console.log('✓ Utilisateur créé dans la BD:', response.data);
