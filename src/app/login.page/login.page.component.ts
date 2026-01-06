@@ -60,19 +60,17 @@ export class LoginPageComponent implements OnInit {
 
   async loginUser() {
     if (this.user.email && this.user.password) {
+      const loading = await this.loadingController.create({
+        message: 'Connexion en cours...',
+        spinner: 'crescent'
+      });
+      await loading.present();
+
       const auth = getAuth(app);
 
       try {
         const userCredential = await signInWithEmailAndPassword(auth, this.user.email, this.user.password);
-
-        const alert = await this.alertController.create({
-          header: 'Connexion Réussie',
-          message: 'Bienvenue !',
-          buttons: ['OK']
-        });
-
-        await alert.present();
-        this.router.navigate(['/tabs/tab1']);
+        await loading.dismiss();
 
         const notification: Notification = {
           title: 'Connexion',
@@ -82,17 +80,39 @@ export class LoginPageComponent implements OnInit {
         };
         this.notificationService.addNotification(notification);
 
+        await this.router.navigate(['/tabs/tab1']);
+
       } catch (error: any) {
+        await loading.dismiss();
+        
+        let errorMessage = 'Une erreur est survenue.';
+        
+        if (error.code === 'auth/invalid-email') {
+          errorMessage = 'L\'adresse email est invalide.';
+        } else if (error.code === 'auth/user-disabled') {
+          errorMessage = 'Ce compte a été désactivé.';
+        } else if (error.code === 'auth/user-not-found') {
+          errorMessage = 'Aucun compte ne correspond à cette adresse email.';
+        } else if (error.code === 'auth/wrong-password') {
+          errorMessage = 'Le mot de passe est incorrect.';
+        } else if (error.code === 'auth/invalid-credential') {
+          errorMessage = 'Email ou mot de passe incorrect.';
+        } else if (error.code === 'auth/too-many-requests') {
+          errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard.';
+        } else if (error.code === 'auth/network-request-failed') {
+          errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+        }
+
         const alert = await this.alertController.create({
           header: 'Erreur de connexion',
-          message: error.message || 'Email ou mot de passe incorrect.',
+          message: errorMessage,
           buttons: ['OK']
         });
         await alert.present();
       }
     } else {
       const alert = await this.alertController.create({
-        header: 'Erreur',
+        header: 'Champs manquants',
         message: 'Veuillez remplir tous les champs.',
         buttons: ['OK']
       });
@@ -102,24 +122,17 @@ export class LoginPageComponent implements OnInit {
 
   async registerUser() {
     if (this.user.name && this.user.email && this.user.password && this.user.phone) {
+      const loading = await this.loadingController.create({
+        message: 'Création du compte...',
+        spinner: 'crescent'
+      });
+      await loading.present();
+
       const auth = getAuth(app);
       
       try {
-        // Créer un nouvel utilisateur
         const userCredential = await createUserWithEmailAndPassword(auth, this.user.email, this.user.password);
-        
-        // this.userService.setUserName(this.user.name); 
-
-        // Afficher une alerte de succès 
-        const alert = await this.alertController.create({
-          header: 'Inscription Réussie',
-          message: `Bienvenue, ${this.user.name}!`,
-          buttons: ['OK']
-        });
-
-        await alert.present();
-
-        this.router.navigate(['/tabs/tab1']);
+        await loading.dismiss();
 
         const notification: Notification = {
           title: 'Compte',
@@ -128,79 +141,59 @@ export class LoginPageComponent implements OnInit {
           time: new Date(),
         };
         this.notificationService.addNotification(notification);
-      } catch (error: any) { // Typage de l'erreur
+
+        await this.router.navigate(['/tabs/tab1']);
+
+      } catch (error: any) {
+        await loading.dismiss();
+        
+        let errorMessage = 'Une erreur est survenue.';
+        
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'Cette adresse email est déjà utilisée.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'L\'adresse email est invalide.';
+        } else if (error.code === 'auth/operation-not-allowed') {
+          errorMessage = 'L\'inscription par email est désactivée.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'Le mot de passe est trop faible. Utilisez au moins 6 caractères.';
+        } else if (error.code === 'auth/network-request-failed') {
+          errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+        }
+
         const alert = await this.alertController.create({
-          header: 'Erreur',
-          message: error.message || 'Une erreur est survenue.', // Utiliser une valeur par défaut
+          header: 'Erreur d\'inscription',
+          message: errorMessage,
           buttons: ['OK']
         });
         await alert.present();
       }
     } else {
       const alert = await this.alertController.create({
-        header: 'Erreur',
+        header: 'Champs manquants',
         message: 'Veuillez remplir tous les champs.',
         buttons: ['OK']
       });
-
       await alert.present();
     }
   }
 
   async signInWithGoogle() {
-    // TEMPORAIRE : Désactivation de l'authentification Google
-    // Redirection directe vers l'accueil
-    console.log('⚠️ Connexion Google temporairement désactivée - Redirection directe');
-    
     const loading = await this.loadingController.create({
-      message: 'Redirection...',
+      message: 'Connexion avec Google...',
       spinner: 'crescent',
-      duration: 500
-    });
-    await loading.present();
-
-    // Ajouter une notification
-    const notification: Notification = {
-      title: 'Connexion',
-      message: 'Connexion Google temporairement désactivée',
-      image: '../../assets/LOGO.jpg',
-      time: new Date(),
-    };
-    this.notificationService.addNotification(notification);
-
-    // Rediriger vers l'accueil après un court délai
-    setTimeout(async () => {
-      await loading.dismiss();
-      this.router.navigate(['/tabs/tab1']);
-    }, 500);
-
-    /* CODE ORIGINAL DÉSACTIVÉ TEMPORAIREMENT
-    const loading = await this.loadingController.create({
-      message: '🔐 Connexion avec Google...',
-      spinner: 'crescent',
-      backdropDismiss: false // Empêcher de fermer le loader en cliquant à côté
+      backdropDismiss: false
     });
     await loading.present();
 
     try {
-      // Étape 1 : Authentification Firebase/Google
       console.log('🔐 Début de l\'authentification Google...');
       
       const user = await this.googleAuthService.signInWithGoogle();
-      // Note : signInWithGoogle() attend déjà la fin de toutes les opérations :
-      // - Firebase Auth
-      // - Backend GET/POST
-      // - Storage local
-      // - UserDataService
 
       if (user) {
-        // Tout est terminé avec succès !
         console.log('✓ Connexion complète réussie !');
         
-        // Mettre à jour le message du loader avant de rediriger
-        loading.message = '✓ Connexion réussie ! Redirection...';
-        
-        // Ajouter une notification
         const notification: Notification = {
           title: 'Connexion Google',
           message: `Bienvenue ${user.displayName || user.email} !`,
@@ -209,32 +202,12 @@ export class LoginPageComponent implements OnInit {
         };
         this.notificationService.addNotification(notification);
 
-        // Petite pause pour montrer le message de succès
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Dismiss le loader
         await loading.dismiss();
         
-        // Rediriger vers l'application
         console.log('Redirection vers /tabs/tab1...');
-        const navigationSuccess = await this.router.navigate(['/tabs/tab1']);
-        
-        if (!navigationSuccess) {
-          console.error('Navigation failed, trying alternative route');
-          window.location.href = '/tabs/tab1';
-        }
+        await this.router.navigate(['/tabs/tab1']);
 
-        // Afficher l'alerte de bienvenue après la redirection
-        setTimeout(async () => {
-          const alert = await this.alertController.create({
-            header: '🎉 Connexion réussie',
-            message: `Bienvenue ${user.displayName || user.email} !`,
-            buttons: ['OK']
-          });
-          await alert.present();
-        }, 500);
       } else {
-        // Aucun utilisateur retourné (ne devrait pas arriver)
         await loading.dismiss();
         
         const alert = await this.alertController.create({
@@ -245,19 +218,28 @@ export class LoginPageComponent implements OnInit {
         await alert.present();
       }
     } catch (error: any) {
-      // Une erreur s'est produite (Firebase, Backend, ou autre)
       console.error('❌ Erreur lors de la connexion:', error);
-      
       await loading.dismiss();
 
+      let errorMessage = 'Impossible de se connecter avec Google.';
+      
+      if (error.message.includes('annulée')) {
+        errorMessage = 'Connexion annulée.';
+      } else if (error.message.includes('Popup bloquée')) {
+        errorMessage = 'Popup bloquée. Autorisez les popups pour ce site.';
+      } else if (error.message.includes('réseau') || error.message.includes('network')) {
+        errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       const alert = await this.alertController.create({
-        header: '❌ Erreur de connexion',
-        message: error.message || 'Impossible de se connecter avec Google. Vérifiez votre connexion et réessayez.',
+        header: 'Erreur de connexion',
+        message: errorMessage,
         buttons: ['OK']
       });
       await alert.present();
     }
-    */
   }
 
   async registerWithGoogle() {

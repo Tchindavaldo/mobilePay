@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationService, Notification } from '../notification.service';
 import { AlertController } from '@ionic/angular';
+import { LanguageService } from '../services/language.service';
 
 @Component({
   selector: 'app-notification',
@@ -14,8 +15,13 @@ export class NotificationComponent  implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private languageService: LanguageService
   ) {}
+
+  t(key: string): string {
+    return this.languageService.translate(key);
+  }
 
   ngOnInit() {
     this.notifications = this.notificationService.getNotifications();
@@ -33,15 +39,15 @@ export class NotificationComponent  implements OnInit {
 
   async clearAllNotifications() {
     const alert = await this.alertController.create({
-      header: 'Supprimer toutes les notifications',
-      message: 'Voulez-vous vraiment supprimer toutes les notifications ?',
+      header: this.t('notification.delete_all'),
+      message: this.t('notification.delete_all_confirm'),
       buttons: [
         {
-          text: 'Annuler',
+          text: this.t('cancel'),
           role: 'cancel'
         },
         {
-          text: 'Supprimer',
+          text: this.t('notification.delete'),
           role: 'confirm',
           handler: () => {
             this.notificationService.clearAllNotifications();
@@ -67,19 +73,21 @@ export class NotificationComponent  implements OnInit {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
+    const lang = this.languageService.getCurrentLanguage();
 
     if (diffMins < 1) {
-      return 'À l\'instant';
+      return this.t('notification.just_now');
     } else if (diffMins < 60) {
-      return `Il y a ${diffMins} min`;
+      return `${diffMins} ${this.t('notification.min_ago')}`;
     } else if (diffHours < 24) {
-      return `Il y a ${diffHours}h`;
+      return `${diffHours}${this.t('notification.hours_ago')}`;
     } else if (diffDays === 1) {
-      return 'Hier';
+      return this.t('notifications.yesterday');
     } else if (diffDays < 7) {
-      return `Il y a ${diffDays} jours`;
+      return `${diffDays} ${this.t('notification.days_ago')}`;
     } else {
-      return notificationDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+      const locale = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'fr-FR';
+      return notificationDate.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
     }
   }
 

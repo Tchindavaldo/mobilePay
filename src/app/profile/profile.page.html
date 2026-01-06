@@ -1,0 +1,124 @@
+<ion-content class="profile-content">
+
+  <div class="overview-card">
+    <div class="overview-content">
+      <div class="overview-icon">
+        <ion-icon name="person"></ion-icon>
+      </div>
+      <div class="overview-info">
+        <h2 class="overview-title">{{ t('profile') }}</h2>
+        <p class="overview-subtitle">{{ t('profile.subtitle') }}</p>
+      </div>
+    </div>
+    <button class="overview-back" (click)="goBack()">
+      <ion-icon name="chevron-back"></ion-icon>
+    </button>
+  </div>
+
+  <div class="profile-wrapper">
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="profile-top">
+        <div class="avatar-container" (click)="changeAvatar()">
+          <img [src]="getUserPhoto()" alt="Avatar" class="avatar" (error)="onImageError($event)">
+          <button class="avatar-edit-btn" (click)="changeAvatar()">
+            <ion-icon name="camera"></ion-icon>
+          </button>
+        </div>
+
+        <div class="hero-info">
+          <h2 class="profile-name">{{ userProfile.name }}</h2>
+          <p class="profile-email" *ngIf="userProfile.email">{{ userProfile.email }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+    <!-- Profile Info Section -->
+    <div class="profile-section">
+      <h3 class="section-title">{{ t('personal_info') }}</h3>
+
+      <div class="info-card">
+        <div class="info-item" *ngIf="userProfile.email">
+          <div class="info-icon">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <div class="info-label">{{ t('email') }}</div>
+            <div class="info-value">{{ userProfile.email }}</div>
+          </div>
+        </div>
+
+        <div class="info-item" *ngIf="userProfile.phone">
+          <div class="info-icon">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <div class="info-label">{{ t('phone') }}</div>
+            <div class="info-value">{{ userProfile.phone }}</div>
+          </div>
+        </div>
+
+        <div class="info-item" *ngIf="userProfile.joinDate">
+          <div class="info-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <div class="info-label">{{ t('member_since') }}</div>
+            <div class="info-value">{{ userProfile.joinDate }}</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <div class="info-label">{{ t('security_label') }}</div>
+            <div class="info-value">{{ t('protected_connection') }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Profile Button -->
+    <div class="action-section">
+      <div class="action-grid">
+        <button class="action-tile" (click)="editProfile()">
+          <div class="tile-icon red">
+            <ion-icon name="create-outline"></ion-icon>
+          </div>
+          <div class="tile-content">
+            <div class="tile-title">{{ t('edit') }}</div>
+            <div class="tile-subtitle">{{ t('edit.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="tile-arrow"></ion-icon>
+        </button>
+
+        <button class="action-tile" (click)="changeAvatar()">
+          <div class="tile-icon blue">
+            <ion-icon name="camera-outline"></ion-icon>
+          </div>
+          <div class="tile-content">
+            <div class="tile-title">{{ t('photo') }}</div>
+            <div class="tile-subtitle">{{ t('photo.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="tile-arrow"></ion-icon>
+        </button>
+
+        <button class="action-tile danger" (click)="logout()">
+          <div class="tile-icon danger">
+            <ion-icon name="log-out-outline"></ion-icon>
+          </div>
+          <div class="tile-content">
+            <div class="tile-title">{{ t('logout') }}</div>
+            <div class="tile-subtitle">{{ t('logout.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="tile-arrow"></ion-icon>
+        </button>
+      </div>
+    </div>
+    </div>
+  </div>
+
+</ion-content>

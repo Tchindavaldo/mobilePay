@@ -11,14 +11,14 @@
           <ion-icon name="sync-circle"></ion-icon>
         </div>
         <div class="overview-info">
-          <h2 class="overview-title">Mes Activations</h2>
+          <h2 class="overview-title">{{ t('activations.my_activations') }}</h2>
           <p class="overview-subtitle overview-amount">{{ getTotalSpent() }} XAF</p>
         </div>
       </div>
       <div class="overview-stats">
         <div class="stat-item">
           <span class="stat-value">{{ getTotalActivations() }}</span>
-          <span class="stat-label">Total</span>
+          <span class="stat-label">{{ t('activations.total') }}</span>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
 
     <!-- Section Aperçu avec stats sur une ligne -->
     <div class="transactions-section">
-      <h3 class="section-title">Aperçu</h3>
+      <h3 class="section-title">{{ t('activations.overview') }}</h3>
 
       <div class="stats-grid">
         <div class="stat-box">
@@ -36,7 +36,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value-large">{{ getActiveCount() }}</div>
-            <div class="stat-label-small">Activées</div>
+            <div class="stat-label-small">{{ t('activations.activated') }}</div>
           </div>
         </div>
 
@@ -46,7 +46,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value-large">{{ getPendingCount() }}</div>
-            <div class="stat-label-small">En cours</div>
+            <div class="stat-label-small">{{ t('activations.pending') }}</div>
           </div>
         </div>
 
@@ -56,7 +56,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value-large">{{ getExpiredCount() }}</div>
-            <div class="stat-label-small">Expirées</div>
+            <div class="stat-label-small">{{ t('activations.expired') }}</div>
           </div>
         </div>
       </div>
@@ -65,17 +65,17 @@
     <!-- Liste des activations dans le format stats -->
     <div class="transactions-section">
       <div class="section-header">
-        <h3 class="section-title">Historique des activations</h3>
+        <h3 class="section-title">{{ t('activations.history') }}</h3>
         <ion-button fill="clear" size="small" class="filter-btn">
           <ion-icon name="funnel-outline" slot="start"></ion-icon>
-          Filtrer
+          {{ t('activations.filter') }}
         </ion-button>
       </div>
 
       <!-- Loader pendant le chargement -->
       <div class="loading-container" *ngIf="isLoading">
         <ion-spinner name="crescent" color="primary"></ion-spinner>
-        <p class="loading-text">Chargement des activations...</p>
+        <p class="loading-text">{{ t('activations.loading') }}</p>
       </div>
 
       <!-- Message si aucune activation -->
@@ -83,8 +83,8 @@
         <div class="empty-icon">
           <ion-icon name="list-outline"></ion-icon>
         </div>
-        <h3>Aucune activation trouvée</h3>
-        <p>Vos activations apparaîtront ici</p>
+        <h3>{{ t('activations.no_activations') }}</h3>
+        <p>{{ t('activations.will_appear_here') }}</p>
       </div>
 
       <!-- Liste des activations en format stat-item-row -->
@@ -123,7 +123,7 @@
               <div *ngIf="activation.status === 'pending'" class="activation-dates">
                 <div class="date-item">
                   <ion-icon name="calendar-outline"></ion-icon>
-                  Demandé le {{ activation.date }}
+                  {{ t('activations.requested_on') }} {{ activation.date }}
                 </div>
                 <div class="pending-time">
                   <ion-icon name="time-outline"></ion-icon>
@@ -135,11 +135,11 @@
               <div *ngIf="activation.status === 'activated'" class="activation-dates">
                 <div class="date-item">
                   <ion-icon name="play-circle-outline"></ion-icon>
-                  Début : {{ activation.startDate || activation.date }}
+                  {{ t('activations.start') }}: {{ activation.startDate || activation.date }}
                 </div>
                 <div class="date-item expiry">
                   <ion-icon name="flag-outline"></ion-icon>
-                  Expire : {{ activation.expiryDate || '...' }}
+                  {{ t('activations.expires') }}: {{ activation.expiryDate || '...' }}
                 </div>
               </div>
             </div>
@@ -155,7 +155,7 @@
                 'status-expired': activation.status === 'expired'
               }">
               <ion-icon [name]="activation.status === 'pending' ? 'time' : (activation.status === 'expired' ? 'close-circle' : 'checkmark-circle')"></ion-icon>
-              {{ activation.status === 'activated' ? 'Activé' : (activation.status === 'expired' ? 'Expiré' : 'En cours') }}
+              {{ activation.status === 'activated' ? t('activations.status_activated') : (activation.status === 'expired' ? t('activations.status_expired') : t('activations.status_pending')) }}
             </span>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AddEditAccountComponent } from '../add-edit-account/add-edit-account.component';
 import { StreamingAccount } from '../streaming-account.model';
+import { LanguageService } from '../services/language.service';
 
 @Component({
   selector: 'app-compte',
@@ -33,7 +34,14 @@ export class CompteComponent  implements OnInit {
   }
 ];
 
-constructor(private modalController: ModalController) {}
+constructor(
+    private modalController: ModalController,
+    public langService: LanguageService
+  ) {}
+
+  t(key: string): string {
+    return this.langService.translate(key);
+  }
 
 // Open the modal to add a new account
 async openAddAccountModal() {

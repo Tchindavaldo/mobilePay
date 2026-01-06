@@ -34,4 +34,169 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+/*
+ * MobilPay Dark Mode Global Styles
+ * Applique les variables CSS du mode sombre à toutes les pages
+ */
+
+// Transitions globales pour le changement de thème
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+// Mode sombre global
+[data-theme="dark"] {
+  // Ionic components
+  ion-content {
+    --background: var(--background-secondary) !important;
+  }
+
+  ion-header {
+    --background: var(--background-primary);
+  }
+
+  ion-toolbar {
+    --background: var(--background-primary);
+    --color: var(--text-primary);
+  }
+
+  ion-title {
+    color: var(--text-primary);
+  }
+
+  ion-card {
+    --background: var(--background-card);
+    --color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+  }
+
+  ion-item {
+    --background: var(--background-card);
+    --color: var(--text-primary);
+    --border-color: var(--border-primary);
+  }
+
+  ion-list {
+    --background: var(--background-card);
+  }
+
+  ion-searchbar {
+    --background: var(--background-card);
+    --color: var(--text-primary);
+    --placeholder-color: var(--text-muted);
+    --icon-color: var(--text-muted);
+  }
+
+  ion-chip {
+    --background: var(--background-card);
+    --color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+  }
+
+  ion-segment {
+    --background: var(--background-card);
+  }
+
+  ion-segment-button {
+    --background: transparent;
+    --color: var(--text-secondary);
+    --color-checked: var(--text-primary);
+    --indicator-color: var(--mobilpay-primary);
+  }
+
+  ion-input, ion-textarea {
+    --background: var(--background-card);
+    --color: var(--text-primary);
+    --placeholder-color: var(--text-muted);
+  }
+
+  ion-select {
+    --placeholder-color: var(--text-muted);
+    color: var(--text-primary);
+  }
+
+  ion-toggle {
+    --background: var(--border-secondary);
+    --background-checked: var(--mobilpay-primary);
+  }
+
+  ion-tab-bar {
+    --background: var(--background-primary);
+    --color: var(--text-muted);
+    --color-selected: var(--mobilpay-primary);
+    border-top: 1px solid var(--border-primary);
+  }
+
+  ion-tab-button {
+    --color: var(--text-muted);
+    --color-selected: var(--mobilpay-primary);
+  }
+
+  // Textes généraux
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+  }
+
+  p, span, label {
+    color: var(--text-secondary);
+  }
+
+  // Backgrounds communs
+  .card, .settings-card, .info-card, .action-card, .stat-card {
+    background: var(--background-card) !important;
+    border: 1px solid var(--border-primary) !important;
+  }
+
+  // Sections
+  .section-title {
+    color: var(--text-tertiary) !important;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted) !important;
+  }
+
+  // Inputs et formulaires
+  input, textarea, select {
+    background: var(--background-card);
+    color: var(--text-primary);
+    border-color: var(--border-primary);
+  }
+
+  // Modals et overlays
+  .modal-content, .dialog-content {
+    background: var(--background-card);
+    border: 1px solid var(--border-primary);
+  }
+
+  .overlay, .dialog-overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  // Badges et labels
+  .badge, .label {
+    background: var(--background-tertiary);
+    color: var(--text-primary);
+  }
+
+  // Scrollbar personnalisée pour le mode sombre
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-secondary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+}

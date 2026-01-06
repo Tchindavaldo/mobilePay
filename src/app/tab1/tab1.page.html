@@ -22,68 +22,45 @@
     </div>
     <div class="dialog-body">
       <div class="sad-emoji">💔</div>
-      <h2>Confirmer le désabonnement</h2>
-      <p>Vous êtes sur le point de perdre l'accès à tous vos contenus Netflix Premium. Cette action est irréversible.</p>
+      <h2>{{ t('home.confirm_unsubscribe') }}</h2>
+      <p>{{ t('home.unsubscribe_warning') }}</p>
     </div>
     <div class="dialog-actions">
       <ion-button fill="outline" (click)="closeDialog()">
         <ion-icon name="arrow-back" slot="start"></ion-icon>
-        Annuler
+        {{ t('cancel') }}
       </ion-button>
       <ion-button color="danger" (click)="confirmUnsubscribe()">
         <ion-icon name="trash" slot="start"></ion-icon>
-        Désabonner
+        {{ t('home.unsubscribe') }}
       </ion-button>
     </div>
   </div>
 </div>
 
-<!-- Header compact et moderne -->
-<ion-header class="compact-header" [translucent]="true">
-  <div class="header-background"></div>
-  <div class="header-content">
-    <!-- Top section avec tout en une ligne -->
-    <div class="header-main">
-      <div class="left-section">
-        <div class="app-logo">
-          <span class="logo-text">M</span>
-        </div>
-        <div class="greeting-compact">
-          <h1 class="greeting-text">Accueil</h1>
-          <p class="greeting-subtitle">Bienvenue sur MobilPay</p>
-        </div>
-      </div>
-
-      <div class="right-section">
-        <ion-button fill="clear" class="notification-btn" routerLink="/tabs/tab2">
+<!-- Header Simple et Élégant -->
+<ion-header class="simple-header">
+  <div class="header-bg"></div>
+  <div class="header-inner">
+    <!-- Ligne principale -->
+    <div class="header-row">
+      <h1 class="page-title">{{ t('home') }}</h1>
+      
+      <div class="header-icons">
+        <div class="icon-btn" routerLink="/tabs/tab2">
           <ion-icon name="notifications-outline"></ion-icon>
-          <div
-            class="notification-badge"
-            [class.large-number]="notificationCount >= 10"
-            *ngIf="notificationCount > 0">
-            {{ notificationCount > 99 ? '99+' : notificationCount }}
-          </div>
-        </ion-button>
-
-        <div class="user-profile" (click)="openProfileMenu()">
-          <img
-            [src]="getUserPhoto()"
-            [alt]="userName || 'Utilisateur'"
-            class="profile-image"
-            (error)="onImageError($event)"
-            (click)="debugUserData()"
-            loading="lazy">
+          <span class="badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+        </div>
+        <div class="avatar" (click)="openProfileMenu()">
+          <img [src]="getUserPhoto()" [alt]="userName" (error)="onImageError($event)">
         </div>
       </div>
     </div>
-
-    <!-- Search bar simple -->
-    <div class="search-section">
-      <ion-searchbar
-        placeholder="Rechercher un service..."
-        class="simple-searchbar"
-        [debounce]="300">
-      </ion-searchbar>
+    
+    <!-- Barre de recherche -->
+    <div class="search-bar">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" [placeholder]="t('home.search')">
     </div>
   </div>
 </ion-header>
@@ -97,7 +74,7 @@
         [class.active]="selectedFilter === 'all'"
         (click)="selectFilter('all')">
         <ion-icon name="apps-outline"></ion-icon>
-        <ion-label>Tous</ion-label>
+        <ion-label>{{ t('home.all') }}</ion-label>
       </ion-chip>
 
       <ion-chip
@@ -105,7 +82,7 @@
         [class.active]="selectedFilter === 'streaming'"
         (click)="selectFilter('streaming')">
         <ion-icon name="play-circle-outline"></ion-icon>
-        <ion-label>Streaming</ion-label>
+        <ion-label>{{ t('home.streaming') }}</ion-label>
       </ion-chip>
 
       <ion-chip
@@ -113,7 +90,7 @@
         [class.active]="selectedFilter === 'music'"
         (click)="selectFilter('music')">
         <ion-icon name="musical-notes-outline"></ion-icon>
-        <ion-label>Musique</ion-label>
+        <ion-label>{{ t('home.music') }}</ion-label>
       </ion-chip>
 
       <ion-chip
@@ -121,7 +98,7 @@
         [class.active]="selectedFilter === 'gaming'"
         (click)="selectFilter('gaming')">
         <ion-icon name="game-controller-outline"></ion-icon>
-        <ion-label>Gaming</ion-label>
+        <ion-label>{{ t('home.gaming') }}</ion-label>
       </ion-chip>
 
       <ion-chip
@@ -129,7 +106,7 @@
         [class.active]="selectedFilter === 'productivity'"
         (click)="selectFilter('productivity')">
         <ion-icon name="briefcase-outline"></ion-icon>
-        <ion-label>Productivité</ion-label>
+        <ion-label>{{ t('home.productivity') }}</ion-label>
       </ion-chip>
     </div>
   </div>
@@ -146,7 +123,7 @@
     </span>
   
   </div>
-    <div class="soustitre" style="color: gray;display: flex;justify-content: space-between;">Jours restant<span>jours</span></div>
+    <div class="soustitre" style="color: gray;display: flex;justify-content: space-between;">{{ t('home.days_remaining') }}<span>{{ t('home.days') }}</span></div>
     <div class="progress-container">
       <div class="progress-bar">
         <div class="progress-track">
@@ -163,17 +140,17 @@
         </div>
       </div>
     </div>
-    <div class="soustitre" style="padding-top: 3%;color: gray;display: flex;justify-content: space-between;"> Plan:  {{ selectedPlanName }} <span >1 mois</span></div>
+    <div class="soustitre" style="padding-top: 3%;color: gray;display: flex;justify-content: space-between;"> {{ t('home.plan') }}:  {{ selectedPlanName }} <span>1 {{ t('home.month') }}</span></div>
     <div class="flex">
       <ion-button [routerLink]="['/pay']" class="resubscribe-btn" color="danger">
         <ion-icon slot="end" name="flash-sharp"></ion-icon>
-        <span class="btn-text">Réabonner</span>
+        <span class="btn-text">{{ t('home.resubscribe') }}</span>
       </ion-button>
 
       <!-- Bouton Désabonner -->
       <ion-button class="unsubscribe-btn" fill="outline" (click)="showDialog()" (click)="resetNumbers()">
         <ion-icon slot="end" name="flash-off-sharp"></ion-icon>
-        <span class="btn-text">Désabonner</span>
+        <span class="btn-text">{{ t('home.unsubscribe') }}</span>
       </ion-button>
       
     </div>
@@ -185,9 +162,9 @@
 <div class="section-header">
   <h2 class="section-title">
     <ion-icon name="play-circle" class="title-icon"></ion-icon>
-    Services & Streaming
+    {{ t('home.services_streaming') }}
   </h2>
-  <p class="section-subtitle">Gérez vos abonnements et accédez à vos services</p>
+  <p class="section-subtitle">{{ t('home.services_subtitle') }}</p>
 </div>
 
 <div class="services-grid">
@@ -264,28 +241,28 @@
       <div class="action-icon">
         <ion-icon name="people-outline"></ion-icon>
       </div>
-      <span class="action-label">Comptes</span>
+      <span class="action-label">{{ t('home.accounts') }}</span>
     </div>
 
     <div class="action-card" [routerLink]="['/support']">
       <div class="action-icon">
         <ion-icon name="help-circle-outline"></ion-icon>
       </div>
-      <span class="action-label">Aide</span>
+      <span class="action-label">{{ t('home.help') }}</span>
     </div>
 
     <div class="action-card" [routerLink]="['/actus']">
       <div class="action-icon">
         <ion-icon name="film-outline"></ion-icon>
       </div>
-      <span class="action-label">Actus film</span>
+      <span class="action-label">{{ t('home.news') }}</span>
     </div>
 
     <div class="action-card" [routerLink]="['/partage']">
       <div class="action-icon">
         <ion-icon name="share-social-outline"></ion-icon>
       </div>
-      <span class="action-label">Partager</span>
+      <span class="action-label">{{ t('home.share') }}</span>
     </div>
   </div>
 </div>
@@ -297,9 +274,9 @@
   <div class="section-header">
     <h2 class="section-title">
       <ion-icon name="sparkles" class="title-icon"></ion-icon>
-      Découvrir & Divertissement
+      {{ t('home.discover') }}
     </h2>
-    <p class="section-subtitle">Explorez nos services de divertissement et plus encore</p>
+    <p class="section-subtitle">{{ t('home.discover_subtitle') }}</p>
   </div>
 
   <div class="discover-grid">
@@ -310,8 +287,8 @@
           <ion-icon name="film-outline"></ion-icon>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Cinéma</h3>
-          <p class="card-description">Films & séries</p>
+          <h3 class="card-title">{{ t('home.cinema') }}</h3>
+          <p class="card-description">{{ t('home.films_series') }}</p>
         </div>
         <div class="card-badge">
           <ion-icon name="star"></ion-icon>
@@ -326,8 +303,8 @@
           <ion-icon name="game-controller-outline"></ion-icon>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Gaming</h3>
-          <p class="card-description">Jeux & consoles</p>
+          <h3 class="card-title">{{ t('home.gaming') }}</h3>
+          <p class="card-description">{{ t('home.games_consoles') }}</p>
         </div>
         <div class="card-badge">
           <ion-icon name="trophy"></ion-icon>
@@ -342,8 +319,8 @@
           <ion-icon name="bag-outline"></ion-icon>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Shopping</h3>
-          <p class="card-description">Achats en ligne</p>
+          <h3 class="card-title">{{ t('home.shopping') }}</h3>
+          <p class="card-description">{{ t('home.online_shopping') }}</p>
         </div>
         <div class="card-badge">
           <ion-icon name="flash"></ion-icon>
@@ -358,8 +335,8 @@
           <ion-icon name="people-outline"></ion-icon>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Social</h3>
-          <p class="card-description">Réseaux sociaux</p>
+          <h3 class="card-title">{{ t('home.social') }}</h3>
+          <p class="card-description">{{ t('home.social_networks') }}</p>
         </div>
         <div class="card-badge">
           <ion-icon name="heart"></ion-icon>

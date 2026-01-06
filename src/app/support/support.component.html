@@ -7,8 +7,8 @@
         <ion-icon name="chevron-back" class="back-icon"></ion-icon>
       </ion-button>
       <div class="header-title-section">
-        <h1 class="page-title">Centre d'Aide</h1>
-        <p class="page-subtitle">Nous sommes là pour vous accompagner</p>
+        <h1 class="page-title">{{ t('support.title') }}</h1>
+        <p class="page-subtitle">{{ t('support.subtitle') }}</p>
       </div>
       <div class="header-status">
         <div class="status-indicator online">
@@ -26,8 +26,8 @@
       <div class="header-icon">
         <ion-icon name="headset"></ion-icon>
       </div>
-      <h2>Centre d'Aide MobilPay</h2>
-      <p>Choisissez comment nous pouvons vous aider</p>
+      <h2>{{ t('support.help_center') }}</h2>
+      <p>{{ t('support.choose_help') }}</p>
     </div>
 
     <!-- Actions de Contact Principales -->
@@ -37,9 +37,9 @@
           <ion-icon name="chatbubbles"></ion-icon>
         </div>
         <div class="contact-info">
-          <h3>Chat en Direct</h3>
-          <p>Réponse immédiate</p>
-          <span class="status online">● En ligne</span>
+          <h3>{{ t('support.live_chat') }}</h3>
+          <p>{{ t('support.immediate_response') }}</p>
+          <span class="status online">● {{ t('support.online') }}</span>
         </div>
         <ion-icon name="chevron-forward" class="arrow"></ion-icon>
       </div>
@@ -49,9 +49,9 @@
           <ion-icon name="mail"></ion-icon>
         </div>
         <div class="contact-info">
-          <h3>Envoyer un Message</h3>
-          <p>Formulaire de contact</p>
-          <span class="status">Réponse sous 2h</span>
+          <h3>{{ t('support.send_message') }}</h3>
+          <p>{{ t('support.contact_form') }}</p>
+          <span class="status">{{ t('support.response_2h') }}</span>
         </div>
         <ion-icon name="chevron-forward" class="arrow"></ion-icon>
       </div>
@@ -61,9 +61,9 @@
           <ion-icon name="call"></ion-icon>
         </div>
         <div class="contact-info">
-          <h3>Téléphone</h3>
+          <h3>{{ t('support.phone') }}</h3>
           <p>+237 698 178 925</p>
-          <span class="status">Lun-Ven 8h-18h</span>
+          <span class="status">{{ t('support.phone_hours') }}</span>
         </div>
         <ion-icon name="chevron-forward" class="arrow"></ion-icon>
       </div>
@@ -71,15 +71,15 @@
 
     <!-- Ressources d'Aide Compactes -->
     <div class="help-resources">
-      <h3 class="resources-title">Ressources Utiles</h3>
+      <h3 class="resources-title">{{ t('support.useful_resources') }}</h3>
       <div class="resources-list">
         <div class="resource-item" (click)="openFAQ()">
           <div class="resource-icon">
             <ion-icon name="help-circle"></ion-icon>
           </div>
           <div class="resource-text">
-            <span class="resource-name">FAQ</span>
-            <span class="resource-count">{{ faqCount }} articles</span>
+            <span class="resource-name">{{ t('support.faq') }}</span>
+            <span class="resource-count">{{ faqCount }} {{ t('support.articles') }}</span>
           </div>
           <ion-icon name="chevron-forward"></ion-icon>
         </div>
@@ -89,8 +89,8 @@
             <ion-icon name="document"></ion-icon>
           </div>
           <div class="resource-text">
-            <span class="resource-name">Guides</span>
-            <span class="resource-count">{{ docsCount }} guides</span>
+            <span class="resource-name">{{ t('support.guides') }}</span>
+            <span class="resource-count">{{ docsCount }} {{ t('support.guides') }}</span>
           </div>
           <ion-icon name="chevron-forward"></ion-icon>
         </div>
@@ -100,8 +100,8 @@
             <ion-icon name="play-circle"></ion-icon>
           </div>
           <div class="resource-text">
-            <span class="resource-name">Vidéos</span>
-            <span class="resource-count">{{ tutorialsCount }} tutoriels</span>
+            <span class="resource-name">{{ t('support.videos') }}</span>
+            <span class="resource-count">{{ tutorialsCount }} {{ t('support.tutorials') }}</span>
           </div>
           <ion-icon name="chevron-forward"></ion-icon>
         </div>
@@ -111,8 +111,8 @@
             <ion-icon name="people"></ion-icon>
           </div>
           <div class="resource-text">
-            <span class="resource-name">Communauté</span>
-            <span class="resource-count">{{ communityCount }} membres</span>
+            <span class="resource-name">{{ t('support.community') }}</span>
+            <span class="resource-count">{{ communityCount }} {{ t('support.members') }}</span>
           </div>
           <ion-icon name="chevron-forward"></ion-icon>
         </div>
@@ -126,8 +126,8 @@
       <div class="header-icon">
         <ion-icon name="help-circle"></ion-icon>
       </div>
-      <h2>Questions Fréquentes</h2>
-      <p>Trouvez rapidement les réponses à vos questions</p>
+      <h2>{{ t('support.faq_title') }}</h2>
+      <p>{{ t('support.faq_subtitle') }}</p>
     </div>
 
     <div class="faq-list">
@@ -149,8 +149,8 @@
       <div class="header-icon">
         <ion-icon name="document"></ion-icon>
       </div>
-      <h2>Guides d'Utilisation</h2>
-      <p>Apprenez à utiliser MobilPay étape par étape</p>
+      <h2>{{ t('support.guides_title') }}</h2>
+      <p>{{ t('support.guides_subtitle') }}</p>
     </div>
 
     <div class="guides-list">
@@ -175,8 +175,8 @@
       <div class="header-icon online">
         <ion-icon name="chatbubbles"></ion-icon>
       </div>
-      <h2>Chat en Direct</h2>
-      <p>Notre équipe est en ligne pour vous aider</p>
+      <h2>{{ t('support.live_chat') }}</h2>
+      <p>{{ t('support.team_online') }}</p>
     </div>
 
     <div class="chat-container">
@@ -186,8 +186,8 @@
             <ion-icon name="headset"></ion-icon>
           </div>
           <div class="message-content">
-            <p>Bonjour ! Je suis l'assistant MobilPay. Comment puis-je vous aider aujourd'hui ?</p>
-            <span class="message-time">Maintenant</span>
+            <p>{{ t('support.bot_greeting') }}</p>
+            <span class="message-time">{{ t('support.now') }}</span>
           </div>
         </div>
       </div>
@@ -195,19 +195,19 @@
       <div class="chat-input-area">
         <div class="quick-responses">
           <ion-button fill="outline" size="small" (click)="sendQuickMessage('Problème de connexion')">
-            Problème de connexion
+            {{ t('support.connection_issue') }}
           </ion-button>
           <ion-button fill="outline" size="small" (click)="sendQuickMessage('Ajouter un compte')">
-            Ajouter un compte
+            {{ t('support.add_account') }}
           </ion-button>
           <ion-button fill="outline" size="small" (click)="sendQuickMessage('Question facturation')">
-            Question facturation
+            {{ t('support.billing_question') }}
           </ion-button>
         </div>
         
         <div class="chat-input">
           <ion-input 
-            placeholder="Tapez votre message..."
+            [placeholder]="t('support.type_message')"
             [(ngModel)]="chatMessage"
             (keyup.enter)="sendChatMessage()">
           </ion-input>
@@ -223,7 +223,7 @@
   <div class="contact-form-overlay" *ngIf="showContactForm">
     <div class="form-container">
       <div class="form-header">
-        <h3>Nous Contacter</h3>
+        <h3>{{ t('support.contact_us') }}</h3>
         <ion-button fill="clear" (click)="toggleContactForm()">
           <ion-icon name="close"></ion-icon>
         </ion-button>
@@ -232,7 +232,7 @@
       <!-- Étapes du formulaire simplifiées -->
       <div class="form-content">
         <div class="form-step" *ngIf="currentFormStep === 1">
-          <h4>Type de demande</h4>
+          <h4>{{ t('support.request_type') }}</h4>
           <div class="category-list">
             <div class="category-item" 
                  *ngFor="let category of supportCategories"
@@ -248,26 +248,26 @@
           <div class="form-fields-compact">
             <ion-input 
               [(ngModel)]="userName" 
-              placeholder="Votre nom"
+              [placeholder]="t('support.your_name')"
               fill="outline">
             </ion-input>
             
             <ion-input 
               [(ngModel)]="userEmail" 
               type="email"
-              placeholder="Votre email"
+              [placeholder]="t('support.your_email')"
               fill="outline">
             </ion-input>
             
             <ion-input 
               [(ngModel)]="subject" 
-              placeholder="Sujet"
+              [placeholder]="t('support.subject')"
               fill="outline">
             </ion-input>
             
             <ion-textarea 
               [(ngModel)]="message" 
-              placeholder="Votre message..."
+              [placeholder]="t('support.your_message')"
               rows="4"
               fill="outline">
             </ion-textarea>
@@ -277,7 +277,7 @@
         <div class="form-step" *ngIf="currentFormStep === 3">
           <div class="confirmation-summary">
             <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
-            <h4>Prêt à envoyer</h4>
+            <h4>{{ t('support.ready_to_send') }}</h4>
             <p>{{ getSelectedCategoryName() }} - {{ subject }}</p>
           </div>
         </div>
@@ -289,21 +289,21 @@
           fill="outline" 
           *ngIf="currentFormStep > 1"
           (click)="previousFormStep()">
-          Retour
+          {{ t('back') }}
         </ion-button>
 
         <ion-button 
           *ngIf="currentFormStep < 3"
           [disabled]="!canProceedToNextStep()"
           (click)="nextFormStep()">
-          Suivant
+          {{ t('next') }}
         </ion-button>
 
         <ion-button 
           color="success"
           *ngIf="currentFormStep === 3"
           (click)="sendMessage()">
-          Envoyer
+          {{ t('send') }}
         </ion-button>
       </div>
     </div>

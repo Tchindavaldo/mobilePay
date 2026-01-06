@@ -1,22 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../../firebase-config';
+import { LanguageService, Language } from '../services/language.service';
+import { ThemeService } from '../services/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss']
 })
-export class Tab3Page implements OnInit {
+export class Tab3Page implements OnInit, OnDestroy {
   userName: string | null = null;
   userPhoto: string | null = null;
   userEmail: string | null = null;
   notificationCount: number = 0;
 
   // Settings properties
-  selectedLanguage: string = 'fr';
+  selectedLanguage: Language = 'fr';
   selectedTheme: string = 'light';
   darkModeEnabled: boolean = false;
+  
+  private langSubscription?: Subscription;
+  private themeSubscription?: Subscription;
   notificationsEnabled: boolean = true;
   emailNotificationsEnabled: boolean = true;
   messageNotificationsEnabled: boolean = true;
@@ -36,10 +42,47 @@ export class Tab3Page implements OnInit {
     ]
   };
 
-  constructor() {}
+  constructor(
+    public langService: LanguageService,
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit() {
     this.loadUserData();
+    this.initializeSettings();
+  }
+
+  ngOnDestroy() {
+    this.langSubscription?.unsubscribe();
+    this.themeSubscription?.unsubscribe();
+  }
+
+  initializeSettings() {
+    // Initialiser la langue
+    this.selectedLanguage = this.langService.getCurrentLanguage();
+    this.langSubscription = this.langService.language$.subscribe(lang => {
+      this.selectedLanguage = lang;
+    });
+
+    // Initialiser le thème
+    this.darkModeEnabled = this.themeService.isDarkMode();
+    this.themeSubscription = this.themeService.theme$.subscribe(theme => {
+      this.darkModeEnabled = theme === 'dark';
+    });
+  }
+
+  onLanguageChange(event: any) {
+    const newLang = event.detail.value as Language;
+    this.langService.setLanguage(newLang);
+  }
+
+  onDarkModeChange(event: any) {
+    const enabled = event.detail.checked;
+    this.themeService.setTheme(enabled ? 'dark' : 'light');
+  }
+
+  t(key: string): string {
+    return this.langService.translate(key);
   }
 
   loadUserData() {

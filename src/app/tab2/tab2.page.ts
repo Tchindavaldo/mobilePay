@@ -3,6 +3,7 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../../firebase-config';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { LanguageService } from '../services/language.service';
 
 @Component({
   selector: 'app-tab2',
@@ -23,7 +24,15 @@ export class Tab2Page implements OnInit {
   userPhoto: string | null = null;
   notificationCount: number = 0;
 
-  constructor(private router: Router, private alertController: AlertController) {}
+  constructor(
+    private router: Router,
+    private alertController: AlertController,
+    public langService: LanguageService
+  ) {}
+
+  t(key: string): string {
+    return this.langService.translate(key);
+  }
   
   ngOnInit() {
     this.loadUserData();

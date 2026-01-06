@@ -4,6 +4,7 @@ import { map, take } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
 import { ActivationManagerService } from '../services/activation/activation-manager.service';
 import { PlanActivation } from '../services/store/plan-activation/plan-activation-reducer';
+import { LanguageService } from '../services/language.service';
 
 interface Activation {
   id: string;
@@ -35,8 +36,13 @@ export class ActivationsPage implements OnInit, OnDestroy {
 
   constructor(
     private activationManager: ActivationManagerService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    public langService: LanguageService
   ) { }
+
+  t(key: string): string {
+    return this.langService.translate(key);
+  }
 
   async ngOnInit() {
     console.log('🚀 Initialisation de la page activations avec NgRx');

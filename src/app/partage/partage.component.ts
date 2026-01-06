@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LanguageService } from '../services/language.service';
 // import { Share } from '@capacitor/share';
 
 @Component({
@@ -20,9 +21,13 @@ export class PartageComponent implements OnInit {
   // Share dropdown
   showShareDropdown: boolean = false;
 
-  constructor() {}
+  constructor(public langService: LanguageService) {}
 
   ngOnInit() {}
+
+  t(key: string): string {
+    return this.langService.translate(key);
+  }
 
   // Navigation
   goBack(): void {

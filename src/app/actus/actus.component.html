@@ -7,8 +7,8 @@
         <ion-icon name="chevron-back" class="back-icon"></ion-icon>
       </ion-button>
       <div class="header-title-section">
-        <h1 class="page-title">Actualités Cinéma</h1>
-        <p class="page-subtitle">Découvrez les derniers films et séries</p>
+        <h1 class="page-title">{{ t('news.title') }}</h1>
+        <p class="page-subtitle">{{ t('news.subtitle') }}</p>
       </div>
       <ion-button fill="clear" class="filter-btn" (click)="toggleFilters()">
         <ion-icon name="options"></ion-icon>
@@ -27,11 +27,11 @@
       <div class="hero-badges">
         <span class="featured-badge">
           <ion-icon name="star"></ion-icon>
-          Film vedette
+          {{ t('news.featured') }}
         </span>
         <span class="new-badge" *ngIf="featuredMovie.isNew">
           <ion-icon name="flash"></ion-icon>
-          Nouveau
+          {{ t('news.new') }}
         </span>
       </div>
       
@@ -59,11 +59,11 @@
       <div class="hero-actions">
         <ion-button class="primary-btn" (click)="playTrailer(featuredMovie)" *ngIf="featuredMovie.trailer">
           <ion-icon name="play" slot="start"></ion-icon>
-          Regarder la bande-annonce
+          {{ t('news.watch_trailer') }}
         </ion-button>
         <ion-button fill="outline" class="secondary-btn" (click)="openMovieDetails(featuredMovie)">
           <ion-icon name="information-circle-outline" slot="start"></ion-icon>
-          Plus d'infos
+          {{ t('news.more_info') }}
         </ion-button>
         <div class="quick-actions">
           <ion-button fill="clear" class="action-btn" [class.active]="featuredMovie.liked" (click)="likeMovie(featuredMovie)">
@@ -84,13 +84,13 @@
   <div class="filters-section">
     <ion-segment [(ngModel)]="selectedCategory" (ionChange)="selectCategory(selectedCategory)">
       <ion-segment-button value="all">
-        <ion-label>Tous</ion-label>
+        <ion-label>{{ t('news.all') }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="trending">
-        <ion-label>Tendances</ion-label>
+        <ion-label>{{ t('news.trending') }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="new">
-        <ion-label>Nouveautés</ion-label>
+        <ion-label>{{ t('news.new_releases') }}</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -100,9 +100,9 @@
     <div class="section-header">
       <h2 class="section-title">
         <ion-icon name="trending-up" class="section-icon"></ion-icon>
-        Tendances du moment
+        {{ t('news.trending_now') }}
       </h2>
-      <p class="section-subtitle">Les films les plus populaires cette semaine</p>
+      <p class="section-subtitle">{{ t('news.trending_subtitle') }}</p>
     </div>
     
     <div class="movies-grid">
@@ -143,9 +143,9 @@
     <div class="section-header">
       <h2 class="section-title">
         <ion-icon name="flash" class="section-icon"></ion-icon>
-        Nouvelles sorties
+        {{ t('news.new_releases') }}
       </h2>
-      <p class="section-subtitle">Les derniers films ajoutés cette semaine</p>
+      <p class="section-subtitle">{{ t('news.new_releases_subtitle') }}</p>
     </div>
     
     <div class="movies-grid">
@@ -161,7 +161,7 @@
           </div>
           <div class="card-badges">
             <span class="rating-badge">⭐ {{ movie.rating }}</span>
-            <span class="new-badge" *ngIf="movie.isNew">✨ NOUVEAU</span>
+            <span class="new-badge" *ngIf="movie.isNew">✨ {{ t('news.new') | uppercase }}</span>
           </div>
         </div>
         <div class="movie-info">
@@ -230,12 +230,12 @@
               <div class="modal-actions">
                 <ion-button class="primary-action" (click)="playTrailer(selectedMovie)" *ngIf="selectedMovie.trailer && !isTrailerPlaying">
                   <ion-icon name="play" slot="start"></ion-icon>
-                  Voir la bande-annonce
+                  {{ t('news.watch_trailer') }}
                 </ion-button>
                 
                 <ion-button fill="outline" class="secondary-action" (click)="setNotification(selectedMovie)">
                   <ion-icon name="notifications-outline" slot="start"></ion-icon>
-                  Me notifier
+                  {{ t('news.notify_me') }}
                 </ion-button>
                 
                 <div class="interaction-buttons">

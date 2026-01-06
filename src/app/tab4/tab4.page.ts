@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../../firebase-config';
+import { LanguageService } from '../services/language.service';
 
 @Component({
   selector: 'app-tab4',
@@ -12,7 +13,11 @@ export class Tab4Page implements OnInit {
   userPhoto: string | null = null;
   notificationCount: number = 0;
 
-  constructor() { }
+  constructor(public langService: LanguageService) { }
+
+  t(key: string): string {
+    return this.langService.translate(key);
+  }
 
   ngOnInit() {
     this.loadUserData();

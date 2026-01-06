@@ -7,13 +7,13 @@
         <ion-icon name="chevron-back" class="back-icon"></ion-icon>
       </ion-button>
       <div class="header-title-section">
-        <h1 class="page-title">Mes Comptes</h1>
-        <p class="page-subtitle">Gérez vos comptes de streaming</p>
+        <h1 class="page-title">{{ t('account.my_accounts') }}</h1>
+        <p class="page-subtitle">{{ t('account.manage_streaming') }}</p>
       </div>
       <div class="header-stats">
         <div class="stats-indicator">
           <ion-icon name="tv"></ion-icon>
-          <span>{{ accounts.length }} comptes</span>
+          <span>{{ accounts.length }} {{ t('account.accounts') }}</span>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="stat-info">
           <span class="stat-number">{{ accounts.length }}</span>
-          <span class="stat-label">Comptes total</span>
+          <span class="stat-label">{{ t('account.total_accounts') }}</span>
         </div>
       </div>
       <div class="stat-card">
@@ -40,7 +40,7 @@
         </div>
         <div class="stat-info">
           <span class="stat-number">{{ getActiveAccounts() }}</span>
-          <span class="stat-label">Actifs</span>
+          <span class="stat-label">{{ t('account.active') }}</span>
         </div>
       </div>
       <div class="stat-card primary">
@@ -49,7 +49,7 @@
         </div>
         <div class="stat-info">
           <span class="stat-number">{{ getInactiveAccounts() }}</span>
-          <span class="stat-label">Inactifs</span>
+          <span class="stat-label">{{ t('account.inactive') }}</span>
         </div>
       </div>
     </div>
@@ -58,7 +58,7 @@
     <div class="accounts-management-section">
       <div class="accounts-header">
         <ion-icon name="tv"></ion-icon>
-        <span>Vos Comptes Streaming</span>
+        <span>{{ t('account.your_streaming') }}</span>
       </div>
       
       <ion-button 
@@ -66,7 +66,7 @@
         class="main-add-btn" 
         (click)="toggleAccountsView()">
         <ion-icon name="add" slot="start"></ion-icon>
-        Gérer mes comptes
+        {{ t('account.manage_accounts') }}
         <ion-icon [name]="showAccountsGrid ? 'chevron-up' : 'chevron-down'" slot="end"></ion-icon>
       </ion-button>
 
@@ -120,8 +120,8 @@
           <div class="add-icon">
             <ion-icon name="add-circle"></ion-icon>
           </div>
-          <h3>Ajouter un Compte</h3>
-          <p>Connectez un nouveau service de streaming</p>
+          <h3>{{ t('account.add_account') }}</h3>
+          <p>{{ t('account.connect_new') }}</p>
         </div>
       </div>
         </div>

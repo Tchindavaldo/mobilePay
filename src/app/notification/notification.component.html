@@ -6,24 +6,24 @@
         <ion-icon name="notifications"></ion-icon>
       </div>
       <div class="overview-info">
-        <h2 class="overview-title">Mes Notifications</h2>
-        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications > 0">{{ unreadNotifications }} nouvelle(s)</p>
-        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications === 0">À jour</p>
+        <h2 class="overview-title">{{ t('notification.my_notifications') }}</h2>
+        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications > 0">{{ unreadNotifications }} {{ t('notification.new_count') }}</p>
+        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications === 0">{{ t('notification.up_to_date') }}</p>
       </div>
     </div>
     <div class="overview-stats">
       <div class="stat-item">
         <span class="stat-value">{{ notifications.length }}</span>
-        <span class="stat-label">Total</span>
+        <span class="stat-label">{{ t('notification.total') }}</span>
       </div>
     </div>
   </div>
 
   <!-- Bouton Effacer tout -->
   <div class="clear-all-section" *ngIf="notifications.length > 0">
-    <ion-button fill="clear" class="clear-all-btn" (click)="clearAllNotifications()">
-      <ion-icon name="trash-outline"></ion-icon>
-      Effacer tout
+    <ion-button fill="solid" class="clear-all-btn" (click)="clearAllNotifications()">
+      <ion-icon name="trash-outline" slot="start"></ion-icon>
+      {{ t('notification.clear_all') }}
     </ion-button>
   </div>
 
@@ -32,8 +32,8 @@
     <div class="empty-icon">
       <ion-icon name="notifications-off-outline"></ion-icon>
     </div>
-    <h2>Aucune notification</h2>
-    <p>Vous êtes à jour ! Aucune nouvelle notification pour le moment.</p>
+    <h2>{{ t('notification.no_notifications') }}</h2>
+    <p>{{ t('notification.no_notifications_desc') }}</p>
   </div>
 
   <!-- Liste des notifications -->

@@ -11,14 +11,14 @@
           <ion-icon name="card"></ion-icon>
         </div>
         <div class="overview-info">
-          <h2 class="overview-title">Mes Transactions</h2>
+          <h2 class="overview-title">{{ t('transactions.my_transactions') }}</h2>
           <p class="overview-subtitle overview-amount">12,500F</p>
         </div>
       </div>
       <div class="overview-stats">
         <div class="stat-item">
           <span class="stat-value">8</span>
-          <span class="stat-label">Total</span>
+          <span class="stat-label">{{ t('transactions.total') }}</span>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
 
     <!-- Section Aperçu avec stats sur une ligne -->
     <div class="transactions-section">
-      <h3 class="section-title">Aperçu</h3>
+      <h3 class="section-title">{{ t('transactions.overview') }}</h3>
 
       <div class="stats-grid">
         <div class="stat-box">
@@ -36,7 +36,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value-large">12,500F</div>
-            <div class="stat-label-small">Dépensé</div>
+            <div class="stat-label-small">{{ t('transactions.spent') }}</div>
           </div>
         </div>
 
@@ -46,7 +46,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value-large">8</div>
-            <div class="stat-label-small">Transactions</div>
+            <div class="stat-label-small">{{ t('tab.transactions') }}</div>
           </div>
         </div>
 
@@ -56,7 +56,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value-large">2,300F</div>
-            <div class="stat-label-small">Économies</div>
+            <div class="stat-label-small">{{ t('transactions.savings') }}</div>
           </div>
         </div>
       </div>
@@ -65,10 +65,10 @@
     <!-- Transactions récentes -->
     <div class="transactions-section">
       <div class="section-header">
-        <h3 class="section-title">Transactions récentes</h3>
+        <h3 class="section-title">{{ t('transactions.recent') }}</h3>
         <ion-button fill="clear" size="small" class="filter-btn">
           <ion-icon name="funnel-outline" slot="start"></ion-icon>
-          Filtrer
+          {{ t('transactions.filter') }}
         </ion-button>
       </div>
 
@@ -80,7 +80,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-label">Netflix Premium</div>
-            <div class="stat-description">Abonnement mensuel • 15 Jan 2024</div>
+            <div class="stat-description">{{ t('transactions.monthly_subscription') }} • 15 Jan 2024</div>
           </div>
           <div class="stat-value-group">
             <div class="stat-value">-2,000F</div>
@@ -93,7 +93,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-label">Spotify Premium</div>
-            <div class="stat-description">Abonnement mensuel • 12 Jan 2024</div>
+            <div class="stat-description">{{ t('transactions.monthly_subscription') }} • 12 Jan 2024</div>
           </div>
           <div class="stat-value-group">
             <div class="stat-value">-800F</div>
@@ -106,7 +106,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-label">Disney+ Premium</div>
-            <div class="stat-description">Abonnement mensuel • 10 Jan 2024</div>
+            <div class="stat-description">{{ t('transactions.monthly_subscription') }} • 10 Jan 2024</div>
           </div>
           <div class="stat-value-group">
             <div class="stat-value">-1,500F</div>
@@ -118,8 +118,8 @@
             <ion-icon name="arrow-up-circle"></ion-icon>
           </div>
           <div class="stat-content">
-            <div class="stat-label">Remboursement</div>
-            <div class="stat-description">Annulation service • 08 Jan 2024</div>
+            <div class="stat-label">{{ t('transactions.refund') }}</div>
+            <div class="stat-description">{{ t('transactions.service_cancellation') }} • 08 Jan 2024</div>
           </div>
           <div class="stat-value-group">
             <div class="stat-value">+1,200F</div>

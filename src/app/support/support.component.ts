@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { LanguageService } from '../services/language.service';
 
 interface SupportCategory {
   id: string;
@@ -189,9 +190,13 @@ export class SupportComponent implements OnInit {
     }
   ];
 
-  constructor() {}
+  constructor(public langService: LanguageService) {}
 
   ngOnInit() {}
+
+  t(key: string): string {
+    return this.langService.translate(key);
+  }
 
   // Navigation
   goBack(): void {

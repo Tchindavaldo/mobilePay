@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { LanguageService } from '../services/language.service';
 
 interface Movie {
   id: number;
@@ -26,7 +27,7 @@ interface Movie {
 export class ActusComponent implements OnInit {
   @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>;
 
-  constructor() {}
+  constructor(public langService: LanguageService) {}
 
   // Film vedette pour la hero section
   featuredMovie: Movie = {
@@ -127,6 +128,10 @@ export class ActusComponent implements OnInit {
 
 
   ngOnInit() {}
+
+  t(key: string): string {
+    return this.langService.translate(key);
+  }
 
   // Gestion des catégories
   selectCategory(category: string) {

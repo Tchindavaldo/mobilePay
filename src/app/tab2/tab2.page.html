@@ -20,18 +20,18 @@
         <div class="profile-badges">
           <span class="badge premium">
             <ion-icon name="star"></ion-icon>
-            Premium
+            {{ t('notifications.premium') }}
           </span>
           <span class="badge verified">
             <ion-icon name="checkmark-circle"></ion-icon>
-            Vérifié
+            {{ t('notifications.verified') }}
           </span>
         </div>
       </div>
       
       <ion-button class="edit-profile-btn" fill="outline" (click)="editProfile()">
         <ion-icon slot="start" name="create-outline"></ion-icon>
-        Modifier le profil
+        {{ t('notifications.edit_profile') }}
       </ion-button>
     </div>
   </div>
@@ -45,7 +45,7 @@
         </div>
         <div class="stat-info">
           <div class="stat-number">{{ user.followers }}</div>
-          <div class="stat-label">Comptes actifs</div>
+          <div class="stat-label">{{ t('notifications.active_accounts') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="stat-arrow"></ion-icon>
       </div>
@@ -56,7 +56,7 @@
         </div>
         <div class="stat-info">
           <div class="stat-number">{{ user.posts }}</div>
-          <div class="stat-label">Amis parrainés</div>
+          <div class="stat-label">{{ t('notifications.referred_friends') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="stat-arrow"></ion-icon>
       </div>
@@ -67,7 +67,7 @@
         </div>
         <div class="stat-info">
           <div class="stat-number">{{ user.likes }}</div>
-          <div class="stat-label">Points gagnés</div>
+          <div class="stat-label">{{ t('notifications.points_earned') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="stat-arrow"></ion-icon>
       </div>
@@ -79,9 +79,9 @@
     <div class="section-header">
       <h2 class="section-title">
         <ion-icon name="flash" class="section-icon"></ion-icon>
-        Actions rapides
+        {{ t('notifications.quick_actions') }}
       </h2>
-      <p class="section-subtitle">Accès direct à vos fonctionnalités</p>
+      <p class="section-subtitle">{{ t('notifications.quick_actions_desc') }}</p>
     </div>
 
     <div class="quick-actions-grid">
@@ -91,8 +91,8 @@
           <div class="action-icon blue">
             <ion-icon name="analytics"></ion-icon>
           </div>
-          <h3 class="action-title">Statistiques</h3>
-          <p class="action-desc">Voir vos données</p>
+          <h3 class="action-title">{{ t('notifications.statistics') }}</h3>
+          <p class="action-desc">{{ t('notifications.view_data') }}</p>
         </div>
         <div class="action-glow blue-glow"></div>
       </div>
@@ -103,8 +103,8 @@
           <div class="action-icon green">
             <ion-icon name="shield-checkmark"></ion-icon>
           </div>
-          <h3 class="action-title">Sécurité</h3>
-          <p class="action-desc">Protéger votre compte</p>
+          <h3 class="action-title">{{ t('notifications.security') }}</h3>
+          <p class="action-desc">{{ t('notifications.protect_account') }}</p>
         </div>
         <div class="action-glow green-glow"></div>
       </div>
@@ -115,8 +115,8 @@
           <div class="action-icon orange">
             <ion-icon name="notifications"></ion-icon>
           </div>
-          <h3 class="action-title">Notifications</h3>
-          <p class="action-desc">Gérer vos alertes</p>
+          <h3 class="action-title">{{ t('tab.notifications') }}</h3>
+          <p class="action-desc">{{ t('notifications.manage_alerts') }}</p>
         </div>
         <div class="action-glow orange-glow"></div>
       </div>
@@ -127,8 +127,8 @@
           <div class="action-icon purple">
             <ion-icon name="headset"></ion-icon>
           </div>
-          <h3 class="action-title">Support</h3>
-          <p class="action-desc">Obtenir de l'aide</p>
+          <h3 class="action-title">{{ t('support.title') }}</h3>
+          <p class="action-desc">{{ t('notifications.get_help') }}</p>
         </div>
         <div class="action-glow purple-glow"></div>
       </div>
@@ -140,9 +140,9 @@
     <div class="section-header">
       <h2 class="section-title">
         <ion-icon name="settings" class="section-icon"></ion-icon>
-        Gestion du compte
+        {{ t('notifications.account_management') }}
       </h2>
-      <p class="section-subtitle">Contrôlez tous vos paramètres</p>
+      <p class="section-subtitle">{{ t('notifications.control_settings') }}</p>
     </div>
 
     <div class="management-grid">
@@ -154,8 +154,8 @@
           <div class="card-badge">{{ user.followers }}</div>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Mes abonnements</h3>
-          <p class="card-description">Gérer vos comptes de streaming</p>
+          <h3 class="card-title">{{ t('notifications.my_subscriptions') }}</h3>
+          <p class="card-description">{{ t('notifications.manage_streaming') }}</p>
         </div>
         <div class="card-arrow">
           <ion-icon name="chevron-forward"></ion-icon>
@@ -170,8 +170,8 @@
           <div class="card-badge">{{ user.posts }}</div>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Partage & Parrainage</h3>
-          <p class="card-description">Inviter vos amis et gagner des points</p>
+          <h3 class="card-title">{{ t('notifications.share_referral') }}</h3>
+          <p class="card-description">{{ t('notifications.invite_friends') }}</p>
         </div>
         <div class="card-arrow">
           <ion-icon name="chevron-forward"></ion-icon>
@@ -183,11 +183,11 @@
           <div class="card-icon purple">
             <ion-icon name="card"></ion-icon>
           </div>
-          <div class="card-badge new">Nouveau</div>
+          <div class="card-badge new">{{ t('notifications.new') }}</div>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Transactions</h3>
-          <p class="card-description">Historique de vos paiements</p>
+          <h3 class="card-title">{{ t('tab.transactions') }}</h3>
+          <p class="card-description">{{ t('notifications.payment_history') }}</p>
         </div>
         <div class="card-arrow">
           <ion-icon name="chevron-forward"></ion-icon>
@@ -201,8 +201,8 @@
           </div>
         </div>
         <div class="card-content">
-          <h3 class="card-title">Se déconnecter</h3>
-          <p class="card-description">Quitter votre session en toute sécurité</p>
+          <h3 class="card-title">{{ t('notifications.logout') }}</h3>
+          <p class="card-description">{{ t('notifications.logout_desc') }}</p>
         </div>
         <div class="card-arrow">
           <ion-icon name="chevron-forward"></ion-icon>

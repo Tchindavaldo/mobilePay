@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { SocketService } from '../services/socket/socket.service';
+import { LanguageService } from '../services/language.service';
 
 @Component({
   selector: 'app-tabs',
@@ -14,7 +15,8 @@ export class TabsPage implements OnInit {
   constructor(
     private router: Router,
     private platform: Platform,
-    private socketService: SocketService
+    private socketService: SocketService,
+    public langService: LanguageService
   ) {
     // Initialiser les sockets au démarrage de l'application
     this.platform.ready().then(() => {
@@ -33,5 +35,9 @@ export class TabsPage implements OnInit {
 
   onTabsDidChange(event: any) {
     this.selectedTab = event?.detail?.tab ?? this.selectedTab;
+  }
+
+  t(key: string): string {
+    return this.langService.translate(key);
   }
 }

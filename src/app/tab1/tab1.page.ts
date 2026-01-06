@@ -14,6 +14,7 @@ import { PlanService } from '../plan.service';
 import { NotificationService, Notification } from '../notification.service';
 import { UserStorageService } from '../services/storage/user-storage.service';
 import { UserDataService } from '../services/user/data/user-data.service';
+import { LanguageService } from '../services/language.service';
 
 @Component({
   selector: 'app-tab1',
@@ -29,6 +30,7 @@ export class Tab1Page implements OnInit {
   notificationCount: number = 0;
   isDialogVisible: boolean = false;
   selectedFilter: string = 'all';
+  userBalance: number = 0;
   showTooltip: boolean = false;
   currentSlide: number = 0;
   totalSlides: number = 3;
@@ -42,7 +44,8 @@ export class Tab1Page implements OnInit {
     private planService: PlanService,
     private notificationService: NotificationService,
     private userStorage: UserStorageService,
-    private userData: UserDataService
+    private userData: UserDataService,
+    public langService: LanguageService
   ) {
     addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, ionDocument, globe });
     
@@ -244,13 +247,23 @@ export class Tab1Page implements OnInit {
 
   getTimeGreeting(): string {
     const hour = new Date().getHours();
-    if (hour < 12) {
-      return 'Bonne matinée ! ☀️';
-    } else if (hour < 18) {
-      return 'Bon après-midi ! 🌤️';
-    } else {
-      return 'Bonne soirée ! 🌙';
+    const lang = this.langService.getCurrentLanguage();
+    if (lang === 'en') {
+      if (hour < 12) return 'Good morning! ☀️';
+      else if (hour < 18) return 'Good afternoon! 🌤️';
+      else return 'Good evening! 🌙';
+    } else if (lang === 'es') {
+      if (hour < 12) return '¡Buenos días! ☀️';
+      else if (hour < 18) return '¡Buenas tardes! 🌤️';
+      else return '¡Buenas noches! 🌙';
     }
+    if (hour < 12) return 'Bonne matinée ! ☀️';
+    else if (hour < 18) return 'Bon après-midi ! 🌤️';
+    else return 'Bonne soirée ! 🌙';
+  }
+
+  t(key: string): string {
+    return this.langService.translate(key);
   }
 
   getUserPhoto(): string {

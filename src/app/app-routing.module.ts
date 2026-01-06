@@ -16,6 +16,7 @@ import { JeuxComponent } from './jeux/jeux.component';
 import { SiteComponent } from './site/site.component';
 import { AchatsComponent } from './achats/achats.component';
 import { PhoneAuthComponent } from './phone-auth/phone-auth.component';
+import { ProfilePage } from './profile/profile.page';
 
 const routes: Routes = [
   {
@@ -94,6 +95,10 @@ const routes: Routes = [
   {
     path: 'activations',
     loadChildren: () => import('./activations/activations.module').then( m => m.ActivationsPageModule)
+  },
+  {
+    path: 'profile',
+    component: ProfilePage
   },
 ];
 @NgModule({

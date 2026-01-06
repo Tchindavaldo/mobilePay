@@ -7,8 +7,8 @@
         <ion-icon name="settings"></ion-icon>
       </div>
       <div class="overview-info">
-        <h2 class="overview-title">Paramètres</h2>
-        <p class="overview-subtitle">Personnalisez votre app</p>
+        <h2 class="overview-title">{{ t('settings') }}</h2>
+        <p class="overview-subtitle">{{ t('settings.subtitle') }}</p>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@
   <div class="settings-wrapper">
     <!-- Général Section -->
   <div class="settings-section">
-    <h3 class="section-title">Général</h3>
+    <h3 class="section-title">{{ t('general') }}</h3>
     
     <div class="settings-card">
       <div class="setting-item" lines="none">
@@ -25,10 +25,10 @@
           <ion-icon name="language-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Langue</div>
-          <div class="setting-description">Choisissez votre langue</div>
+          <div class="setting-label">{{ t('language') }}</div>
+          <div class="setting-description">{{ t('language.description') }}</div>
         </div>
-        <ion-select class="modern-select" interface="action-sheet" [(ngModel)]="selectedLanguage">
+        <ion-select class="modern-select" interface="action-sheet" [value]="selectedLanguage" (ionChange)="onLanguageChange($event)">
           <ion-select-option value="fr">🇫🇷 Français</ion-select-option>
           <ion-select-option value="en">🇬🇧 English</ion-select-option>
           <ion-select-option value="es">🇪🇸 Español</ion-select-option>
@@ -42,17 +42,17 @@
           <ion-icon name="moon-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Mode sombre</div>
-          <div class="setting-description">Activez le thème sombre</div>
+          <div class="setting-label">{{ t('dark_mode') }}</div>
+          <div class="setting-description">{{ t('dark_mode.description') }}</div>
         </div>
-        <ion-toggle class="modern-toggle" [(ngModel)]="darkModeEnabled"></ion-toggle>
+        <ion-toggle class="modern-toggle" [checked]="darkModeEnabled" (ionChange)="onDarkModeChange($event)"></ion-toggle>
       </div>
     </div>
   </div>
 
   <!-- Notifications Section -->
   <div class="settings-section">
-    <h3 class="section-title">Notifications</h3>
+    <h3 class="section-title">{{ t('notifications') }}</h3>
     
     <div class="settings-card">
       <div class="setting-item">
@@ -60,8 +60,8 @@
           <ion-icon name="notifications-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Notifications push</div>
-          <div class="setting-description">Recevez des notifications</div>
+          <div class="setting-label">{{ t('push_notifications') }}</div>
+          <div class="setting-description">{{ t('push_notifications.description') }}</div>
         </div>
         <ion-toggle class="modern-toggle" [(ngModel)]="notificationsEnabled"></ion-toggle>
       </div>
@@ -71,8 +71,8 @@
           <ion-icon name="mail-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Notifications email</div>
-          <div class="setting-description">Recevez des emails</div>
+          <div class="setting-label">{{ t('email_notifications') }}</div>
+          <div class="setting-description">{{ t('email_notifications.description') }}</div>
         </div>
         <ion-toggle class="modern-toggle" [(ngModel)]="emailNotificationsEnabled"></ion-toggle>
       </div>
@@ -82,8 +82,8 @@
           <ion-icon name="chatbox-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Messages</div>
-          <div class="setting-description">Notifications de messages</div>
+          <div class="setting-label">{{ t('messages') }}</div>
+          <div class="setting-description">{{ t('messages.description') }}</div>
         </div>
         <ion-toggle class="modern-toggle" [(ngModel)]="messageNotificationsEnabled"></ion-toggle>
       </div>
@@ -92,7 +92,7 @@
 
   <!-- Sécurité Section -->
   <div class="settings-section">
-    <h3 class="section-title">Sécurité & Confidentialité</h3>
+    <h3 class="section-title">{{ t('security') }}</h3>
     
     <div class="settings-card">
       <div class="setting-item clickable" (click)="changePassword()">
@@ -100,8 +100,8 @@
           <ion-icon name="lock-closed-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Mot de passe</div>
-          <div class="setting-description">Modifiez votre mot de passe</div>
+          <div class="setting-label">{{ t('password') }}</div>
+          <div class="setting-description">{{ t('password.description') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
@@ -111,8 +111,8 @@
           <ion-icon name="finger-print-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Biométrie</div>
-          <div class="setting-description">Touch ID / Face ID</div>
+          <div class="setting-label">{{ t('biometrics') }}</div>
+          <div class="setting-description">{{ t('biometrics.description') }}</div>
         </div>
         <ion-toggle class="modern-toggle" [(ngModel)]="biometricEnabled"></ion-toggle>
       </div>
@@ -122,8 +122,8 @@
           <ion-icon name="shield-checkmark-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Vérification en 2 étapes</div>
-          <div class="setting-description">Sécurité renforcée</div>
+          <div class="setting-label">{{ t('two_factor') }}</div>
+          <div class="setting-description">{{ t('two_factor.description') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
@@ -132,16 +132,16 @@
 
   <!-- Compte Section -->
   <div class="settings-section">
-    <h3 class="section-title">Mon compte</h3>
+    <h3 class="section-title">{{ t('my_account') }}</h3>
     
     <div class="settings-card">
-      <div class="setting-item clickable" routerLink="/tabs/tab2">
+      <div class="setting-item clickable" routerLink="/profile">
         <div class="setting-icon-wrapper blue">
           <ion-icon name="person-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Profil</div>
-          <div class="setting-description">Gérez votre profil</div>
+          <div class="setting-label">{{ t('profile') }}</div>
+          <div class="setting-description">{{ t('profile.description') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
@@ -151,10 +151,10 @@
           <ion-icon name="card-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Abonnement</div>
-          <div class="setting-description">Gérez votre abonnement</div>
+          <div class="setting-label">{{ t('subscription') }}</div>
+          <div class="setting-description">{{ t('subscription.description') }}</div>
         </div>
-        <ion-badge color="danger" class="premium-badge">Premium</ion-badge>
+        <ion-badge color="danger" class="premium-badge">{{ t('premium') }}</ion-badge>
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
     </div>
@@ -162,7 +162,7 @@
 
   <!-- Support Section -->
   <div class="settings-section">
-    <h3 class="section-title">Aide & Support</h3>
+    <h3 class="section-title">{{ t('help_support') }}</h3>
     
     <div class="settings-card">
       <div class="setting-item clickable" (click)="contactSupport()" [routerLink]="['/support']">
@@ -170,8 +170,8 @@
           <ion-icon name="headset-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">Support client</div>
-          <div class="setting-description">Contactez-nous</div>
+          <div class="setting-label">{{ t('customer_support') }}</div>
+          <div class="setting-description">{{ t('customer_support.description') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
@@ -181,8 +181,8 @@
           <ion-icon name="help-circle-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">FAQ</div>
-          <div class="setting-description">Questions fréquentes</div>
+          <div class="setting-label">{{ t('faq') }}</div>
+          <div class="setting-description">{{ t('faq.description') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
@@ -192,8 +192,8 @@
           <ion-icon name="information-circle-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label">À propos</div>
-          <div class="setting-description">Version 1.0.0</div>
+          <div class="setting-label">{{ t('about') }}</div>
+          <div class="setting-description">{{ t('about.description') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
@@ -202,7 +202,7 @@
 
   <!-- Danger Zone -->
   <div class="settings-section danger-zone">
-    <h3 class="section-title danger">Zone dangereuse</h3>
+    <h3 class="section-title danger">{{ t('danger_zone') }}</h3>
     
     <div class="settings-card danger-card">
       <div class="setting-item clickable" (click)="deleteAccount()">
@@ -210,8 +210,8 @@
           <ion-icon name="trash-outline"></ion-icon>
         </div>
         <div class="setting-content">
-          <div class="setting-label danger">Supprimer le compte</div>
-          <div class="setting-description">Cette action est irréversible</div>
+          <div class="setting-label danger">{{ t('delete_account') }}</div>
+          <div class="setting-description">{{ t('delete_account.description') }}</div>
         </div>
         <ion-icon name="chevron-forward" class="arrow-icon danger"></ion-icon>
       </div>
@@ -221,7 +221,7 @@
     <!-- App Version Footer -->
     <div class="app-footer">
       <p class="app-version">MobilPay v1.0.0</p>
-      <p class="copyright">© 2025 MobilPay. Tous droits réservés.</p>
+      <p class="copyright">© 2025 MobilPay. {{ t('all_rights_reserved') }}</p>
     </div>
   </div>
   
