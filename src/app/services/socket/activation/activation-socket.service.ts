@@ -27,10 +27,10 @@ export class ActivationSocketService implements OnDestroy {
   private async initializeSocket(): Promise<void> {
     // Récupérer l'ID utilisateur
     await this.initializeUser();
-    
+
     // Obtenir l'instance socket
     this.socket = this.socketService.getSocket();
-    
+
     if (this.socket) {
       this.setupSocketListeners();
       console.log('🔌 Socket d\'activation initialisé');
@@ -117,21 +117,21 @@ export class ActivationSocketService implements OnDestroy {
     }
 
     const activation: PlanActivation = data.data;
-    
+
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (activation.userId === this.currentUserId) {
       // Vérifier que la liste est initialisée avant de modifier
       const currentActivations = await this.planActivationService.getPlanActivations().pipe(
         take(1)
       ).toPromise();
-      
+
       if (currentActivations === null) {
         console.warn('⚠️ Mise à jour d\'activation ignorée: liste non initialisée');
         return;
       }
-      
+
       console.log('✅ Mise à jour de l\'activation pour l\'utilisateur actuel:', activation.id);
-      
+
       // Mettre à jour l'activation dans le store
       this.planActivationService.updatePlanActivation(activation.id, activation);
     }
@@ -147,21 +147,21 @@ export class ActivationSocketService implements OnDestroy {
     }
 
     const activation: PlanActivation = data.data;
-    
+
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (activation.userId === this.currentUserId) {
       // Vérifier que la liste est initialisée avant d'ajouter
       const currentActivations = await this.planActivationService.getPlanActivations().pipe(
         take(1)
       ).toPromise();
-      
+
       if (currentActivations === null) {
         console.warn('⚠️ Nouvelle activation ignorée: liste non initialisée');
         return;
       }
-      
+
       console.log('✅ Nouvelle activation pour l\'utilisateur actuel:', activation.id);
-      
+
       // Ajouter l'activation au store
       this.planActivationService.addPlanActivation(activation);
     }
@@ -178,21 +178,21 @@ export class ActivationSocketService implements OnDestroy {
 
     const activationId: string = data.activationId;
     const userId: string = data.userId;
-    
+
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (userId === this.currentUserId) {
       // Vérifier que la liste est initialisée avant de supprimer
       const currentActivations = await this.planActivationService.getPlanActivations().pipe(
         take(1)
       ).toPromise();
-      
+
       if (currentActivations === null) {
         console.warn('⚠️ Suppression d\'activation ignorée: liste non initialisée');
         return;
       }
-      
+
       console.log('✅ Suppression d\'activation pour l\'utilisateur actuel:', activationId);
-      
+
       // Supprimer l'activation du store
       this.planActivationService.removePlanActivation(activationId);
     }
@@ -212,21 +212,21 @@ export class ActivationSocketService implements OnDestroy {
     const newStatus: string = data.newStatus;
     const previousStatus: string = data.previousStatus;
     const userId: string = activation.userId;
-    
+
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (userId === this.currentUserId) {
       // Vérifier que la liste est initialisée avant de modifier
       const currentActivations = await this.planActivationService.getPlanActivations().pipe(
         take(1)
       ).toPromise();
-      
+
       if (currentActivations === null) {
         console.warn('⚠️ Changement de statut ignoré: liste non initialisée');
         return;
       }
-      
+
       console.log(`✅ Changement de statut: ${previousStatus} → ${newStatus} pour:`, activationId);
-      
+
       // Mettre à jour l'activation complète dans le store avec toutes les données reçues
       this.planActivationService.updatePlanActivation(activationId, {
         ...activation,
@@ -248,21 +248,21 @@ export class ActivationSocketService implements OnDestroy {
     const paymentData = data.data;
     const userId: string = paymentData.userId;
     const planActivationId: string = paymentData.planActivationId;
-    
+
     // Vérifier si le paiement appartient à l'utilisateur actuel
     if (userId === this.currentUserId) {
       // Vérifier que la liste est initialisée avant de modifier
       const currentActivations = await this.planActivationService.getPlanActivations().pipe(
         take(1)
       ).toPromise();
-      
+
       if (currentActivations === null) {
         console.warn('⚠️ Validation de paiement ignorée: liste non initialisée');
         return;
       }
-      
+
       console.log('✅ Paiement validé pour l\'utilisateur actuel:', planActivationId);
-      
+
       // Mettre à jour l'activation dans le store
       this.planActivationService.updatePlanActivation(planActivationId, {
         status: 'pending' as any, // Reste en pending jusqu'à l'activation Netflix
@@ -281,24 +281,24 @@ export class ActivationSocketService implements OnDestroy {
     }
 
     const activation: PlanActivation = data.data.activation;
-    
+
     // Vérifier si l'activation appartient à l'utilisateur actuel
     if (activation.userId === this.currentUserId) {
       // Vérifier que la liste est initialisée avant de modifier
       const currentActivations = await this.planActivationService.getPlanActivations().pipe(
         take(1)
       ).toPromise();
-      
+
       if (currentActivations === null) {
         console.warn('⚠️ Succès d\'abonnement ignoré: liste non initialisée');
         return;
       }
-      
+
       console.log('✅ Abonnement Netflix activé avec succès pour:', activation.id);
-      
+
       // Vérifier si l'activation existe déjà
       const existingActivation = currentActivations?.find(a => a.id === activation.id);
-      
+
       if (existingActivation) {
         // Mettre à jour l'activation existante
         this.planActivationService.updatePlanActivation(activation.id, activation);
@@ -322,27 +322,27 @@ export class ActivationSocketService implements OnDestroy {
     const userId: string = errorData.userId;
     const planActivationId: string = errorData.planActivationId;
     const errorMessage: string = data.error || data.message;
-    
+
     // Vérifier si l'erreur appartient à l'utilisateur actuel
     if (userId === this.currentUserId) {
       // Vérifier que la liste est initialisée avant de modifier
       const currentActivations = await this.planActivationService.getPlanActivations().pipe(
         take(1)
       ).toPromise();
-      
+
       if (currentActivations === null) {
         console.warn('⚠️ Erreur d\'abonnement ignorée: liste non initialisée');
         return;
       }
-      
+
       console.error('❌ Erreur d\'abonnement Netflix pour:', planActivationId, errorMessage);
-      
+
       // Mettre à jour l'activation dans le store avec le statut d'échec
       this.planActivationService.updatePlanActivation(planActivationId, {
         status: 'cancelled' as any, // Marquer comme annulé en cas d'erreur
         updatedAt: new Date().toISOString()
       });
-      
+
       // Optionnel: Définir une erreur dans le store
       this.planActivationService.setError(errorMessage);
     }
@@ -388,12 +388,12 @@ export class ActivationSocketService implements OnDestroy {
       this.socket.off('activationcreated');
       this.socket.off('activationdeleted');
       this.socket.off('activationstatuschanged');
-      
+
       // Quitter la room d'activation
       if (this.currentUserId) {
         this.leaveActivationRoom(this.currentUserId);
       }
-      
+
       console.log('🧹 Service socket d\'activation nettoyé');
     }
   }

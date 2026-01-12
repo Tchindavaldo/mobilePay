@@ -6,6 +6,13 @@ import { Router } from '@angular/router';
 import { NotificationService, Notification } from '../notification.service';
 import { UserService } from '../user.service';
 import { GoogleAuthService } from '../services/google-auth.service';
+import { GetUserService } from '../services/user/requests/get-user.service';
+import { CreateUserService, CreateUserDto } from '../services/user/requests/create-user.service';
+import { UpdateUserService, UpdateUserDto } from '../services/user/requests/update-user.service';
+import { UserStorageService } from '../services/storage/user-storage.service';
+import { UserDataService } from '../services/user/data/user-data.service';
+import { SocketService } from '../services/socket/socket.service';
+import { InitSessionSocketService } from '../services/socket/init-session-socket.service';
 
 @Component({
   selector: 'app-login.page',
@@ -23,35 +30,48 @@ export class LoginPageComponent implements OnInit {
     phone: ''
   };
 
+  errorMessage: string = '';
+
   constructor(
     private alertController: AlertController,
     private router: Router,
     private userService: UserService,
     private notificationService: NotificationService,
     private googleAuthService: GoogleAuthService,
-    private loadingController: LoadingController
-  ) {}
+    private loadingController: LoadingController,
+    private getUserService: GetUserService,
+    private createUserService: CreateUserService,
+    private updateUserService: UpdateUserService,
+    private userStorage: UserStorageService,
+    private userData: UserDataService,
+    private socketService: SocketService,
+    private sessionSocketService: InitSessionSocketService
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   showEmailLogin() {
     this.showEmailForm = true;
     this.showRegisterForm = false;
+    this.errorMessage = '';
   }
 
   showRegister() {
     this.showRegisterForm = true;
     this.showEmailForm = false;
+    this.errorMessage = '';
   }
 
   showLogin() {
     this.showEmailForm = true;
     this.showRegisterForm = false;
+    this.errorMessage = '';
   }
 
   backToMainLogin() {
     this.showEmailForm = false;
     this.showRegisterForm = false;
+    this.errorMessage = '';
   }
 
   showPhoneAuth() {
@@ -59,6 +79,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   async loginUser() {
+    this.errorMessage = '';
     if (this.user.email && this.user.password) {
       const loading = await this.loadingController.create({
         message: 'Connexion en cours...',
@@ -69,9 +90,49 @@ export class LoginPageComponent implements OnInit {
       const auth = getAuth(app);
 
       try {
+        // 1. Authentification Firebase
         const userCredential = await signInWithEmailAndPassword(auth, this.user.email, this.user.password);
+        const firebaseUser = userCredential.user;
+
+        // 2. Vérification Backend
+        let backendUser = await this.getUserService.getUserByEmail(this.user.email);
+
+        // Préparer les données
+        const authData: CreateUserDto | UpdateUserDto = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email || '',
+          displayName: firebaseUser.displayName || this.user.name || '',
+          photoURL: firebaseUser.photoURL || '',
+          phoneNumber: firebaseUser.phoneNumber || '',
+          accessToken: (firebaseUser as any).accessToken,
+          metadata: {
+            lastSignInTime: firebaseUser.metadata.lastSignInTime,
+            creationTime: firebaseUser.metadata.creationTime
+          }
+        };
+
+        if (backendUser) {
+          // 3. Mise à jour Backend
+          const userId = backendUser._id || backendUser.id;
+          backendUser = await this.updateUserService.updateUser(userId, authData);
+        } else {
+          // 3. Création Backend (si n'existe pas)
+          backendUser = await this.createUserService.createUser(authData as CreateUserDto);
+        }
+
+        // 4. Stockage Local
+        await this.userStorage.set('user', backendUser);
+
+        // 5. Mise à jour UserData
+        await this.userData.initCurrentUser();
+
+        // 6. Socket
+        const socket = this.socketService.getSocket();
+        await this.sessionSocketService.initializeSocket(socket);
+
         await loading.dismiss();
 
+        // Notification de succès
         const notification: Notification = {
           title: 'Connexion',
           message: 'Vous êtes maintenant connecté.',
@@ -80,47 +141,30 @@ export class LoginPageComponent implements OnInit {
         };
         this.notificationService.addNotification(notification);
 
-        await this.router.navigate(['/tabs/tab1']);
+        this.router.navigate(['/tabs/tab1']);
 
       } catch (error: any) {
         await loading.dismiss();
-        
-        let errorMessage = 'Une erreur est survenue.';
-        
-        if (error.code === 'auth/invalid-email') {
-          errorMessage = 'L\'adresse email est invalide.';
-        } else if (error.code === 'auth/user-disabled') {
-          errorMessage = 'Ce compte a été désactivé.';
-        } else if (error.code === 'auth/user-not-found') {
-          errorMessage = 'Aucun compte ne correspond à cette adresse email.';
-        } else if (error.code === 'auth/wrong-password') {
-          errorMessage = 'Le mot de passe est incorrect.';
-        } else if (error.code === 'auth/invalid-credential') {
-          errorMessage = 'Email ou mot de passe incorrect.';
-        } else if (error.code === 'auth/too-many-requests') {
-          errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard.';
-        } else if (error.code === 'auth/network-request-failed') {
-          errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
-        }
+        console.error('Login error:', error);
 
-        const alert = await this.alertController.create({
-          header: 'Erreur de connexion',
-          message: errorMessage,
-          buttons: ['OK']
-        });
-        await alert.present();
+        // Messages d'erreur personnalisés en français
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+          this.errorMessage = 'Email ou mot de passe incorrect.';
+        } else if (error.code === 'auth/invalid-email') {
+          this.errorMessage = 'Format d\'email invalide.';
+        } else if (error.code === 'auth/too-many-requests') {
+          this.errorMessage = 'Trop de tentatives échouées. Veuillez réessayer plus tard.';
+        } else {
+          this.errorMessage = 'Une erreur est survenue lors de la connexion.';
+        }
       }
     } else {
-      const alert = await this.alertController.create({
-        header: 'Champs manquants',
-        message: 'Veuillez remplir tous les champs.',
-        buttons: ['OK']
-      });
-      await alert.present();
+      this.errorMessage = 'Veuillez remplir tous les champs.';
     }
   }
 
   async registerUser() {
+    this.errorMessage = '';
     if (this.user.name && this.user.email && this.user.password && this.user.phone) {
       const loading = await this.loadingController.create({
         message: 'Création du compte...',
@@ -129,11 +173,42 @@ export class LoginPageComponent implements OnInit {
       await loading.present();
 
       const auth = getAuth(app);
-      
+
       try {
+        // 1. Création Firebase
         const userCredential = await createUserWithEmailAndPassword(auth, this.user.email, this.user.password);
+        const firebaseUser = userCredential.user;
+
+        // 2. Création Backend
+        const authData: CreateUserDto = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email || '',
+          displayName: this.user.name,
+          phoneNumber: this.user.phone,
+          photoURL: '',
+          password: this.user.password, // Sauvegarde du mot de passe en dur
+          accessToken: (firebaseUser as any).accessToken,
+          metadata: {
+            creationTime: firebaseUser.metadata.creationTime,
+            lastSignInTime: firebaseUser.metadata.lastSignInTime
+          }
+        };
+
+        const backendUser = await this.createUserService.createUser(authData);
+
+        // 3. Stockage Local
+        await this.userStorage.set('user', backendUser);
+
+        // 4. Mise à jour UserData
+        await this.userData.initCurrentUser();
+
+        // 5. Socket
+        const socket = this.socketService.getSocket();
+        await this.sessionSocketService.initializeSocket(socket);
+
         await loading.dismiss();
 
+        // Notification de succès
         const notification: Notification = {
           title: 'Compte',
           message: 'Votre compte a été créé avec succès.',
@@ -142,58 +217,48 @@ export class LoginPageComponent implements OnInit {
         };
         this.notificationService.addNotification(notification);
 
-        await this.router.navigate(['/tabs/tab1']);
+        this.router.navigate(['/tabs/tab1']);
 
       } catch (error: any) {
         await loading.dismiss();
-        
-        let errorMessage = 'Une erreur est survenue.';
-        
-        if (error.code === 'auth/email-already-in-use') {
-          errorMessage = 'Cette adresse email est déjà utilisée.';
-        } else if (error.code === 'auth/invalid-email') {
-          errorMessage = 'L\'adresse email est invalide.';
-        } else if (error.code === 'auth/operation-not-allowed') {
-          errorMessage = 'L\'inscription par email est désactivée.';
-        } else if (error.code === 'auth/weak-password') {
-          errorMessage = 'Le mot de passe est trop faible. Utilisez au moins 6 caractères.';
-        } else if (error.code === 'auth/network-request-failed') {
-          errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
-        }
+        console.error('Registration error:', error);
 
-        const alert = await this.alertController.create({
-          header: 'Erreur d\'inscription',
-          message: errorMessage,
-          buttons: ['OK']
-        });
-        await alert.present();
+        // Messages d'erreur personnalisés
+        if (error.code === 'auth/email-already-in-use') {
+          this.errorMessage = 'Cet email est déjà utilisé par un autre compte.';
+        } else if (error.code === 'auth/weak-password') {
+          this.errorMessage = 'Le mot de passe doit contenir au moins 6 caractères.';
+        } else if (error.code === 'auth/invalid-email') {
+          this.errorMessage = 'Format d\'email invalide.';
+        } else {
+          this.errorMessage = 'Une erreur est survenue lors de l\'inscription.';
+        }
       }
     } else {
-      const alert = await this.alertController.create({
-        header: 'Champs manquants',
-        message: 'Veuillez remplir tous les champs.',
-        buttons: ['OK']
-      });
-      await alert.present();
+      this.errorMessage = 'Veuillez remplir tous les champs.';
     }
   }
 
   async signInWithGoogle() {
     const loading = await this.loadingController.create({
-      message: 'Connexion avec Google...',
+      message: '🔐 Connexion avec Google...',
       spinner: 'crescent',
-      backdropDismiss: false
+      backdropDismiss: false // Empêcher de fermer le loader en cliquant à côté
     });
     await loading.present();
 
     try {
       console.log('🔐 Début de l\'authentification Google...');
-      
+
       const user = await this.googleAuthService.signInWithGoogle();
 
       if (user) {
         console.log('✓ Connexion complète réussie !');
-        
+
+        // Mettre à jour le message du loader avant de rediriger
+        loading.message = '✓ Connexion réussie ! Redirection...';
+
+        // Ajouter une notification
         const notification: Notification = {
           title: 'Connexion Google',
           message: `Bienvenue ${user.displayName || user.email} !`,
@@ -202,14 +267,33 @@ export class LoginPageComponent implements OnInit {
         };
         this.notificationService.addNotification(notification);
 
-        await loading.dismiss();
-        
-        console.log('Redirection vers /tabs/tab1...');
-        await this.router.navigate(['/tabs/tab1']);
+        // Petite pause pour montrer le message de succès
+        await new Promise(resolve => setTimeout(resolve, 800));
 
+        // Dismiss le loader
+        await loading.dismiss();
+
+        // Rediriger vers l'application
+        console.log('Redirection vers /tabs/tab1...');
+        const navigationSuccess = await this.router.navigate(['/tabs/tab1']);
+
+        if (!navigationSuccess) {
+          console.error('Navigation failed, trying alternative route');
+          window.location.href = '/tabs/tab1';
+        }
+
+        // Afficher l'alerte de bienvenue après la redirection
+        setTimeout(async () => {
+          const alert = await this.alertController.create({
+            header: '🎉 Connexion réussie',
+            message: `Bienvenue ${user.displayName || user.email} !`,
+            buttons: ['OK']
+          });
+          await alert.present();
+        }, 500);
       } else {
         await loading.dismiss();
-        
+
         const alert = await this.alertController.create({
           header: 'Erreur',
           message: 'Impossible de récupérer les informations utilisateur.',
@@ -219,10 +303,11 @@ export class LoginPageComponent implements OnInit {
       }
     } catch (error: any) {
       console.error('❌ Erreur lors de la connexion:', error);
+
       await loading.dismiss();
 
       let errorMessage = 'Impossible de se connecter avec Google.';
-      
+
       if (error.message.includes('annulée')) {
         errorMessage = 'Connexion annulée.';
       } else if (error.message.includes('Popup bloquée')) {

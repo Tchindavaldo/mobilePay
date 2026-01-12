@@ -9,20 +9,21 @@ export interface UpdateUserDto {
   displayName?: string;
   photoURL?: string;
   phoneNumber?: string;
-  
+  password?: string;
+
   // Tokens d'authentification
   accessToken?: string;
   refreshToken?: string;
   expirationTime?: number;
-  
+
   // Informations de vérification
   emailVerified?: boolean;
   isAnonymous?: boolean;
-  
+
   // Provider info
   providerId?: string;
   providerData?: any[];  // Données des providers (Google, etc.)
-  
+
   // Métadonnées temporelles
   metadata?: {
     createdAt?: string;
@@ -30,7 +31,7 @@ export interface UpdateUserDto {
     lastSignInTime?: string;
     creationTime?: string;
   };
-  
+
   // Tenant (si applicable)
   tenantId?: string | null;
 }
@@ -39,7 +40,7 @@ export interface UpdateUserDto {
 export class UpdateUserService {
   private apiUrl = environment.apiUrl;
 
-  constructor() {}
+  constructor() { }
 
   /**
    * Met à jour un utilisateur existant dans la base de données
@@ -50,18 +51,18 @@ export class UpdateUserService {
   async updateUser(userId: string, userData: UpdateUserDto): Promise<any> {
     try {
       console.log(`🔄 Mise à jour de l'utilisateur ID ${userId} avec:`, userData);
-      
+
       const response = await axios.put(
         `${this.apiUrl}/api/users/${userId}`,
         userData,
-        { 
-          headers: { 
+        {
+          headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true' 
-          } 
+            'ngrok-skip-browser-warning': 'true'
+          }
         }
       );
-      
+
       console.log('✓ Utilisateur mis à jour dans la BD:', response.data);
       return response.data.data || response.data;
     } catch (error: any) {
