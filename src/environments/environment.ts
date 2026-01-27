@@ -29,7 +29,7 @@ export const environment = {
     },
     premium: {
       name: 'Premium',
-      price: 6500,
+      price: 25,
       currency: 'XAF',
       resolution: '4K Ultra HD'
     }
