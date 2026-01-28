@@ -817,24 +817,27 @@
         <div class="spinner-circle"></div>
         <div class="spinner-glow"></div>
       </div>
-      <h2>Traitement en cours...</h2>
-      <p>Veuillez Composez le #150*50# et entrer votre code secret pour valider votre paiement</p>
+
+      <!-- Message fixe pour l'activation -->
+      <h2>Activation en cours !</h2>
+      <p>Votre abonnement est en cours de création. Veuillez patienter quelques instants.</p>
     </div>
 
     <div class="processing-steps">
-      <div class="process-step" [class.active]="verificationStep >= 1" [class.completed]="verificationStep > 1"
-        id="step-1">
-        <div class="step-icon">
-          <ion-icon [name]="verificationStep > 1 ? 'checkmark-circle' : 'card'"></ion-icon>
-        </div>
-        <span>Vérification du paiement</span>
-      </div>
-
-      <div class="process-step" [class.active]="verificationStep >= 2" id="step-2">
+      <!-- Étape 1: Paiement validé (toujours complété) -->
+      <div class="process-step active completed" id="step-1">
         <div class="step-icon">
           <ion-icon name="checkmark-circle"></ion-icon>
         </div>
-        <span>Confirmation</span>
+        <span>Paiement validé</span>
+      </div>
+
+      <!-- Étape 2: Activation -->
+      <div class="process-step" [class.active]="verificationStep >= 3" id="step-2">
+        <div class="step-icon">
+          <ion-icon [name]="verificationStep >= 3 ? 'checkmark-circle' : 'rocket'"></ion-icon>
+        </div>
+        <span>Abonnement en attente</span>
       </div>
     </div>
 

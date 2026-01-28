@@ -437,7 +437,8 @@ export class PayementComponent implements OnInit, OnDestroy {
        }
 
        initiateSubscription(transactionId: string, planActivationId: string) {
-              this.page = 5; // Go to processing page
+              // Ne PAS naviguer vers page 5 ici, on attend le socket payment_validated
+              // this.page = 5; // SUPPRIMÉ - on navigue seulement quand le paiement est validé
 
               const subscriptionData = {
                      typeDePlan: this.selectedPlan,
@@ -559,7 +560,20 @@ export class PayementComponent implements OnInit, OnDestroy {
                      }
               });
 
+              // 2. Création de l'activation (Enregistré en base)
+              this.socket.on('activationcreated', (data: any) => {
+                     console.log('📝 Socket: activationcreated reçu:', data);
+                     if (data.success && data.data) {
+                            // Passage à l'étape 3 : Activation en cours
+                            this.verificationStep = 3;
+                            this.presentSuccessToast('Activation de l\'abonnement en cours...');
 
+                            // Passer à la page de succès après un court délai
+                            setTimeout(() => {
+                                   this.page = 6;
+                            }, 3000);
+                     }
+              });
 
 
 
@@ -570,6 +584,9 @@ export class PayementComponent implements OnInit, OnDestroy {
        // Handle payment validation from socket
        private handlePaymentValidated(data: any) {
               console.log('✅ Paiement validé pour l\'utilisateur:', data.data.userId);
+
+              // Naviguer vers la page de traitement (page 5)
+              this.page = 5;
 
               // Fermer le modal de paiement directement (sans logique d'annulation)
               this.showPaymentModal = false;
