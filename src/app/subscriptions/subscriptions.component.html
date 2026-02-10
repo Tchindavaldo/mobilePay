@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Abonnements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="subscriptions-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Vos abonnements</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="sub-item" *ngFor="let s of subscriptions">
+          <div class="sub-main">
+            <div class="sub-name">{{ s.name }}</div>
+            <ion-badge [color]="s.status === 'active' ? 'success' : 'medium'">
+              {{ s.status === 'active' ? 'Actif' : 'Inactif' }}
+            </ion-badge>
+          </div>
+          <div class="sub-meta" *ngIf="s.nextBillingDate">
+            Prochaine échéance: {{ s.nextBillingDate }}
+          </div>
+        </div>
+
+        <div class="hint">
+          Cette page est prête. Dis-moi ce que tu veux afficher exactement ici (liste réelle depuis Firebase, détails de plan, renouvellement, etc.).
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

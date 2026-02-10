@@ -75,7 +75,7 @@ export class ActivationsPage implements OnInit, OnDestroy {
     const defaultActivePlan: Activation = {
       id: 'default-active-1',
       plan: 'Netflix Premium',
-      email: 'demo@mobilepay.com',
+      email: 'demo@moobilpay.com',
       date: this.formatDate(today.toISOString()),
       amount: '6500 XAF',
       status: 'activated',

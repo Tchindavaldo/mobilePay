@@ -9,7 +9,7 @@ import { LanguageService } from '../services/language.service';
 })
 export class PartageComponent implements OnInit {
   // Données de parrainage
-  referralCode: string = 'MOBILPAY2024';
+  referralCode: string = 'MOOBILPAY2024';
   referralCount: number = 12;
   pendingRewards: number = 3;
   totalPoints: number = 15;
@@ -41,14 +41,14 @@ export class PartageComponent implements OnInit {
         await navigator.share({
           title: 'Découvrez cette application incroyable !',
           text: `Téléchargez cette application avec mon code de parrainage ${this.referralCode}`,
-          url: 'https://mobilpay.com',
+          url: 'https://moobilpay.com',
         });
       } catch (err) {
         console.log('Erreur lors du partage:', err);
       }
     } else {
       // Fallback: copier dans le presse-papier
-      const textToCopy = `Découvrez MobilPay! Code: ${this.referralCode} - https://mobilpay.com`;
+      const textToCopy = `Découvrez MoobilPay! Code: ${this.referralCode} - https://moobilpay.com`;
       navigator.clipboard.writeText(textToCopy).then(() => {
         alert('Lien copié dans le presse-papier!');
       });
@@ -56,29 +56,29 @@ export class PartageComponent implements OnInit {
   }
 
   async shareViaWhatsApp() {
-    const message = `🎉 Découvrez MobilPay, l'app qui révolutionne vos abonnements streaming !\n\n⭐ Utilisez mon code de parrainage: ${this.referralCode} et gagnez 1 point !\n\n📱 Téléchargez maintenant: https://mobilpay.app`;
+    const message = `🎉 Découvrez MoobilPay, l'app qui révolutionne vos abonnements streaming !\n\n⭐ Utilisez mon code de parrainage: ${this.referralCode} et gagnez 1 point !\n\n📱 Téléchargez maintenant: https://moobilpay.app`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   }
 
   async shareViaFacebook() {
-    const url = `https://mobilpay.app?ref=${this.referralCode}`;
+    const url = `https://moobilpay.app?ref=${this.referralCode}`;
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
   }
 
   async shareViaTwitter() {
-    const message = `🎉 Découvrez MobilPay avec mon code ${this.referralCode} et gagnez 1 point ! ⭐`;
-    const url = `https://mobilpay.app?ref=${this.referralCode}`;
+    const message = `🎉 Découvrez MoobilPay avec mon code ${this.referralCode} et gagnez 1 point ! ⭐`;
+    const url = `https://moobilpay.app?ref=${this.referralCode}`;
     window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(message)}`, '_blank');
   }
 
   async shareViaEmail() {
-    const subject = 'Découvrez MobilPay - App de gestion streaming';
-    const body = `Salut !\n\nJe voulais te parler de MobilPay, une super app qui m'aide à gérer tous mes abonnements streaming.\n\nUtilise mon code de parrainage "${this.referralCode}" lors de ton inscription et tu gagneras 1 point de fidélité !\n\nTélécharge l'app ici: https://mobilpay.app?ref=${this.referralCode}\n\nÀ bientôt !`;
+    const subject = 'Découvrez MoobilPay - App de gestion streaming';
+    const body = `Salut !\n\nJe voulais te parler de MoobilPay, une super app qui m'aide à gérer tous mes abonnements streaming.\n\nUtilise mon code de parrainage "${this.referralCode}" lors de ton inscription et tu gagneras 1 point de fidélité !\n\nTélécharge l'app ici: https://moobilpay.app?ref=${this.referralCode}\n\nÀ bientôt !`;
     window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
   }
 
   async shareViaSMS() {
-    const message = `🎉 Découvrez MobilPay avec mon code ${this.referralCode} et gagnez 1 point ! Téléchargez: https://mobilpay.app?ref=${this.referralCode}`;
+    const message = `🎉 Découvrez MoobilPay avec mon code ${this.referralCode} et gagnez 1 point ! Téléchargez: https://moobilpay.app?ref=${this.referralCode}`;
     window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank');
   }
 

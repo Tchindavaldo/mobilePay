@@ -136,7 +136,7 @@ export class LoginPageComponent implements OnInit {
         const notification: Notification = {
           title: 'Connexion',
           message: 'Vous êtes maintenant connecté.',
-          image: '../../assets/LOGO.jpg',
+          image: '../../assets/icon/opp.png',
           time: new Date(),
         };
         this.notificationService.addNotification(notification);
@@ -212,7 +212,7 @@ export class LoginPageComponent implements OnInit {
         const notification: Notification = {
           title: 'Compte',
           message: 'Votre compte a été créé avec succès.',
-          image: '../../assets/LOGO.jpg',
+          image: '../../assets/icon/opp.png',
           time: new Date(),
         };
         this.notificationService.addNotification(notification);
@@ -262,7 +262,7 @@ export class LoginPageComponent implements OnInit {
         const notification: Notification = {
           title: 'Connexion Google',
           message: `Bienvenue ${user.displayName || user.email} !`,
-          image: user.photoURL || '../../assets/LOGO.jpg',
+          image: user.photoURL || '../../assets/icon/opp.png',
           time: new Date(),
         };
         this.notificationService.addNotification(notification);

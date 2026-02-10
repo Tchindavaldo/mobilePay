@@ -555,7 +555,7 @@ export class PayementComponent implements OnInit, OnDestroy
               const notification: Notification = {
                      title: 'Paiement en cours',
                      message: `Votre paiement ${this.getOperatorName()} est en cours de traitement. Vous serez notifié sous 20-60 minutes.`,
-                     image: '../../assets/LOGO.jpg',
+                     image: '../../assets/icon/opp.png',
                      time: new Date(),
               };
 

@@ -12,8 +12,12 @@ export class ThemeService {
 
   constructor() {
     // Charger le thème sauvegardé ou utiliser le mode clair par défaut
-    const savedTheme = localStorage.getItem('mobilpay-theme') as Theme;
+    const savedTheme = (localStorage.getItem('moobilpay-theme') as Theme) || (localStorage.getItem('mobilpay-theme') as Theme);
     if (savedTheme) {
+      // Migrer l'ancienne clé si nécessaire
+      if (!localStorage.getItem('moobilpay-theme') && localStorage.getItem('mobilpay-theme')) {
+        localStorage.setItem('moobilpay-theme', savedTheme);
+      }
       this.setTheme(savedTheme);
     } else {
       // Mode clair par défaut
@@ -32,7 +36,7 @@ export class ThemeService {
     }
     
     // Sauvegarder le thème
-    localStorage.setItem('mobilpay-theme', theme);
+    localStorage.setItem('moobilpay-theme', theme);
     
     console.log(`Thème changé vers: ${theme}`);
   }

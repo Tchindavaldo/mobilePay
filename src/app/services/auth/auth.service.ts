@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+// import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { UserStorageService } from '../storage/user-storage.service';
 import { UserDataService } from '../user/data/user-data.service';
 import { GetUserService } from '../user/requests/get-user.service';
@@ -26,11 +26,12 @@ export class AuthService {
    */
   private async initializeGoogleAuth() {
     try {
-      await GoogleAuth.initialize({
-        clientId: environment.googleClientId,
-        scopes: ['profile', 'email'],
-        grantOfflineAccess: true,
-      });
+      // await GoogleAuth.initialize({
+      //   clientId: environment.googleClientId,
+      //   scopes: ['profile', 'email'],
+      //   grantOfflineAccess: true,
+      // });
+      console.log('Google Auth initialisation désactivée (module non installé)');
     } catch (error) {
       console.error('Erreur initialisation Google Auth:', error);
     }
@@ -48,50 +49,50 @@ export class AuthService {
       console.log('🔐 Début de la connexion Google...');
       
       // Étape 1 : Authentification Google
-      const googleUser = await GoogleAuth.signIn();
-      console.log('✓ Authentification Google réussie:', googleUser);
+      // const googleUser = await GoogleAuth.signIn();
+      // console.log('✓ Authentification Google réussie:', googleUser);
 
-      if (!googleUser || !googleUser.id) {
-        throw new Error('Aucune donnée utilisateur reçue de Google');
-      }
+      // if (!googleUser || !googleUser.id) {
+      //   throw new Error('Aucune donnée utilisateur reçue de Google');
+      // }
 
-      const uid = googleUser.id;
-      const email = googleUser.email;
-      const displayName = googleUser.name;
-      const photoURL = googleUser.imageUrl;
+      // const uid = googleUser.id;
+      // const email = googleUser.email;
+      // const displayName = googleUser.name;
+      // const photoURL = googleUser.imageUrl;
 
-      // Étape 2 : Vérifier si l'utilisateur existe dans la BD
-      console.log('🔍 Vérification de l\'utilisateur dans la BD...');
-      let user = await this.getUserService.getUserByUid(uid);
+      // // Étape 2 : Vérifier si l'utilisateur existe dans la BD
+      // console.log('🔍 Vérification de l\'utilisateur dans la BD...');
+      // let user = await this.getUserService.getUserByUid(uid);
 
-      // Étape 3 : Si l'utilisateur n'existe pas, le créer
-      if (!user) {
-        console.log('➕ Utilisateur non trouvé, création dans la BD...');
+      // // Étape 3 : Si l'utilisateur n'existe pas, le créer
+      // if (!user) {
+      //   console.log('➕ Utilisateur non trouvé, création dans la BD...');
         
-        const newUserData: CreateUserDto = {
-          uid: uid,
-          email: email,
-          displayName: displayName,
-          photoURL: photoURL,
-        };
+      //   const newUserData: CreateUserDto = {
+      //     uid: uid,
+      //     email: email,
+      //     displayName: displayName,
+      //     photoURL: photoURL,
+      //   };
 
-        user = await this.createUserService.createUser(newUserData);
-        console.log('✓ Utilisateur créé:', user);
-      } else {
-        console.log('✓ Utilisateur trouvé dans la BD:', user);
-      }
+      //   user = await this.createUserService.createUser(newUserData);
+      //   console.log('✓ Utilisateur créé:', user);
+      // } else {
+      //   console.log('✓ Utilisateur trouvé dans la BD:', user);
+      // }
 
-      // Étape 4 : Stocker l'utilisateur localement (SecureStorage ou localStorage)
-      console.log('💾 Enregistrement de l\'utilisateur dans le storage...');
-      await this.userStorage.set('user', user);
-      console.log('✓ Utilisateur enregistré dans le storage');
+      // // Étape 4 : Stocker l'utilisateur localement (SecureStorage ou localStorage)
+      // console.log('💾 Enregistrement de l\'utilisateur dans le storage...');
+      // await this.userStorage.set('user', user);
+      // console.log('✓ Utilisateur enregistré dans le storage');
 
-      // Étape 5 : Mettre à jour le service UserData (mémoire)
-      await this.userData.initCurrentUser();
-      console.log('✓ UserData mis à jour');
+      // // Étape 5 : Mettre à jour le service UserData (mémoire)
+      // await this.userData.initCurrentUser();
+      // console.log('✓ UserData mis à jour');
 
-      console.log('🎉 Connexion complète réussie !');
-      return user;
+      console.log('Google Sign In désactivé (module non installé)');
+      return null;
 
     } catch (error) {
       console.error('❌ Erreur lors de la connexion Google:', error);
@@ -107,10 +108,8 @@ export class AuthService {
    */
   async signOut(): Promise<void> {
     try {
-      console.log('🔓 Déconnexion...');
-      
-      // Déconnexion Google
-      await GoogleAuth.signOut();
+      // await GoogleAuth.signOut();
+      console.log('Google Sign Out désactivé (module non installé)');
       
       // Supprimer le storage local
       await this.userStorage.remove('user');

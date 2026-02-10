@@ -58,28 +58,28 @@ export class TransactionService {
   // Obtenir une transaction par ID
   getTransactionById(id: string): Observable<any | undefined> {
     return this.store.select(state => 
-      state.transaction.Transaction?.find(transaction => transaction.id === id)
+      state.transaction.Transaction?.find((transaction: any) => transaction.id === id)
     );
   }
 
   // Obtenir les transactions par type
   getTransactionsByType(type: string): Observable<any[]> {
     return this.store.select(state => 
-      state.transaction.Transaction?.filter(transaction => transaction.type === type) || []
+      state.transaction.Transaction?.filter((transaction: any) => transaction.type === type) || []
     );
   }
 
   // Obtenir les transactions par statut
   getTransactionsByStatus(status: string): Observable<any[]> {
     return this.store.select(state => 
-      state.transaction.Transaction?.filter(transaction => transaction.status === status) || []
+      state.transaction.Transaction?.filter((transaction: any) => transaction.status === status) || []
     );
   }
 
   // Obtenir les transactions d'une période
   getTransactionsByDateRange(startDate: Date, endDate: Date): Observable<any[]> {
     return this.store.select(state => 
-      state.transaction.Transaction?.filter(transaction => {
+      state.transaction.Transaction?.filter((transaction: any) => {
         const transactionDate = new Date(transaction.date);
         return transactionDate >= startDate && transactionDate <= endDate;
       }) || []
@@ -112,8 +112,9 @@ export class TransactionService {
   // Calculer le montant total des transactions
   calculateTotalTransactionAmount(): Observable<number> {
     return this.store.select(state => 
-      state.transaction.Transaction?.reduce((total, transaction) => 
-        total + (transaction.amount || 0), 0) || 0
+      state.transaction.Transaction?.reduce((total: number, transaction: any) =>
+        total + (transaction.amount || 0), 0
+      ) || 0
     );
   }
 

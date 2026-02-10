@@ -28,20 +28,23 @@ import { AchatsComponent } from './achats/achats.component';
 import { SiteComponent } from './site/site.component';
 import { PhoneAuthComponent } from './phone-auth/phone-auth.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { AboutComponent } from './about/about.component';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 // import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 @NgModule({
-  declarations: [AppComponent, PayementComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent],
+  declarations: [AppComponent, PayementComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent, AboutComponent, SubscriptionsComponent],
   imports: [
     BrowserModule, 
     IonicModule.forRoot(), 
     AppRoutingModule,
     FormsModule,
+    CommonModule,
     HttpClientModule,
     // Configuration NgRx
     StoreModule.forRoot(reducers),

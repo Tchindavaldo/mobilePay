@@ -17,6 +17,8 @@ import { SiteComponent } from './site/site.component';
 import { AchatsComponent } from './achats/achats.component';
 import { PhoneAuthComponent } from './phone-auth/phone-auth.component';
 import { ProfilePage } from './profile/profile.page';
+import { AboutComponent } from './about/about.component';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 
 const routes: Routes = [
   {
@@ -99,6 +101,14 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePage
+  },
+  {
+    path: 'about',
+    component: AboutComponent
+  },
+  {
+    path: 'subscriptions',
+    component: SubscriptionsComponent
   },
 ];
 @NgModule({

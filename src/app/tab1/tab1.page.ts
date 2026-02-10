@@ -167,7 +167,7 @@ export class Tab1Page implements OnInit {
     const notification: Notification = {
       title: 'Desabonner',
       message: 'Le desabonnement a bien ete efectuer.',
-      image: '../../assets/LOGO.jpg',
+      image: '../../assets/icon/opp.png',
       time: new Date(),
     };
     this.notificationService.addNotification(notification);

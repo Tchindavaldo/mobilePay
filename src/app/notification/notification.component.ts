@@ -92,6 +92,6 @@ export class NotificationComponent  implements OnInit {
   }
 
   onImageError(event: any) {
-    event.target.src = 'assets/LOGO.jpg';
+    event.target.src = 'assets/icon/opp.png';
   }
 }

@@ -1,0 +1,136 @@
+<ion-content class="about-content" [fullscreen]="true">
+  
+  <!-- Overview Card pour À propos - FIXED HEADER (identique aux paramètres) -->
+  <div class="overview-card">
+    <div class="overview-content">
+      <div class="overview-icon">
+        <ion-icon name="information-circle"></ion-icon>
+      </div>
+      <div class="overview-info">
+        <h2 class="overview-title">À propos</h2>
+        <p class="overview-subtitle">Découvrez MoobilPay</p>
+      </div>
+    </div>
+    <button class="overview-back" (click)="goBack()">
+      <ion-icon name="chevron-back"></ion-icon>
+    </button>
+  </div>
+
+  <!-- Content Wrapper pour le padding -->
+  <div class="about-wrapper">
+    
+    <!-- App Identity Section -->
+    <div class="about-section">
+      <div class="app-identity-card">
+        <div class="app-logo">
+          <img src="assets/icon/opp.png" alt="MoobilPay" />
+        </div>
+        <div class="app-info">
+          <h1 class="app-name">MoobilPay</h1>
+          <p class="app-version">Version 1.0.0</p>
+          <p class="app-tagline">Votre solution de paiement streaming</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    <div class="about-section">
+      <h3 class="section-title">Application</h3>
+      <div class="about-card">
+        <div class="card-content">
+          <div class="card-icon">
+            <ion-icon name="phone-portrait"></ion-icon>
+          </div>
+          <div class="card-text">
+            <p>
+              MoobilPay vous aide à gérer vos abonnements streaming et à effectuer vos paiements simplement et en toute sécurité.
+            </p>
+            <ul class="feature-list">
+              <li><ion-icon name="checkmark-circle"></ion-icon> Gestion multi-plateformes</li>
+              <li><ion-icon name="checkmark-circle"></ion-icon> Paiements sécurisés</li>
+              <li><ion-icon name="checkmark-circle"></ion-icon> Interface intuitive</li>
+              <li><ion-icon name="checkmark-circle"></ion-icon> Support 24/7</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="about-section">
+      <h3 class="section-title">Contact & Support</h3>
+      <div class="contact-cards">
+        <div class="contact-card">
+          <div class="contact-icon-wrapper blue">
+            <ion-icon name="mail"></ion-icon>
+          </div>
+          <div class="contact-content">
+            <h4 class="contact-label">Email</h4>
+            <p class="contact-value">contact@moobilpay.com</p>
+            <span class="contact-badge">Disponible 24/7</span>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow"></ion-icon>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon-wrapper green">
+            <ion-icon name="call"></ion-icon>
+          </div>
+          <div class="contact-content">
+            <h4 class="contact-label">Téléphone</h4>
+            <p class="contact-value">+237 698 178 925</p>
+            <span class="contact-badge">Support rapide</span>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow"></ion-icon>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon-wrapper purple">
+            <ion-icon name="location"></ion-icon>
+          </div>
+          <div class="contact-content">
+            <h4 class="contact-label">Siège social</h4>
+            <p class="contact-value">Douala, Cameroun</p>
+            <span class="contact-badge">Afrique Centrale</span>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal Section -->
+    <div class="about-section">
+      <h3 class="section-title">Informations légales</h3>
+      <div class="legal-cards">
+        <div class="legal-card">
+          <div class="legal-icon">
+            <ion-icon name="shield-checkmark"></ion-icon>
+          </div>
+          <div class="legal-content">
+            <h4>Politique de confidentialité</h4>
+            <p>Vos données sont protégées et sécurisées</p>
+          </div>
+        </div>
+
+        <div class="legal-card">
+          <div class="legal-icon">
+            <ion-icon name="document-text"></ion-icon>
+          </div>
+          <div class="legal-content">
+            <h4>Conditions d'utilisation</h4>
+            <p>Consultez nos termes et conditions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="about-footer">
+      <div class="footer-content">
+        <p class="copyright">© 2024 MoobilPay. Tous droits réservés.</p>
+        <p class="made-with">Fait avec ❤️ au Cameroun</p>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,0 +1,36 @@
+.subscriptions-container {
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.sub-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sub-item:last-child {
+  border-bottom: none;
+}
+
+.sub-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sub-name {
+  font-weight: 700;
+}
+
+.sub-meta {
+  margin-top: 6px;
+  opacity: 0.75;
+  font-size: 0.9rem;
+}
+
+.hint {
+  margin-top: 14px;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}

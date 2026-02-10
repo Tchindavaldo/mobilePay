@@ -106,7 +106,7 @@ export class LanguageService {
       'tab.settings': 'Paramètres',
       
       // Home Page (Tab1)
-      'home.welcome': 'Bienvenue sur MobilPay',
+      'home.welcome': 'Bienvenue sur MoobilPay',
       'home.your_balance': 'Votre solde',
       'home.search': 'Rechercher un service...',
       'home.all': 'Tous',
@@ -251,7 +251,7 @@ export class LanguageService {
       'support.call_us': 'Appelez-nous',
       'support.faq': 'FAQ',
       'support.guides': 'Guides',
-      'support.help_center': 'Centre d\'Aide MobilPay',
+      'support.help_center': 'Centre d\'Aide MoobilPay',
       'support.choose_help': 'Choisissez comment nous pouvons vous aider',
       'support.immediate_response': 'Réponse immédiate',
       'support.online': 'En ligne',
@@ -269,9 +269,9 @@ export class LanguageService {
       'support.faq_title': 'Questions Fréquentes',
       'support.faq_subtitle': 'Trouvez rapidement les réponses à vos questions',
       'support.guides_title': 'Guides d\'Utilisation',
-      'support.guides_subtitle': 'Apprenez à utiliser MobilPay étape par étape',
+      'support.guides_subtitle': 'Apprenez à utiliser MoobilPay étape par étape',
       'support.team_online': 'Notre équipe est en ligne pour vous aider',
-      'support.bot_greeting': 'Bonjour ! Je suis l\'assistant MobilPay. Comment puis-je vous aider aujourd\'hui ?',
+      'support.bot_greeting': 'Bonjour ! Je suis l\'assistant MoobilPay. Comment puis-je vous aider aujourd\'hui ?',
       'support.now': 'Maintenant',
       'support.connection_issue': 'Problème de connexion',
       'support.add_account': 'Ajouter un compte',
@@ -421,7 +421,7 @@ export class LanguageService {
       'tab.settings': 'Settings',
       
       // Home Page (Tab1)
-      'home.welcome': 'Welcome to MobilPay',
+      'home.welcome': 'Welcome to MoobilPay',
       'home.your_balance': 'Your balance',
       'home.search': 'Search for a service...',
       'home.all': 'All',
@@ -566,7 +566,7 @@ export class LanguageService {
       'support.call_us': 'Call us',
       'support.faq': 'FAQ',
       'support.guides': 'Guides',
-      'support.help_center': 'MobilPay Help Center',
+      'support.help_center': 'MoobilPay Help Center',
       'support.choose_help': 'Choose how we can help you',
       'support.immediate_response': 'Immediate response',
       'support.online': 'Online',
@@ -584,9 +584,9 @@ export class LanguageService {
       'support.faq_title': 'Frequently Asked Questions',
       'support.faq_subtitle': 'Quickly find answers to your questions',
       'support.guides_title': 'User Guides',
-      'support.guides_subtitle': 'Learn to use MobilPay step by step',
+      'support.guides_subtitle': 'Learn to use MoobilPay step by step',
       'support.team_online': 'Our team is online to help you',
-      'support.bot_greeting': 'Hello! I\'m the MobilPay assistant. How can I help you today?',
+      'support.bot_greeting': 'Hello! I\'m the MoobilPay assistant. How can I help you today?',
       'support.now': 'Now',
       'support.connection_issue': 'Connection issue',
       'support.add_account': 'Add account',
@@ -736,7 +736,7 @@ export class LanguageService {
       'tab.settings': 'Configuración',
       
       // Home Page (Tab1)
-      'home.welcome': 'Bienvenido a MobilPay',
+      'home.welcome': 'Bienvenido a MoobilPay',
       'home.your_balance': 'Tu saldo',
       'home.search': 'Buscar un servicio...',
       'home.all': 'Todos',
@@ -881,7 +881,7 @@ export class LanguageService {
       'support.call_us': 'Llámanos',
       'support.faq': 'FAQ',
       'support.guides': 'Guías',
-      'support.help_center': 'Centro de Ayuda MobilPay',
+      'support.help_center': 'Centro de Ayuda MoobilPay',
       'support.choose_help': 'Elige cómo podemos ayudarte',
       'support.immediate_response': 'Respuesta inmediata',
       'support.online': 'En línea',
@@ -899,9 +899,9 @@ export class LanguageService {
       'support.faq_title': 'Preguntas Frecuentes',
       'support.faq_subtitle': 'Encuentra rápidamente las respuestas a tus preguntas',
       'support.guides_title': 'Guías de Uso',
-      'support.guides_subtitle': 'Aprende a usar MobilPay paso a paso',
+      'support.guides_subtitle': 'Aprende a usar MoobilPay paso a paso',
       'support.team_online': 'Nuestro equipo está en línea para ayudarte',
-      'support.bot_greeting': '¡Hola! Soy el asistente MobilPay. ¿Cómo puedo ayudarte hoy?',
+      'support.bot_greeting': '¡Hola! Soy el asistente MoobilPay. ¿Cómo puedo ayudarte hoy?',
       'support.now': 'Ahora',
       'support.connection_issue': 'Problema de conexión',
       'support.add_account': 'Añadir cuenta',
@@ -963,8 +963,12 @@ export class LanguageService {
   };
 
   constructor() {
-    const savedLanguage = localStorage.getItem('mobilpay-language') as Language;
+    const savedLanguage = (localStorage.getItem('moobilpay-language') as Language) || (localStorage.getItem('mobilpay-language') as Language);
     if (savedLanguage && this.translations[savedLanguage]) {
+      // Migrer l'ancienne clé si nécessaire
+      if (!localStorage.getItem('moobilpay-language') && localStorage.getItem('mobilpay-language')) {
+        localStorage.setItem('moobilpay-language', savedLanguage);
+      }
       this.currentLanguage.next(savedLanguage);
     }
   }
@@ -972,7 +976,7 @@ export class LanguageService {
   setLanguage(lang: Language): void {
     if (this.translations[lang]) {
       this.currentLanguage.next(lang);
-      localStorage.setItem('mobilpay-language', lang);
+      localStorage.setItem('moobilpay-language', lang);
       console.log(`Langue changée vers: ${lang}`);
     }
   }

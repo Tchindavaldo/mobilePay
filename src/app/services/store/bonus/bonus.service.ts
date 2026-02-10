@@ -33,21 +33,21 @@ export class BonusService {
   // Obtenir un bonus par ID
   getBonusById(id: string): Observable<any | undefined> {
     return this.store.select(state => 
-      state.bonus.bonus?.find(bonus => bonus.id === id)
+      state.bonus.bonus?.find((bonus: any) => bonus.id === id)
     );
   }
 
   // Obtenir les bonus par type
   getBonusByType(type: string): Observable<any[]> {
     return this.store.select(state => 
-      state.bonus.bonus?.filter(bonus => bonus.type === type) || []
+      state.bonus.bonus?.filter((bonus: any) => bonus.type === type) || []
     );
   }
 
   // Obtenir les bonus actifs
   getActiveBonus(): Observable<any[]> {
     return this.store.select(state => 
-      state.bonus.bonus?.filter(bonus => bonus.active === true) || []
+      state.bonus.bonus?.filter((bonus: any) => bonus.active === true) || []
     );
   }
 

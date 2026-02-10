@@ -146,7 +146,7 @@
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
 
-      <div class="setting-item clickable">
+      <div class="setting-item clickable" [routerLink]="['/subscriptions']">
         <div class="setting-icon-wrapper cyan">
           <ion-icon name="card-outline"></ion-icon>
         </div>
@@ -176,7 +176,7 @@
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
 
-      <div class="setting-item clickable">
+      <div class="setting-item clickable" [routerLink]="['/support']" [queryParams]="{ page: 'faq' }">
         <div class="setting-icon-wrapper purple">
           <ion-icon name="help-circle-outline"></ion-icon>
         </div>
@@ -187,7 +187,7 @@
         <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
 
-      <div class="setting-item clickable" (click)="aboutApp()">
+      <div class="setting-item clickable" [routerLink]="['/about']">
         <div class="setting-icon-wrapper gray">
           <ion-icon name="information-circle-outline"></ion-icon>
         </div>
@@ -220,8 +220,8 @@
 
     <!-- App Version Footer -->
     <div class="app-footer">
-      <p class="app-version">MobilPay v1.0.0</p>
-      <p class="copyright">© 2025 MobilPay. {{ t('all_rights_reserved') }}</p>
+      <p class="app-version">MoobilPay v1.0.0</p>
+      <p class="copyright">© 2025 MoobilPay. {{ t('all_rights_reserved') }}</p>
     </div>
   </div>
   

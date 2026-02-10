@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { LanguageService } from '../services/language.service';
 
 interface SupportCategory {
@@ -117,8 +118,8 @@ export class SupportComponent implements OnInit {
   faqItems: FAQItem[] = [
     {
       id: 'faq1',
-      question: 'Comment créer un compte MobilPay ?',
-      answer: 'Pour créer un compte MobilPay, téléchargez l\'application, cliquez sur "S\'inscrire", renseignez vos informations personnelles et validez votre numéro de téléphone.',
+      question: 'Comment créer un compte MoobilPay ?',
+      answer: 'Pour créer un compte MoobilPay, téléchargez l\'application, cliquez sur "S\'inscrire", renseignez vos informations personnelles et validez votre numéro de téléphone.',
       category: 'account'
     },
     {
@@ -151,10 +152,10 @@ export class SupportComponent implements OnInit {
   guideItems: GuideItem[] = [
     {
       id: 'guide1',
-      title: 'Configuration initiale de MobilPay',
-      description: 'Guide complet pour bien démarrer avec MobilPay',
+      title: 'Configuration initiale de MoobilPay',
+      description: 'Guide complet pour bien démarrer avec MoobilPay',
       steps: [
-        'Téléchargez l\'application MobilPay depuis votre store',
+        'Téléchargez l\'application MoobilPay depuis votre store',
         'Créez votre compte avec votre numéro de téléphone',
         'Vérifiez votre identité avec le code SMS reçu',
         'Configurez votre profil et photo',
@@ -190,9 +191,19 @@ export class SupportComponent implements OnInit {
     }
   ];
 
-  constructor(public langService: LanguageService) {}
+  constructor(
+    public langService: LanguageService,
+    private route: ActivatedRoute,
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.queryParamMap.subscribe(params => {
+      const page = params.get('page');
+      if (page) {
+        this.currentPage = page;
+      }
+    });
+  }
 
   t(key: string): string {
     return this.langService.translate(key);
