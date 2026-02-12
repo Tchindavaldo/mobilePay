@@ -67,7 +67,7 @@ export class GoogleAuthService {
         const loginResult = await SocialLogin.login({
           provider: 'google',
           options: {
-            scopes: ['profile', 'email']
+            // Ne pas ajouter de scopes ici si non configurés dans le MainActivity
           }
         });
 
@@ -166,9 +166,9 @@ export class GoogleAuthService {
       // ÉTAPE 3 : Si l'utilisateur existe, le mettre à jour avec les données Google
       if (backendUser) {
         console.log('🔄 Étape 3/6 : Utilisateur trouvé - Mise à jour avec les données Google Auth...');
-        console.log('ID utilisateur existant:', backendUser._id || backendUser.id);
+        console.log('ID utilisateur existant:', backendUser.id);
 
-        const userId = backendUser._id || backendUser.id;
+        const userId = backendUser.id;
         if (!userId) {
           throw new Error('Impossible de récupérer l\'ID de l\'utilisateur existant');
         }

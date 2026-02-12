@@ -23,7 +23,10 @@ export class SocketService {
       reconnectionDelayMax: 5000,
       reconnectionAttempts: 5, // Réessayer indéfiniment
       autoConnect: true,
-      path: '/socket.io'
+      path: '/socket.io',
+      extraHeaders: {
+        "ngrok-skip-browser-warning": "true"
+      }
     });
   }
 

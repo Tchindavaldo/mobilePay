@@ -36,15 +36,19 @@ export class PlanManagementService {
     public plans$ = this.plansSubject.asObservable();
 
     constructor(private http: HttpClient) {
-        // Optionnel: Charger les plans au démarrage du service
-        this.fetchPlans().subscribe();
+        // Le chargement sera initié par les composants pour plus de contrôle
+        // this.fetchPlans().subscribe();
     }
 
     /**
      * Récupère les plans depuis le backend
      */
     fetchPlans(): Observable<NetflixPlan[]> {
-        return this.http.get<{ success: boolean, data: NetflixPlan[] }>(`${environment.apiUrl}/api/netflix/plans`).pipe(
+        return this.http.get<{ success: boolean, data: NetflixPlan[] }>(`${environment.apiUrl}/api/netflix/plans`, {
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
+            }
+        }).pipe(
             map(res => res.success ? res.data : []),
             tap(plans => {
                 if (plans.length > 0) {

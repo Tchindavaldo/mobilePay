@@ -5,6 +5,7 @@ import { app } from '../firebase-config';
 import { AuthStateService } from './services/auth-state.service';
 import { FcmService } from './services/notifications/FCM/fcm.service';
 import { Platform } from '@ionic/angular';
+import { UserStorageService } from './services/storage/user-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,8 @@ export class AppComponent {
     private router: Router,
     private authState: AuthStateService,
     private fcmService: FcmService,
-    private platform: Platform
+    private platform: Platform,
+    private userStorage: UserStorageService
   ) {
     this.initializeApp();
 
@@ -35,8 +37,8 @@ export class AppComponent {
     });
   }
 
-  private initializeAuth() {
-    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
+  private async initializeAuth() {
+    const hasSeenOnboarding = await this.userStorage.get('hasSeenOnboarding') === true || await this.userStorage.get('hasSeenOnboarding') === 'true';
     const auth = getAuth(app);
 
     onAuthStateChanged(auth, (user) => {

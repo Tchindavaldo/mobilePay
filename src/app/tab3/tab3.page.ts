@@ -4,6 +4,7 @@ import { app } from '../../firebase-config';
 import { LanguageService, Language } from '../services/language.service';
 import { ThemeService } from '../services/theme.service';
 import { Subscription } from 'rxjs';
+import { UserStorageService } from '../services/storage/user-storage.service';
 
 @Component({
   selector: 'app-tab3',
@@ -20,7 +21,7 @@ export class Tab3Page implements OnInit, OnDestroy {
   selectedLanguage: Language = 'fr';
   selectedTheme: string = 'light';
   darkModeEnabled: boolean = false;
-  
+
   private langSubscription?: Subscription;
   private themeSubscription?: Subscription;
   notificationsEnabled: boolean = true;
@@ -44,8 +45,9 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   constructor(
     public langService: LanguageService,
-    private themeService: ThemeService
-  ) {}
+    private themeService: ThemeService,
+    private userStorage: UserStorageService
+  ) { }
 
   ngOnInit() {
     this.loadUserData();
@@ -85,29 +87,29 @@ export class Tab3Page implements OnInit, OnDestroy {
     return this.langService.translate(key);
   }
 
-  loadUserData() {
+  async loadUserData() {
     const auth = getAuth(app);
-    const storedUserName = localStorage.getItem('userName');
-    const storedUserPhoto = localStorage.getItem('userPhoto');
+    const storedUserName = await this.userStorage.get('userName');
+    const storedUserPhoto = await this.userStorage.get('userPhoto');
 
     if (storedUserName) {
       this.userName = storedUserName;
       this.userPhoto = storedUserPhoto;
     }
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         let fullName = user.displayName || user.email?.split('@')[0] || 'Utilisateur';
         this.userName = fullName;
         this.userPhoto = user.photoURL;
         this.userEmail = user.email;
 
-        localStorage.setItem('userName', fullName);
+        await this.userStorage.set('userName', fullName);
         if (user.photoURL) {
-          localStorage.setItem('userPhoto', user.photoURL);
+          await this.userStorage.set('userPhoto', user.photoURL);
         }
         if (user.email) {
-          localStorage.setItem('userEmail', user.email);
+          await this.userStorage.set('userEmail', user.email);
         }
       } else {
         if (!this.userName) {
@@ -120,12 +122,6 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   getUserPhoto(): string {
-    if (!this.userPhoto) {
-      const storedPhoto = localStorage.getItem('userPhoto');
-      if (storedPhoto) {
-        this.userPhoto = storedPhoto;
-      }
-    }
     return this.userPhoto || 'assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png';
   }
 

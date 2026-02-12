@@ -21,7 +21,9 @@ export class PaymentService {
   initiateMobileMoneyPayment(paymentData: PaymentRequest): Observable<PaymentResponse> {
     const endpoint = `${this.apiUrl}/api/payment/initpaiment`;
 
-    return this.http.post<PaymentResponse>(endpoint, paymentData).pipe(
+    return this.http.post<PaymentResponse>(endpoint, paymentData, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Paiement initié avec succès:', response);
         return response;
@@ -38,7 +40,9 @@ export class PaymentService {
   initiateMobileMoneyPaymentNew(paymentData: any): Observable<any> {
     const endpoint = `${this.apiUrl}/api/payment/init-mobile-money`;
 
-    return this.http.post<any>(endpoint, paymentData).pipe(
+    return this.http.post<any>(endpoint, paymentData, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Paiement Mobile Money initié:', response);
         return response;
@@ -54,7 +58,9 @@ export class PaymentService {
    */
   initSubscription(subscriptionData: any): Observable<any> {
     const endpoint = `${this.apiUrl}/api/subscription/init`;
-    return this.http.post<any>(endpoint, subscriptionData).pipe(
+    return this.http.post<any>(endpoint, subscriptionData, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Abonnement initié:', response);
         return response;
@@ -69,7 +75,9 @@ export class PaymentService {
    */
   cancelPaymentVerification(transactionId: string): Observable<any> {
     const endpoint = `${this.apiUrl}/api/subscription/cancel`;
-    return this.http.post<any>(endpoint, { transactionId }).pipe(
+    return this.http.post<any>(endpoint, { transactionId }, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Annulation demandée:', response);
         return response;
@@ -125,7 +133,9 @@ export class PaymentService {
    */
   getNetflixCredentials(userId: string, nom: string, prenom: string): Observable<any> {
     const endpoint = `${this.apiUrl}/api/netflix/credentials`;
-    return this.http.post<any>(endpoint, { userId, nom, prenom }).pipe(
+    return this.http.post<any>(endpoint, { userId, nom, prenom }, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Identifiants Netflix récupérés:', response);
         return response;

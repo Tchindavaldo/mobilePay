@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../../firebase-config';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { LanguageService } from '../services/language.service';
+import { UserStorageService } from '../services/storage/user-storage.service';
+import { GoogleAuthService } from '../services/google-auth.service';
 
 @Component({
   selector: 'app-tab2',
@@ -27,22 +29,24 @@ export class Tab2Page implements OnInit {
   constructor(
     private router: Router,
     private alertController: AlertController,
-    public langService: LanguageService
-  ) {}
+    public langService: LanguageService,
+    private userStorage: UserStorageService,
+    private googleAuthService: GoogleAuthService
+  ) { }
 
   t(key: string): string {
     return this.langService.translate(key);
   }
-  
+
   ngOnInit() {
     this.loadUserData();
   }
 
-  loadUserData() {
+  async loadUserData() {
     const auth = getAuth(app);
 
-    const storedUserName = localStorage.getItem('userName');
-    const storedUserPhoto = localStorage.getItem('userPhoto');
+    const storedUserName = await this.userStorage.get('userName');
+    const storedUserPhoto = await this.userStorage.get('userPhoto');
 
     if (storedUserName) {
       this.userName = storedUserName;
@@ -53,7 +57,7 @@ export class Tab2Page implements OnInit {
       }
     }
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         let fullName = user.displayName || user.email?.split('@')[0] || 'Utilisateur';
         this.userName = fullName;
@@ -63,9 +67,9 @@ export class Tab2Page implements OnInit {
           this.user.photoURL = user.photoURL;
         }
 
-        localStorage.setItem('userName', fullName);
+        await this.userStorage.set('userName', fullName);
         if (user.photoURL) {
-          localStorage.setItem('userPhoto', user.photoURL);
+          await this.userStorage.set('userPhoto', user.photoURL);
         }
       } else {
         if (!this.userName) {
@@ -76,8 +80,6 @@ export class Tab2Page implements OnInit {
     });
   }
 
-
-
   editProfile() {
     console.log('Édition du profil en cours...');
   }
@@ -87,12 +89,6 @@ export class Tab2Page implements OnInit {
   }
 
   getUserPhoto(): string {
-    if (!this.userPhoto) {
-      const storedPhoto = localStorage.getItem('userPhoto');
-      if (storedPhoto) {
-        this.userPhoto = storedPhoto;
-      }
-    }
     return this.userPhoto || 'assets/3d-illustration-person-with-glasses_23-2149436185-removebg-preview.png';
   }
 
@@ -109,10 +105,8 @@ export class Tab2Page implements OnInit {
   }
 
   async logout() {
-    const auth = getAuth(app);
-    
     try {
-      await signOut(auth);
+      await this.googleAuthService.signOut();
       const alert = await this.alertController.create({
         header: 'Déconnexion',
         message: 'Vous êtes déconnecté.',

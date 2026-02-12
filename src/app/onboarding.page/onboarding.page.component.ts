@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserStorageService } from '../services/storage/user-storage.service';
 
 @Component({
   selector: 'app-onboarding.page',
@@ -10,17 +11,18 @@ export class OnboardingPageComponent implements OnInit {
   currentStep: number = 1;
   totalSteps: number = 3;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userStorage: UserStorageService) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   nextStep() {
     if (this.currentStep < this.totalSteps) {
       this.currentStep++;
     } else {
       // Dernière étape, marquer l'onboarding comme vu et aller à la page de connexion
-      this.markOnboardingAsSeen();
-      this.router.navigate(['/login']);
+      this.markOnboardingAsSeen().then(() => {
+        this.router.navigate(['/login']);
+      });
     }
   }
 
@@ -37,11 +39,12 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   skipOnboarding() {
-    this.markOnboardingAsSeen();
-    this.router.navigate(['/login']);
+    this.markOnboardingAsSeen().then(() => {
+      this.router.navigate(['/login']);
+    });
   }
 
-  private markOnboardingAsSeen() {
-    localStorage.setItem('hasSeenOnboarding', 'true');
+  private async markOnboardingAsSeen() {
+    await this.userStorage.set('hasSeenOnboarding', true);
   }
 }

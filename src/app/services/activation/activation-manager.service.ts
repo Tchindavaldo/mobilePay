@@ -13,6 +13,7 @@ import { PlanActivation } from '../store/plan-activation/plan-activation-reducer
 export class ActivationManagerService implements OnDestroy {
   private currentUserId: string = '';
   private isInitialized = false;
+  private initPromise: Promise<void>;
 
   // Subject pour gérer l'état de chargement global
   private loadingSubject = new BehaviorSubject<boolean>(false);
@@ -28,7 +29,7 @@ export class ActivationManagerService implements OnDestroy {
     private storeService: PlanActivationService,
     private userStorage: UserStorageService
   ) {
-    this.initializeService();
+    this.initPromise = this.initializeService();
   }
 
   /**
@@ -39,17 +40,17 @@ export class ActivationManagerService implements OnDestroy {
       console.log('🔍 [DEBUG] Initialisation du service...');
       const user = await this.userStorage.get('user');
       console.log('🔍 [DEBUG] Utilisateur récupéré du storage:', user);
-      
+
       if (user && user.id) {
         this.currentUserId = user.id;
         this.isInitialized = true;
         console.log('🚀 Service d\'activation initialisé pour l\'utilisateur:', this.currentUserId);
-        
+
         // Rejoindre la room socket pour cet utilisateur
         this.socketService.joinActivationRoom(this.currentUserId);
       } else {
-        console.error('❌ Aucun utilisateur trouvé dans le storage');
-        throw new Error('Aucun utilisateur connecté');
+        console.warn('⚠️ Aucun utilisateur trouvé dans le storage pour le service d\'activation');
+        // On ne jette pas d'erreur ici pour permettre une réinitialisation ultérieure si besoin
       }
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation du service d\'activation:', error);
@@ -58,59 +59,82 @@ export class ActivationManagerService implements OnDestroy {
   }
 
   /**
+   * S'assure que le service est bien initialisé avant de continuer
+   */
+  private async ensureInitialized(): Promise<void> {
+    await this.initPromise;
+    if (!this.isInitialized) {
+      // Retenter une initialisation si elle avait échoué précédemment
+      await this.initializeService();
+    }
+  }
+
+  /**
    * Charge toutes les activations de l'utilisateur depuis l'API
    * Affiche un loader et stocke les données dans le store
    */
   public loadUserActivations(): Observable<PlanActivation[]> {
-    if (!this.isInitialized || !this.currentUserId) {
-      return throwError(() => new Error('Service non initialisé ou utilisateur non connecté'));
-    }
+    // On utilise un petit hack pour attendre l'init dans un observable
+    return new Observable<PlanActivation[]>(subscriber => {
+      this.ensureInitialized().then(() => {
+        if (!this.isInitialized || !this.currentUserId) {
+          subscriber.error(new Error('Service non initialisé ou utilisateur non connecté'));
+          return;
+        }
 
-    // Activer le loader
-    this.setLoading(true);
-    this.clearError();
+        this.setLoading(true);
+        this.clearError();
 
-    console.log('📡 Chargement des activations pour l\'utilisateur:', this.currentUserId);
+        console.log('📡 Chargement des activations pour l\'utilisateur:', this.currentUserId);
 
-    return this.apiService.getUserActivations(this.currentUserId).pipe(
-      catchError(error => {
-        console.error('❌ Erreur lors du chargement des activations:', error);
-        this.setError('Erreur lors du chargement des activations');
-        return throwError(() => error);
-      }),
-      finalize(() => {
-        // Désactiver le loader
+        this.apiService.getUserActivations(this.currentUserId).subscribe({
+          next: activations => {
+            subscriber.next(activations);
+            subscriber.complete();
+          },
+          error: err => {
+            console.error('❌ Erreur lors du chargement des activations:', err);
+            this.setError('Erreur lors du chargement des activations');
+            subscriber.error(err);
+          },
+          complete: () => this.setLoading(false)
+        });
+      }).catch(err => {
+        console.error('❌ Erreur lors de l\'initialisation du service avant le chargement des activations:', err);
+        this.setError('Erreur lors de l\'initialisation du service');
         this.setLoading(false);
-      })
-    );
+        subscriber.error(err);
+      });
+    });
   }
 
   /**
    * Charge et stocke les activations dans le store seulement si la liste est null
    */
   public async loadAndStoreActivations(): Promise<void> {
+    await this.ensureInitialized();
     console.log('🔍 [DEBUG] loadAndStoreActivations appelée');
     console.log('🔍 [DEBUG] Service initialisé?', this.isInitialized);
     console.log('🔍 [DEBUG] User ID:', this.currentUserId);
-    
+
     // Vérifier d'abord si les activations sont déjà chargées
     const currentActivations = await this.storeService.getPlanActivations().pipe(
       take(1)
     ).toPromise();
-    
+
     console.log('🔍 [DEBUG] Activations actuelles dans le store:', currentActivations);
-    
+
     // Ne charger que si la liste est null (pas encore initialisée)
     if (currentActivations !== null) {
       console.log('ℹ️ Activations déjà chargées, pas de rechargement nécessaire');
       console.log('ℹ️ Nombre d\'activations:', currentActivations?.length || 0);
       return;
     }
-    
+
     try {
       console.log('🔄 Chargement initial des activations depuis l\'API...');
       const activations = await this.loadUserActivations().toPromise();
-      
+
       if (activations) {
         // Stocker les activations dans le store NgRx
         this.storeService.initPlanActivations(activations);
@@ -140,7 +164,7 @@ export class ActivationManagerService implements OnDestroy {
     const currentActivations = await this.storeService.getPlanActivations().pipe(
       take(1)
     ).toPromise();
-    
+
     if (currentActivations === null) {
       console.warn('⚠️ Impossible de créer une activation: liste non initialisée');
       throw new Error('Liste des activations non initialisée');
@@ -157,14 +181,14 @@ export class ActivationManagerService implements OnDestroy {
       };
 
       const newActivation = await this.apiService.createActivation(dataWithUserId).toPromise();
-      
+
       if (newActivation) {
         // Ajouter au store (le socket se chargera aussi de la mise à jour)
         this.storeService.addPlanActivation(newActivation);
         console.log('✅ Nouvelle activation créée et ajoutée au store:', newActivation.id);
         return newActivation;
       }
-      
+
       throw new Error('Erreur lors de la création de l\'activation');
     } catch (error) {
       console.error('❌ Erreur lors de la création de l\'activation:', error);
@@ -183,7 +207,7 @@ export class ActivationManagerService implements OnDestroy {
     const currentActivations = await this.storeService.getPlanActivations().pipe(
       take(1)
     ).toPromise();
-    
+
     if (currentActivations === null) {
       console.warn('⚠️ Impossible de mettre à jour une activation: liste non initialisée');
       throw new Error('Liste des activations non initialisée');
@@ -194,14 +218,14 @@ export class ActivationManagerService implements OnDestroy {
 
     try {
       const updatedActivation = await this.apiService.updateActivation(activationId, updates).toPromise();
-      
+
       if (updatedActivation) {
         // Mettre à jour dans le store (le socket se chargera aussi de la mise à jour)
         this.storeService.updatePlanActivation(activationId, updatedActivation);
         console.log('✅ Activation mise à jour dans le store:', activationId);
         return updatedActivation;
       }
-      
+
       throw new Error('Erreur lors de la mise à jour de l\'activation');
     } catch (error) {
       console.error('❌ Erreur lors de la mise à jour de l\'activation:', error);
@@ -220,7 +244,7 @@ export class ActivationManagerService implements OnDestroy {
     const currentActivations = await this.storeService.getPlanActivations().pipe(
       take(1)
     ).toPromise();
-    
+
     if (currentActivations === null) {
       console.warn('⚠️ Impossible de supprimer une activation: liste non initialisée');
       throw new Error('Liste des activations non initialisée');
@@ -231,7 +255,7 @@ export class ActivationManagerService implements OnDestroy {
 
     try {
       await this.apiService.deleteActivation(activationId).toPromise();
-      
+
       // Supprimer du store (le socket se chargera aussi de la mise à jour)
       this.storeService.removePlanActivation(activationId);
       console.log('✅ Activation supprimée du store:', activationId);

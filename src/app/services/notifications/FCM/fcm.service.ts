@@ -121,21 +121,34 @@ export class FcmService {
     // Envoi du token FCM au backend via UpdateUserService
     async sendTokenToBackend(token: string) {
         try {
+            console.log('🔄 Tentative d\'envoi du token FCM au backend:', token);
             const user = await this.userStorage.get('user');
-            const userId = user?.uid || user?.id || user?._id;
+            // Log pour debugger l'objet user
+            console.log('👤 Utilisateur récupéré pour mise à jour FCM:', user);
+
+            const userId = user?.id;
 
             if (userId) {
+                console.log(`📤 Envoi du token pour userId: ${userId}`);
                 await this.updateUserService.updateUser(userId, { fcmToken: token });
                 console.log('✅ Token FCM envoyé avec succès au backend');
 
                 // Mettre à jour le stockage local
                 await this.userStorage.set('user', { ...user, fcmToken: token });
             } else {
-                console.warn('⚠️ Impossible d\'envoyer le token : Utilisateur non identifié localement');
+                console.warn('⚠️ Impossible d\'envoyer le token : Utilisateur non identifié localement (userId manquant)');
                 await this.userStorage.set('unsentFcmToken', token);
             }
         } catch (error) {
-            console.error("❌ Erreur d'envoi du token FCM au backend:", error);
+            console.error("❌ Erreur d'envoi du token FCM au backend (Détails):", JSON.stringify(error, null, 2));
+            if (error instanceof Error) {
+                console.error("❌ Message d'erreur:", error.message);
+                console.error("❌ Stack trace:", error.stack);
+            }
+            // Essayer d'afficher la réponse serveur si disponible (cas Axios/Http)
+            if ((error as any).error) {
+                console.error("❌ Réponse serveur:", JSON.stringify((error as any).error, null, 2));
+            }
             this.userStorage.set('unsentFcmToken', token);
         }
     }

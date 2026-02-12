@@ -11,7 +11,7 @@ import { PlanActivation } from '../store/plan-activation/plan-activation-reducer
 export class PlanActivationApiService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Récupère toutes les activations d'un utilisateur
@@ -20,8 +20,12 @@ export class PlanActivationApiService {
    */
   getUserActivations(userId: string): Observable<PlanActivation[]> {
     const endpoint = `${this.apiUrl}/api/plan-activation/user/${userId}`;
-    
-    return this.http.get<{ success: boolean; data: PlanActivation[] }>(endpoint).pipe(
+
+    return this.http.get<{ success: boolean; data: PlanActivation[] }>(endpoint, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    }).pipe(
       map(response => {
         console.log('✅ Activations récupérées avec succès:', response);
         return response.data || [];
@@ -37,7 +41,7 @@ export class PlanActivationApiService {
    */
   getActivationById(activationId: string): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}`;
-    
+
     return this.http.get<{ success: boolean; data: PlanActivation }>(endpoint).pipe(
       map(response => {
         console.log('✅ Activation récupérée avec succès:', response);
@@ -54,7 +58,7 @@ export class PlanActivationApiService {
    */
   createActivation(activation: Partial<PlanActivation>): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation`;
-    
+
     return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, activation).pipe(
       map(response => {
         console.log('✅ Activation créée avec succès:', response);
@@ -72,7 +76,7 @@ export class PlanActivationApiService {
    */
   updateActivation(activationId: string, updates: Partial<PlanActivation>): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}`;
-    
+
     return this.http.put<{ success: boolean; data: PlanActivation }>(endpoint, updates).pipe(
       map(response => {
         console.log('✅ Activation mise à jour avec succès:', response);
@@ -89,7 +93,7 @@ export class PlanActivationApiService {
    */
   deleteActivation(activationId: string): Observable<{ success: boolean; message: string }> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}`;
-    
+
     return this.http.delete<{ success: boolean; message: string }>(endpoint).pipe(
       map(response => {
         console.log('✅ Activation supprimée avec succès:', response);
@@ -106,7 +110,7 @@ export class PlanActivationApiService {
    */
   activateActivation(activationId: string): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}/activate`;
-    
+
     return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, {}).pipe(
       map(response => {
         console.log('✅ Activation activée avec succès:', response);
@@ -123,7 +127,7 @@ export class PlanActivationApiService {
    */
   cancelActivation(activationId: string): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}/cancel`;
-    
+
     return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, {}).pipe(
       map(response => {
         console.log('✅ Activation annulée avec succès:', response);
@@ -140,7 +144,7 @@ export class PlanActivationApiService {
    */
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Une erreur est survenue lors de la communication avec le serveur.';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Erreur côté client
       errorMessage = `Erreur client: ${error.error.message}`;
@@ -148,7 +152,7 @@ export class PlanActivationApiService {
       // Erreur côté serveur
       errorMessage = error.error?.message || `Erreur serveur: ${error.status} - ${error.message}`;
     }
-    
+
     console.error('❌ Erreur API Plan Activation:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }

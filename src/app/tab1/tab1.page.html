@@ -45,7 +45,7 @@
     <!-- Ligne principale -->
     <div class="header-row">
       <h1 class="page-title">{{ t('home') }}</h1>
-      
+
       <div class="header-icons">
         <div class="icon-btn" routerLink="/tabs/tab2">
           <ion-icon name="notifications-outline"></ion-icon>
@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Barre de recherche -->
     <div class="search-bar">
       <ion-icon name="search-outline"></ion-icon>
@@ -69,41 +69,27 @@
   <!-- Filter Chips Section -->
   <div class="filter-chips-container">
     <div class="chips-wrapper">
-      <ion-chip
-        class="filter-chip"
-        [class.active]="selectedFilter === 'all'"
-        (click)="selectFilter('all')">
+      <ion-chip class="filter-chip" [class.active]="selectedFilter === 'all'" (click)="selectFilter('all')">
         <ion-icon name="apps-outline"></ion-icon>
         <ion-label>{{ t('home.all') }}</ion-label>
       </ion-chip>
 
-      <ion-chip
-        class="filter-chip"
-        [class.active]="selectedFilter === 'streaming'"
-        (click)="selectFilter('streaming')">
+      <ion-chip class="filter-chip" [class.active]="selectedFilter === 'streaming'" (click)="selectFilter('streaming')">
         <ion-icon name="play-circle-outline"></ion-icon>
         <ion-label>{{ t('home.streaming') }}</ion-label>
       </ion-chip>
 
-      <ion-chip
-        class="filter-chip"
-        [class.active]="selectedFilter === 'music'"
-        (click)="selectFilter('music')">
+      <ion-chip class="filter-chip" [class.active]="selectedFilter === 'music'" (click)="selectFilter('music')">
         <ion-icon name="musical-notes-outline"></ion-icon>
         <ion-label>{{ t('home.music') }}</ion-label>
       </ion-chip>
 
-      <ion-chip
-        class="filter-chip"
-        [class.active]="selectedFilter === 'gaming'"
-        (click)="selectFilter('gaming')">
+      <ion-chip class="filter-chip" [class.active]="selectedFilter === 'gaming'" (click)="selectFilter('gaming')">
         <ion-icon name="game-controller-outline"></ion-icon>
         <ion-label>{{ t('home.gaming') }}</ion-label>
       </ion-chip>
 
-      <ion-chip
-        class="filter-chip"
-        [class.active]="selectedFilter === 'productivity'"
+      <ion-chip class="filter-chip" [class.active]="selectedFilter === 'productivity'"
         (click)="selectFilter('productivity')">
         <ion-icon name="briefcase-outline"></ion-icon>
         <ion-label>{{ t('home.productivity') }}</ion-label>
@@ -118,234 +104,236 @@
 
     <div class="donnee">
 
-    <div class="chiffre" style="display: flex;justify-content: space-between;" ><span style="font-size: 36px;"><span style="font-size: 18px;">$</span>{{ selectedPlanPrice }}</span>     <span class="compteur" [style.color]="'#ff6969'" [style.fontSize.px]="36">
-      {{ days }}
-    </span>
-  
-  </div>
-    <div class="soustitre" style="color: gray;display: flex;justify-content: space-between;">{{ t('home.days_remaining') }}<span>{{ t('home.days') }}</span></div>
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-track">
-          <div
-            class="progress-fill"
-            [style.width.%]="getProgressPercentage()">
-          </div>
-          <div class="progress-indicator" [style.left.%]="getProgressPercentage()">
-            <div class="indicator-dot" (click)="toggleTooltip()"></div>
-            <div class="indicator-tooltip" [class.show]="showTooltip">
-              {{ days }} jours restants
+      <div class="chiffre" style="display: flex;justify-content: space-between;"><span style="font-size: 36px;"><span
+            style="font-size: 18px;">$</span>{{ selectedPlanPrice }}</span> <span class="compteur"
+          [style.color]="'#ff6969'" [style.fontSize.px]="36">
+          {{ days }}
+        </span>
+
+      </div>
+      <div class="soustitre" style="color: gray;display: flex;justify-content: space-between;">{{
+        t('home.days_remaining') }}<span>{{ t('home.days') }}</span></div>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="getProgressPercentage()">
+            </div>
+            <div class="progress-indicator" [style.left.%]="getProgressPercentage()">
+              <div class="indicator-dot" (click)="toggleTooltip()"></div>
+              <div class="indicator-tooltip" [class.show]="showTooltip">
+                {{ days }} jours restants
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="soustitre" style="padding-top: 3%;color: gray;display: flex;justify-content: space-between;"> {{ t('home.plan') }}:  {{ selectedPlanName }} <span>1 {{ t('home.month') }}</span></div>
-    <div class="flex">
-      <ion-button [routerLink]="['/pay']" class="resubscribe-btn" color="danger">
-        <ion-icon slot="end" name="flash-sharp"></ion-icon>
-        <span class="btn-text">{{ t('home.resubscribe') }}</span>
-      </ion-button>
+      <div class="soustitre" style="padding-top: 3%;color: gray;display: flex;justify-content: space-between;"> {{
+        t('home.plan') }}: {{ selectedPlanName }} <span>1 {{ t('home.month') }}</span></div>
+      <div class="flex">
+        <ion-button (click)="goToPay()" class="resubscribe-btn" color="danger">
+          <ion-icon slot="end" name="flash-sharp"></ion-icon>
+          <span class="btn-text">{{ t('home.resubscribe') }}</span>
+        </ion-button>
 
-      <!-- Bouton Désabonner -->
-      <ion-button class="unsubscribe-btn" fill="outline" (click)="showDialog()" (click)="resetNumbers()">
-        <ion-icon slot="end" name="flash-off-sharp"></ion-icon>
-        <span class="btn-text">{{ t('home.unsubscribe') }}</span>
-      </ion-button>
-      
-    </div>
+        <!-- Bouton Désabonner -->
+        <ion-button class="unsubscribe-btn" fill="outline" (click)="showDialog()" (click)="resetNumbers()">
+          <ion-icon slot="end" name="flash-off-sharp"></ion-icon>
+          <span class="btn-text">{{ t('home.unsubscribe') }}</span>
+        </ion-button>
+
+      </div>
     </div>
 
     <!-- Séparateur discret -->
     <div class="subtle-separator"></div>
-<!-- Section Services & Streaming -->
-<div class="section-header">
-  <h2 class="section-title">
-    <ion-icon name="play-circle" class="title-icon"></ion-icon>
-    {{ t('home.services_streaming') }}
-  </h2>
-  <p class="section-subtitle">{{ t('home.services_subtitle') }}</p>
-</div>
+    <!-- Section Services & Streaming -->
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="play-circle" class="title-icon"></ion-icon>
+        {{ t('home.services_streaming') }}
+      </h2>
+      <p class="section-subtitle">{{ t('home.services_subtitle') }}</p>
+    </div>
 
-<div class="services-grid">
-  <!-- Slider des services -->
-  <div class="featured-service">
-    <div class="services-slider">
-      <div class="slider-container" #sliderContainer>
+    <div class="services-grid">
+      <!-- Slider des services -->
+      <div class="featured-service">
+        <div class="services-slider">
+          <div class="slider-container" #sliderContainer>
 
-        <!-- Slide 1 - Netflix -->
-        <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 0">
-          <div class="slide-image">
-            <img src="../../assets/flyers netfliox.jpg" alt="Netflix">
-            <div class="slide-overlay">
-              <div class="slide-content">
-                <h3 class="slide-title">Netflix Premium</h3>
-                <p class="slide-subtitle">Compte partagé • 4 écrans</p>
-                <div class="slide-badges">
-                  <span class="price-badge">2000F</span>
-                  <span class="status-badge active">Actif</span>
+            <!-- Slide 1 - Netflix -->
+            <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 0">
+              <div class="slide-image">
+                <img src="../../assets/flyers netfliox.jpg" alt="Netflix">
+                <div class="slide-overlay">
+                  <div class="slide-content">
+                    <h3 class="slide-title">Netflix Premium</h3>
+                    <p class="slide-subtitle">Compte partagé • 4 écrans</p>
+                    <div class="slide-badges">
+                      <span class="price-badge">2000F</span>
+                      <span class="status-badge active">Actif</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Slide 2 - Disney+ -->
-        <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 1">
-          <div class="slide-image">
-            <img src="../../assets/disney.png" alt="Disney+">
-            <div class="slide-overlay">
-              <div class="slide-content">
-                <h3 class="slide-title">Disney+ Premium</h3>
-                <p class="slide-subtitle">Famille • 4 profils</p>
-                <div class="slide-badges">
-                  <span class="price-badge">1500F</span>
-                  <span class="status-badge inactive">Inactif</span>
+            <!-- Slide 2 - Disney+ -->
+            <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 1">
+              <div class="slide-image">
+                <img src="../../assets/disney.png" alt="Disney+">
+                <div class="slide-overlay">
+                  <div class="slide-content">
+                    <h3 class="slide-title">Disney+ Premium</h3>
+                    <p class="slide-subtitle">Famille • 4 profils</p>
+                    <div class="slide-badges">
+                      <span class="price-badge">1500F</span>
+                      <span class="status-badge inactive">Inactif</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Slide 3 - Spotify -->
-        <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 2">
-          <div class="slide-image">
-            <img src="../../assets/télécharger (10).jpeg" alt="Spotify">
-            <div class="slide-overlay">
-              <div class="slide-content">
-                <h3 class="slide-title">Spotify Premium</h3>
-                <p class="slide-subtitle">Musique illimitée</p>
-                <div class="slide-badges">
-                  <span class="price-badge">800F</span>
-                  <span class="status-badge active">Actif</span>
+            <!-- Slide 3 - Spotify -->
+            <div class="service-slide" [routerLink]="['/plan']" [class.active]="currentSlide === 2">
+              <div class="slide-image">
+                <img src="../../assets/télécharger (10).jpeg" alt="Spotify">
+                <div class="slide-overlay">
+                  <div class="slide-content">
+                    <h3 class="slide-title">Spotify Premium</h3>
+                    <p class="slide-subtitle">Musique illimitée</p>
+                    <div class="slide-badges">
+                      <span class="price-badge">800F</span>
+                      <span class="status-badge active">Actif</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
+        <!-- Indicateurs de pagination -->
+        <div class="slider-pagination">
+          <div class="pagination-dot" [class.active]="currentSlide === 0" (click)="goToSlide(0)"></div>
+          <div class="pagination-dot" [class.active]="currentSlide === 1" (click)="goToSlide(1)"></div>
+          <div class="pagination-dot" [class.active]="currentSlide === 2" (click)="goToSlide(2)"></div>
+        </div>
+      </div>
+
+      <!-- Grille des services -->
+      <div class="services-actions">
+        <div class="action-card" [routerLink]="['/compte']">
+          <div class="action-icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <span class="action-label">{{ t('home.accounts') }}</span>
+        </div>
+
+        <div class="action-card" [routerLink]="['/support']">
+          <div class="action-icon">
+            <ion-icon name="help-circle-outline"></ion-icon>
+          </div>
+          <span class="action-label">{{ t('home.help') }}</span>
+        </div>
+
+        <div class="action-card" [routerLink]="['/actus']">
+          <div class="action-icon">
+            <ion-icon name="film-outline"></ion-icon>
+          </div>
+          <span class="action-label">{{ t('home.news') }}</span>
+        </div>
+
+        <div class="action-card" [routerLink]="['/partage']">
+          <div class="action-icon">
+            <ion-icon name="share-social-outline"></ion-icon>
+          </div>
+          <span class="action-label">{{ t('home.share') }}</span>
+        </div>
       </div>
     </div>
-
-    <!-- Indicateurs de pagination -->
-    <div class="slider-pagination">
-      <div class="pagination-dot" [class.active]="currentSlide === 0" (click)="goToSlide(0)"></div>
-      <div class="pagination-dot" [class.active]="currentSlide === 1" (click)="goToSlide(1)"></div>
-      <div class="pagination-dot" [class.active]="currentSlide === 2" (click)="goToSlide(2)"></div>
-    </div>
-  </div>
-
-  <!-- Grille des services -->
-  <div class="services-actions">
-    <div class="action-card" [routerLink]="['/compte']">
-      <div class="action-icon">
-        <ion-icon name="people-outline"></ion-icon>
-      </div>
-      <span class="action-label">{{ t('home.accounts') }}</span>
-    </div>
-
-    <div class="action-card" [routerLink]="['/support']">
-      <div class="action-icon">
-        <ion-icon name="help-circle-outline"></ion-icon>
-      </div>
-      <span class="action-label">{{ t('home.help') }}</span>
-    </div>
-
-    <div class="action-card" [routerLink]="['/actus']">
-      <div class="action-icon">
-        <ion-icon name="film-outline"></ion-icon>
-      </div>
-      <span class="action-label">{{ t('home.news') }}</span>
-    </div>
-
-    <div class="action-card" [routerLink]="['/partage']">
-      <div class="action-icon">
-        <ion-icon name="share-social-outline"></ion-icon>
-      </div>
-      <span class="action-label">{{ t('home.share') }}</span>
-    </div>
-  </div>
-</div>
 
     <!-- Séparateur discret -->
     <div class="subtle-separator"></div>
-<!-- Section Découvrir & Divertissement -->
-<div class="discover-section">
-  <div class="section-header">
-    <h2 class="section-title">
-      <ion-icon name="sparkles" class="title-icon"></ion-icon>
-      {{ t('home.discover') }}
-    </h2>
-    <p class="section-subtitle">{{ t('home.discover_subtitle') }}</p>
-  </div>
+    <!-- Section Découvrir & Divertissement -->
+    <div class="discover-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <ion-icon name="sparkles" class="title-icon"></ion-icon>
+          {{ t('home.discover') }}
+        </h2>
+        <p class="section-subtitle">{{ t('home.discover_subtitle') }}</p>
+      </div>
 
-  <div class="discover-grid">
-    <!-- Cinéma -->
-    <div class="discover-card cinema-card" (click)="presentToast('top')">
-      <div class="card-background">
-        <div class="card-icon">
-          <ion-icon name="film-outline"></ion-icon>
+      <div class="discover-grid">
+        <!-- Cinéma -->
+        <div class="discover-card cinema-card" (click)="presentToast('top')">
+          <div class="card-background">
+            <div class="card-icon">
+              <ion-icon name="film-outline"></ion-icon>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">{{ t('home.cinema') }}</h3>
+              <p class="card-description">{{ t('home.films_series') }}</p>
+            </div>
+            <div class="card-badge">
+              <ion-icon name="star"></ion-icon>
+            </div>
+          </div>
         </div>
-        <div class="card-content">
-          <h3 class="card-title">{{ t('home.cinema') }}</h3>
-          <p class="card-description">{{ t('home.films_series') }}</p>
+
+        <!-- Gaming -->
+        <div class="discover-card gaming-card" (click)="presentToast('top')">
+          <div class="card-background">
+            <div class="card-icon">
+              <ion-icon name="game-controller-outline"></ion-icon>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">{{ t('home.gaming') }}</h3>
+              <p class="card-description">{{ t('home.games_consoles') }}</p>
+            </div>
+            <div class="card-badge">
+              <ion-icon name="trophy"></ion-icon>
+            </div>
+          </div>
         </div>
-        <div class="card-badge">
-          <ion-icon name="star"></ion-icon>
+
+        <!-- Shopping -->
+        <div class="discover-card shopping-card" (click)="presentToast('top')">
+          <div class="card-background">
+            <div class="card-icon">
+              <ion-icon name="bag-outline"></ion-icon>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">{{ t('home.shopping') }}</h3>
+              <p class="card-description">{{ t('home.online_shopping') }}</p>
+            </div>
+            <div class="card-badge">
+              <ion-icon name="flash"></ion-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Réseaux sociaux -->
+        <div class="discover-card social-card" (click)="presentToast('top')">
+          <div class="card-background">
+            <div class="card-icon">
+              <ion-icon name="people-outline"></ion-icon>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">{{ t('home.social') }}</h3>
+              <p class="card-description">{{ t('home.social_networks') }}</p>
+            </div>
+            <div class="card-badge">
+              <ion-icon name="heart"></ion-icon>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Gaming -->
-    <div class="discover-card gaming-card" (click)="presentToast('top')">
-      <div class="card-background">
-        <div class="card-icon">
-          <ion-icon name="game-controller-outline"></ion-icon>
-        </div>
-        <div class="card-content">
-          <h3 class="card-title">{{ t('home.gaming') }}</h3>
-          <p class="card-description">{{ t('home.games_consoles') }}</p>
-        </div>
-        <div class="card-badge">
-          <ion-icon name="trophy"></ion-icon>
-        </div>
-      </div>
-    </div>
-
-    <!-- Shopping -->
-    <div class="discover-card shopping-card" (click)="presentToast('top')">
-      <div class="card-background">
-        <div class="card-icon">
-          <ion-icon name="bag-outline"></ion-icon>
-        </div>
-        <div class="card-content">
-          <h3 class="card-title">{{ t('home.shopping') }}</h3>
-          <p class="card-description">{{ t('home.online_shopping') }}</p>
-        </div>
-        <div class="card-badge">
-          <ion-icon name="flash"></ion-icon>
-        </div>
-      </div>
-    </div>
-
-    <!-- Réseaux sociaux -->
-    <div class="discover-card social-card" (click)="presentToast('top')">
-      <div class="card-background">
-        <div class="card-icon">
-          <ion-icon name="people-outline"></ion-icon>
-        </div>
-        <div class="card-content">
-          <h3 class="card-title">{{ t('home.social') }}</h3>
-          <p class="card-description">{{ t('home.social_networks') }}</p>
-        </div>
-        <div class="card-badge">
-          <ion-icon name="heart"></ion-icon>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- <ion-button (click)="startCountdown()">Démarrer le compte à rebours</ion-button> -->
+    <!-- <ion-button (click)="startCountdown()">Démarrer le compte à rebours</ion-button> -->
   </div>
 </ion-content>

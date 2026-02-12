@@ -67,7 +67,19 @@ export class UpdateUserService {
       console.log('✓ Utilisateur mis à jour dans la BD:', response.data);
       return response.data.data || response.data;
     } catch (error: any) {
-      console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
+      console.error('❌ Erreur lors de la mise à jour de l\'utilisateur (Détails):');
+      if (error.response) {
+        // La requête a été faite et le serveur a répondu avec un code d'erreur
+        console.error('Status:', error.response.status);
+        console.error('Headers:', JSON.stringify(error.response.headers));
+        console.error('Data:', JSON.stringify(error.response.data, null, 2));
+      } else if (error.request) {
+        // La requête a été faite mais pas de réponse
+        console.error('No response received:', error.request);
+      } else {
+        // Erreur lors de la configuration de la requête
+        console.error('Error Message:', error.message);
+      }
       throw error;
     }
   }

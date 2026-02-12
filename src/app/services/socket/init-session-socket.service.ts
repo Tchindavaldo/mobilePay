@@ -16,7 +16,7 @@ export class InitSessionSocketService {
     // Si le socket est DÉJÀ connecté, rejoindre la room immédiatement
     if (socket.connected) {
       const user = await this.userStorage.get('user');
-      const userId = user?.uid || user?.id || user?._id;
+      const userId = user?.id;
 
       if (userId) {
         socket.emit('join_user', userId);
@@ -29,7 +29,7 @@ export class InitSessionSocketService {
     // Configurer les événements pour les futures connexions
     socket.on('connect', async () => {
       const user = await this.userStorage.get('user');
-      const userId = user?.uid || user?.id || user?._id;
+      const userId = user?.id;
 
       if (userId) {
         socket.emit('join_user', userId);

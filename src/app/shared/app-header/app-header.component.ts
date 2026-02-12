@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NotificationService } from '../../notification.service';
+import { UserStorageService } from '../../services/storage/user-storage.service';
 
 @Component({
   selector: 'app-header',
@@ -14,12 +15,15 @@ export class AppHeaderComponent implements OnInit {
   userPhoto: string | null = null;
   notificationCount: number = 0;
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private userStorage: UserStorageService
+  ) { }
 
-  ngOnInit(): void {
-    // Load from localStorage if available
-    const storedUserName = localStorage.getItem('userName');
-    const storedUserPhoto = localStorage.getItem('userPhoto');
+  async ngOnInit(): Promise<void> {
+    // Load from UserStorage if available
+    const storedUserName = await this.userStorage.get('userName');
+    const storedUserPhoto = await this.userStorage.get('userPhoto');
     if (storedUserName) this.userName = storedUserName;
     if (storedUserPhoto) this.userPhoto = storedUserPhoto;
 

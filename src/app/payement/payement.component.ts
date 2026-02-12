@@ -93,12 +93,10 @@ export class PayementComponent implements OnInit, OnDestroy {
        constructor(
               public router: Router,
               public planService: PlanService, // Public for legacy usage if any
-              private apiService: ApiService,
               private toastController: ToastController,
               private alertController: AlertController,
               private countdownService: CountdownService,
               private notificationService: NotificationService,
-              private animationCtrl: AnimationController,
               private userStorage: UserStorageService,
               private socketService: SocketService,
 
@@ -107,38 +105,66 @@ export class PayementComponent implements OnInit, OnDestroy {
               public planManagement: PlanManagementService,
               public paymentModal: PaymentModalService,
               private paymentProcessing: PaymentProcessingService
-       ) { }
+       ) {
+              console.log('🏗️ PayementComponent: Constructor called');
+       }
 
        async ngOnInit() {
-              this.planManagement.reset();
-              this.planManagement.fetchPlans().subscribe(plans => {
-                     if (plans && plans.length > 0) {
-                            const premium = plans.find(p => p.id === 'premium') || plans[0];
-                            this.planManagement.setSelectedPlan(premium.id);
-                            this.totalAmount = premium.price;
+              console.log('🏁 [DEBUG] PayementComponent: Début ngOnInit');
+              try {
+                     this.planManagement.reset();
+                     console.log('🔄 [DEBUG] PlanManagement reset effectué');
+
+                     this.planManagement.fetchPlans().subscribe({
+                            next: (plans) => {
+                                   console.log('📦 [DEBUG] Plans reçus:', plans ? plans.length : 0);
+                                   if (plans && plans.length > 0) {
+                                          const premium = plans.find(p => p.id === 'premium') || plans[0];
+                                          if (premium) {
+                                                 this.planManagement.setSelectedPlan(premium.id);
+                                                 this.totalAmount = premium.price || 0;
+                                                 console.log(`✅ [DEBUG] Plan par défaut: ${premium.id}`);
+                                          }
+                                   } else {
+                                          console.warn('⚠️ [DEBUG] Liste de plans vide');
+                                   }
+                            },
+                            error: (err) => {
+                                   console.error('❌ [DEBUG] Erreur fetchPlans:', err);
+                                   this.presentErrorToast('Impossible de charger les offres.');
+                            }
+                     });
+
+                     // Reset local state
+                     this.isLoading = false;
+                     this.paymentSuccess = false;
+                     this.showCodePopup = false;
+                     this.cardNumber = ''; this.expiryDate = ''; this.cvv = '';
+                     this.phoneNumber = ''; this.netflixEmail = ''; this.netflixPassword = '';
+
+                     console.log('🔍 [DEBUG] Initialisation utilisateur...');
+                     await this.initializeUser();
+                     console.log('👤 [DEBUG] UserID actuel:', this.currentUserId);
+
+                     // Pre-fill user name
+                     if (this.currentUserId) {
+                            const user = await this.userStorage.get('user');
+                            if (user) {
+                                   this.userFirstName = user.prenom || user.displayName?.split(' ')[0] || '';
+                                   this.userLastName = user.nom || user.displayName?.split(' ')[1] || '';
+                                   console.log('📝 [DEBUG] Nom pré-rempli:', this.userFirstName, this.userLastName);
+                            }
                      }
-              });
 
-              // Reset local state
-              this.isLoading = false;
-              this.paymentSuccess = false;
-              this.showCodePopup = false;
-              this.cardNumber = ''; this.expiryDate = ''; this.cvv = '';
-              this.phoneNumber = ''; this.netflixEmail = ''; this.netflixPassword = '';
+                     this.initializeSocket();
+                     console.log('🔌 [DEBUG] Socket initialisé');
 
-              await this.initializeUser();
-
-              // Pre-fill user name
-              if (this.currentUserId) {
-                     const user = await this.userStorage.get('user');
-                     if (user) {
-                            this.userFirstName = user.prenom || '';
-                            this.userLastName = user.nom || '';
-                     }
+                     // NOTE: initializePlanSelection est obsolète et a été supprimée car elle utilisait 
+                     // du DOM direct incompatible avec le rendu dynamique Angular actuel.
+              } catch (error) {
+                     console.error('❌ [FATAL] Crash dans ngOnInit PayementComponent:', error);
+                     this.presentErrorToast('Une erreur critique est survenue.');
               }
-
-              this.initializeSocket();
-              setTimeout(() => this.initializePlanSelection(), 100);
        }
 
        ngOnDestroy() {
@@ -356,58 +382,28 @@ export class PayementComponent implements OnInit, OnDestroy {
        getOperatorLogo() { return this.selectedPaymentMethod === 'orangemoney' ? '../../assets/R.png' : '../../assets/th (1).jpeg'; }
        getPhonePlaceholder() { return '6XXXXXXXX'; }
 
-       // Initializers needing DOM or complexity
-       initializePlanSelection() {
-              const options = document.querySelectorAll('.plan-option');
-              if (options.length === 0) return;
+       // Les méthodes initializePlanSelection et updatePlanInfo ont été supprimées car elles sont incompatibles
+       // avec la gestion dynamique des plans via *ngFor et causaient des erreurs potentielles.
+       // La sélection est maintenant gérée directement par (click)="selectPlan(plan.id)" dans le HTML.
 
-              options.forEach(opt => opt.classList.remove('active'));
-              const idx = parseInt(localStorage.getItem('activePlanIndex') || '3');
-              const target = options[idx] || options[3];
-
-              target.classList.add('active');
-              this.updatePlanInfo(target as HTMLElement);
-
-              options.forEach((opt, index) => {
-                     opt.addEventListener('click', () => {
-                            options.forEach(o => o.classList.remove('active'));
-                            opt.classList.add('active');
-                            localStorage.setItem('activePlanIndex', index.toString());
-                            this.updatePlanInfo(opt as HTMLElement);
-                            const planName = opt.getAttribute('data-plan') || 'premium';
-                            this.selectPlan(planName.toLowerCase());
-                     });
-              });
-       }
-
-       updatePlanInfo(element: HTMLElement) {
-              const setText = (id: string, val: string | null) => {
-                     const el = document.getElementById(id);
-                     if (el && val) el.textContent = val;
-              };
-              setText('info-div1', `${this.totalAmount} ${this.getCurrency()}`);
-              setText('info-div2', element.getAttribute('data-qualite'));
-              setText('info-div3', element.getAttribute('data-resolution'));
-              setText('info-div4', element.getAttribute('data-support'));
-              setText('info-div5', element.getAttribute('data-appareils'));
-              setText('info-div6', element.getAttribute('data-telechargement'));
-       }
-
-       // Socket Logic
+       // Socket Logic: On s'abonne uniquement aux événements de navigation UI.
+       // La jointure de room (join_user) est gérée globalement par InitSessionSocketService.
        private initializeSocket() {
               this.socket = this.socketService.getSocket();
               if (this.socket) {
-                     if (this.currentUserId) this.socket.emit('join_user', this.currentUserId);
+                     console.log('📡 [DEBUG] PayementComponent: Attachement des listeners de validation');
+
+                     // On s'assure de ne pas avoir de doublons
+                     this.socket.off('payment_validated');
+                     this.socket.off('activationcreated');
 
                      this.socket.on('payment_validated', (data: any) => {
                             if (data.success && data.data && String(data.data.userId) === String(this.currentUserId)) {
-                                   console.log('✅ Payment validated via socket');
+                                   console.log('✅ [SOCKET] Paiement validé reçu dans le composant');
 
-                                   this.paymentModal.closeModal(); // This might trigger cancellation logic if not handled carefully
-                                   // Correction: Manually update state to success instead of close
                                    this.showPaymentModal = false;
                                    this.paymentModal.verificationStep = 2; // Confirmed
-                                   this.paymentModal.reset(); // Clean reset
+                                   this.paymentModal.reset();
 
                                    this.page = 5;
                                    this.presentSuccessToast(data.message || 'Paiement validé avec succès!');
@@ -416,11 +412,14 @@ export class PayementComponent implements OnInit, OnDestroy {
 
                      this.socket.on('activationcreated', (data: any) => {
                             if (data.success) {
+                                   console.log('✅ [SOCKET] Activation créée reçue');
                                    this.verificationStep = 3;
                                    this.presentSuccessToast('Activation de l\'abonnement en cours...');
-                                   setTimeout(() => { this.page = 6; }, 3000);
+                                   setTimeout(() => { this.page = 6; }, 2000);
                             }
                      });
+              } else {
+                     console.warn('⚠️ [DEBUG] Socket non disponible dans PayementComponent');
               }
        }
 

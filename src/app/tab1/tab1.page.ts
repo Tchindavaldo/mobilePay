@@ -1,4 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
@@ -45,7 +46,8 @@ export class Tab1Page implements OnInit {
     private notificationService: NotificationService,
     private userStorage: UserStorageService,
     private userData: UserDataService,
-    public langService: LanguageService
+    public langService: LanguageService,
+    private router: Router
   ) {
     addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, ionDocument, globe });
 
@@ -63,7 +65,7 @@ export class Tab1Page implements OnInit {
     },
   ];
 
-  ngOnInit() {
+  async ngOnInit() {
     // Charger les données utilisateur
     this.loadUserData();
     this.loadNotificationCount();
@@ -73,30 +75,34 @@ export class Tab1Page implements OnInit {
 
     // Vérifiez s'il y a des sticks et définissez le premier comme actif par défaut
     if (sticks.length > 0) {
-      // Récupérer l'index de la dernière div active depuis localStorage
-      const activeIndex = localStorage.getItem('activeStickIndex');
+      // Récupérer l'index de la dernière div active depuis UserStorage
+      const activeIndex = await this.userStorage.get('activeStickIndex');
 
-      if (activeIndex !== null) {
+      if (activeIndex !== null && activeIndex !== undefined) {
         // Appliquez la classe active à la div correspondante
-        sticks[parseInt(activeIndex)].classList.add('active');
+        const index = parseInt(activeIndex.toString());
+        if (sticks[index]) {
+          sticks[index].classList.add('active');
+        } else {
+          sticks[0].classList.add('active');
+        }
       } else {
         // Si aucun index n'est trouvé, activez la première div
         sticks[0].classList.add('active');
       }
-
     }
 
     // Ajouter un écouteur d'événements à chaque div 'stick'
     sticks.forEach((stick: HTMLElement, index: number) => {
-      stick.addEventListener('click', () => {
+      stick.addEventListener('click', async () => {
         // Retirer la classe 'active' de tous les sticks
         sticks.forEach((s: HTMLElement) => s.classList.remove('active'));
 
         // Ajouter la classe 'active' à la div cliquée
         stick.classList.add('active');
 
-        // Enregistrer l'index de la div active dans localStorage
-        localStorage.setItem('activeStickIndex', index.toString());
+        // Enregistrer l'index de la div active dans UserStorage
+        await this.userStorage.set('activeStickIndex', index);
       });
     });
 
@@ -113,6 +119,17 @@ export class Tab1Page implements OnInit {
       this.selectedPlanName = plan;
       this.selectedPlanPrice = price;
     });
+  }
+
+  async goToPay() {
+    console.log('🔘 [DEBUG] Bouton "Réabonner" cliqué sur Tab1');
+    try {
+      console.log('🚀 [DEBUG] Tentative de navigation vers /pay...');
+      await this.router.navigate(['/pay']);
+      console.log('✅ [DEBUG] Navigation réussie !');
+    } catch (error) {
+      console.error('❌ [DEBUG] Erreur fatale lors de la navigation:', error);
+    }
   }
 
 
@@ -222,10 +239,10 @@ export class Tab1Page implements OnInit {
     console.log('Opening profile menu');
   }
 
-  getFirstName(): string {
-    // Si pas de nom utilisateur, essayer de recharger depuis localStorage
+  async getFirstName(): Promise<string> {
+    // Si pas de nom utilisateur, essayer de recharger depuis UserStorage
     if (!this.userName || this.userName === 'Utilisateur') {
-      const storedName = localStorage.getItem('userName');
+      const storedName = await this.userStorage.get('userName');
       if (storedName && storedName !== 'Utilisateur') {
         this.userName = storedName;
       }
@@ -277,13 +294,13 @@ export class Tab1Page implements OnInit {
   }
 
   // Méthode de debug pour vérifier les données utilisateur
-  debugUserData() {
+  async debugUserData() {
     console.log('=== DEBUG USER DATA ===');
     console.log('userName:', this.userName);
     console.log('userPhoto:', this.userPhoto);
-    console.log('localStorage userName:', localStorage.getItem('userName'));
-    console.log('localStorage userPhoto:', localStorage.getItem('userPhoto'));
-    console.log('getFirstName():', this.getFirstName());
+    console.log('UserStorage userName:', await this.userStorage.get('userName'));
+    console.log('UserStorage userPhoto:', await this.userStorage.get('userPhoto'));
+    console.log('getFirstName():', await this.getFirstName());
     console.log('getUserPhoto():', this.getUserPhoto());
     console.log('======================');
   }
