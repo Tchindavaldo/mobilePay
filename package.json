@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "16.0.0",
     "@angular/router": "16.0.0",
     "@awesome-cordova-plugins/network": "^6.8.0",
-    "@capacitor/android": "6.0.0",
+    "@capacitor/android": "6.2.0",
     "@capacitor/app": "6.0.0",
     "@capacitor/core": "6.2.0",
     "@capacitor/haptics": "6.0.0",
