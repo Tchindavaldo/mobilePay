@@ -15,11 +15,13 @@ export class SocketService {
   ) {
     console.log('🔌 Initialisation Socket.IO vers:', this.apiUrl);
     this.socket = io(this.apiUrl, {
-      transports: ['websocket', 'polling'], // Support des deux méthodes
+      transports: ['polling', 'websocket'], // Polling en premier pour meilleure compatibilité
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5
+      reconnectionAttempts: 5, // Réessayer indéfiniment
+      autoConnect: true,
+      path: '/socket.io'
     });
   }
 
@@ -29,10 +31,10 @@ export class SocketService {
    */
   public initializeAllSockets() {
     console.log('🚀 Initialisation de tous les sockets...');
-    
+
     // Initialiser le socket de session utilisateur
     this.sessionSocketService.initializeSocket(this.socket);
-    
+
     console.log('✅ Tous les sockets ont été initialisés');
   }
 

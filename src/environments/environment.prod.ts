@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://44.222.96.175:80',
+  apiUrl: 'https://netflix-automation.fly.dev',
+  // apiUrl: 'http://localhost:3000',
   googleClientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
 
   // Configuration des plans Netflix (modifiable facilement)
@@ -25,7 +26,7 @@ export const environment = {
     },
     premium: {
       name: 'Premium',
-      price: 6500,
+      price: 25,
       currency: 'XAF',
       resolution: '4K Ultra HD'
     }

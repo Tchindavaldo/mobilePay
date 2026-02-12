@@ -191,7 +191,7 @@ export class ActivationsPage implements OnInit, OnDestroy {
       'mobile': '2500 XAF',
       'basic': '3000 XAF',
       'standard': '5500 XAF',
-      'premium': '6500 XAF'
+      'premium': '25 XAF'
     };
     return amounts[planType.toLowerCase()] || '...';
   }
@@ -282,30 +282,30 @@ export class ActivationsPage implements OnInit, OnDestroy {
 
   async viewActivationDetails(activation: Activation) {
     console.log('Détails activation:', activation);
-    
+
     // Si on clique sur la même activation, toggle (cacher/afficher)
     if (this.selectedActivationId === activation.id) {
       this.selectedActivationId = null;
       this.selectedPassword = '';
       return;
     }
-    
+
     // Récupérer l'activation complète depuis le store pour avoir le mot de passe
     const fullActivations = await this.activationManager.getActivationsFromStore().pipe(
       take(1)
     ).toPromise();
-    
+
     const fullActivation = (fullActivations as PlanActivation[] | null)?.find((a: PlanActivation) => a.id === activation.id);
-    
+
     if (fullActivation) {
       // Afficher le mot de passe Netflix dans les logs
       const netflixPassword = fullActivation['motDePasse'] || fullActivation['netflixPassword'] || fullActivation['password'];
       const netflixEmail = fullActivation['email'] || fullActivation['netflixEmail'];
-      
+
       console.log('🔑 Mot de passe Netflix:', netflixPassword);
       console.log('📧 Email Netflix:', netflixEmail);
       console.log('📊 Données complètes:', fullActivation);
-      
+
       // Afficher le mot de passe dans la liste
       this.selectedActivationId = activation.id;
       this.selectedPassword = netflixPassword || 'Non disponible';
