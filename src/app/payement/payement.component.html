@@ -92,75 +92,34 @@
 
 
     <!-- Nouveau design 4 cartes (2x2) -->
-    <div class="plans-container">
-      <div class="plan-card mobile" [class.selected]="selectedPlan === 'mobile'" (click)="selectPlan('mobile')">
+    <div class="plans-container" *ngIf="(planManagement.plans$ | async) as backendPlans; else loadingPlans">
+      <div *ngFor="let plan of backendPlans" class="plan-card" [class.selected]="selectedPlan === plan.id"
+        [ngClass]="plan.id" (click)="selectPlan(plan.id)">
         <div class="plan-card-header">
           <div class="plan-icon">
-            <ion-icon name="phone-portrait"></ion-icon>
+            <ion-icon [name]="getPlanIcon(plan.id)"></ion-icon>
           </div>
-          <div class="plan-badge" *ngIf="selectedPlan === 'mobile'">
+          <div class="plan-badge" *ngIf="selectedPlan === plan.id">
             <ion-icon name="checkmark"></ion-icon>
           </div>
-        </div>
-        <div class="plan-card-content">
-          <h3 class="plan-title">{{ plans.mobile.name }}</h3>
-          <div class="plan-price">{{ plans.mobile.price }} {{ plans.mobile.currency }}</div>
-          <div class="plan-resolution">{{ plans.mobile.resolution }}</div>
-        </div>
-      </div>
-
-      <div class="plan-card basic" [class.selected]="selectedPlan === 'basic'" (click)="selectPlan('basic')">
-        <div class="plan-card-header">
-          <div class="plan-icon">
-            <ion-icon name="tv"></ion-icon>
-          </div>
-          <div class="plan-badge" *ngIf="selectedPlan === 'basic'">
-            <ion-icon name="checkmark"></ion-icon>
-          </div>
-        </div>
-        <div class="plan-card-content">
-          <h3 class="plan-title">{{ plans.basic.name }}</h3>
-          <div class="plan-price">{{ plans.basic.price }} {{ plans.basic.currency }}</div>
-          <div class="plan-resolution">{{ plans.basic.resolution }}</div>
-        </div>
-      </div>
-
-      <div class="plan-card standard" [class.selected]="selectedPlan === 'standard'" (click)="selectPlan('standard')">
-        <div class="plan-card-header">
-          <div class="plan-icon">
-            <ion-icon name="desktop"></ion-icon>
-          </div>
-          <div class="plan-badge" *ngIf="selectedPlan === 'standard'">
-            <ion-icon name="checkmark"></ion-icon>
-          </div>
-        </div>
-        <div class="plan-card-content">
-          <h3 class="plan-title">{{ plans.standard.name }}</h3>
-          <div class="plan-price">{{ plans.standard.price }} {{ plans.standard.currency }}</div>
-          <div class="plan-resolution">{{ plans.standard.resolution }}</div>
-        </div>
-      </div>
-
-      <div class="plan-card premium" [class.selected]="selectedPlan === 'premium'" (click)="selectPlan('premium')">
-        <div class="plan-card-header">
-          <div class="plan-icon">
-            <ion-icon name="diamond"></ion-icon>
-          </div>
-          <div class="plan-badge popular" *ngIf="selectedPlan !== 'premium'">
+          <div class="plan-badge popular" *ngIf="plan.id === 'premium' && selectedPlan !== 'premium'">
             <ion-icon name="star"></ion-icon>
-            <span>Populaire</span>
-          </div>
-          <div class="plan-badge selected" *ngIf="selectedPlan === 'premium'">
-            <ion-icon name="checkmark"></ion-icon>
           </div>
         </div>
         <div class="plan-card-content">
-          <h3 class="plan-title">{{ plans.premium.name }}</h3>
-          <div class="plan-price">{{ plans.premium.price }} {{ plans.premium.currency }}</div>
-          <div class="plan-resolution">{{ plans.premium.resolution }}</div>
+          <h3 class="plan-title">{{ plan.name }}</h3>
+          <div class="plan-price">{{ plan.price }} {{ plan.currency }}</div>
+          <div class="plan-resolution">{{ plan.resolution }}</div>
         </div>
       </div>
     </div>
+    <ng-template #loadingPlans>
+      <div class="plans-loader"
+        style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; width: 100%;">
+        <ion-spinner name="crescent" color="danger"></ion-spinner>
+        <p style="margin-top: 15px; color: #666;">Chargement des offres...</p>
+      </div>
+    </ng-template>
 
     <!-- Informations dynamiques du plan sélectionné -->
     <div class="plan-info-section" *ngIf="selectedPlan">
@@ -239,31 +198,27 @@
     <!-- Section des identifiants Netflix -->
     <div class="netflix-credentials-container">
       <div class="credentials-header">
-        <h3>Identifiants Netflix</h3>
-        <p>Entrez vos informations de connexion Netflix</p>
+        <h3>Informations personnelles</h3>
+        <p>Nous créerons votre compte Netflix automatiquement</p>
       </div>
 
       <div class="input-group">
         <label class="input-label">
-          <ion-icon name="mail"></ion-icon>
-          Email Netflix
+          <ion-icon name="person"></ion-icon>
+          Prénom
         </label>
-        <ion-input type="email" placeholder="email@example.com" [(ngModel)]="netflixEmail"></ion-input>
+        <ion-input type="text" placeholder="Votre prénom" [(ngModel)]="userFirstName"></ion-input>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">
+          <ion-icon name="person"></ion-icon>
+          Nom
+        </label>
+        <ion-input type="text" placeholder="Votre nom" [(ngModel)]="userLastName"></ion-input>
         <div class="input-hint">
           <ion-icon name="information-circle"></ion-icon>
-          <span>Entrez l'email de votre compte Netflix</span>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">
-          <ion-icon name="lock-closed"></ion-icon>
-          Mot de passe Netflix
-        </label>
-        <ion-input type="password" placeholder="Mot de passe" [(ngModel)]="netflixPassword"></ion-input>
-        <div class="input-hint">
-          <ion-icon name="shield-checkmark"></ion-icon>
-          <span>Votre mot de passe est sécurisé et chiffré</span>
+          <span>Ces informations serviront à créer votre compte Netflix @moobilpay.com</span>
         </div>
       </div>
 
@@ -271,7 +226,7 @@
         <div class="back-button" (click)="page = 1">
           <span class="back-button-text">Retour</span>
         </div>
-        <div class="pay-button" [class.disabled]="!netflixEmail || !netflixPassword" (click)="nextPage()">
+        <div class="pay-button" [class.disabled]="!userFirstName || !userLastName" (click)="nextPage()">
           <div class="pay-gradient">
             <span class="pay-button-text">Continuer</span>
             <ion-icon name="arrow-forward"></ion-icon>
@@ -901,7 +856,7 @@
   <ion-modal [isOpen]="showPaymentModal" [initialBreakpoint]="0.8" [breakpoints]="[0, 0.8, 1]" [canDismiss]="canDismiss"
     (didDismiss)="closePaymentModal()">
     <ng-template>
-      <ion-header>
+      <ion-header *ngIf="!isInitializing">
         <ion-toolbar>
           <ion-title>Paiement Sécurisé</ion-title>
           <ion-buttons slot="end">
@@ -919,8 +874,17 @@
           </div>
         </div>
 
+        <!-- Initializing overlay (Pre-Payment Link) -->
+        <div *ngIf="isInitializing" class="payment-loading-overlay">
+          <div class="loading-content">
+            <ion-spinner name="crescent" color="danger"></ion-spinner>
+            <h3>Initialisation du paiement...</h3>
+            <p class="instruction-text">Création de la transaction sécurisée en cours...</p>
+          </div>
+        </div>
+
         <!-- Loading overlay with instructions -->
-        <div *ngIf="!paymentFrameLoaded && !isCancelling" class="payment-loading-overlay">
+        <div *ngIf="!paymentFrameLoaded && !isCancelling && !isInitializing" class="payment-loading-overlay">
           <div class="loading-content">
             <ion-spinner name="crescent" color="danger"></ion-spinner>
             <h3>Chargement du paiement sécurisé...</h3>

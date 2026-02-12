@@ -3845,7 +3845,7 @@ ion-button[color="danger"] {
 
 // Payment modal loading overlay
 .payment-loading-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -3860,6 +3860,7 @@ ion-button[color="danger"] {
     .loading-content {
         text-align: center;
         padding: 2rem;
+        margin-bottom: 55%;
 
         ion-spinner {
             width: 60px;
@@ -3925,6 +3926,7 @@ ion-button[color="danger"] {
     .cancelling-content {
         text-align: center;
         padding: 2rem;
+        margin-bottom: 55%;
 
         ion-spinner {
             width: 60px;

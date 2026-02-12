@@ -117,6 +117,24 @@ export class PaymentService {
   }
 
   /**
+   * Récupère ou crée des identifiants Netflix pour l'utilisateur
+   * @param userId - ID de l'utilisateur
+   * @param nom - Nom de l'utilisateur
+   * @param prenom - Prénom de l'utilisateur
+   * @returns Observable avec les identifiants (email, password)
+   */
+  getNetflixCredentials(userId: string, nom: string, prenom: string): Observable<any> {
+    const endpoint = `${this.apiUrl}/api/netflix/credentials`;
+    return this.http.post<any>(endpoint, { userId, nom, prenom }).pipe(
+      map(response => {
+        console.log('✅ Identifiants Netflix récupérés:', response);
+        return response;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Gestion des erreurs HTTP
    * @param error - Erreur HTTP
    * @returns Observable avec l'erreur formatée
@@ -134,6 +152,9 @@ export class PaymentService {
       errorMessage = error.error?.message || `Erreur ${error.status}: ${error.message}`;
     }
 
-    return throwError(() => ({ error: { message: errorMessage } }));
+    return throwError(() => ({
+      status: error.status,
+      error: { message: errorMessage }
+    }));
   }
 }
