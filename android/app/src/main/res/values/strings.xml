@@ -4,5 +4,6 @@
     <string name="title_activity_main">MoobilPay</string>
     <string name="package_name">com.moobilpay.app</string>
     <string name="custom_url_scheme">com.moobilpay.app</string>
+    <string name="google_client_id">583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com</string>
     <string name="server_client_id">583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com</string>
 </resources>

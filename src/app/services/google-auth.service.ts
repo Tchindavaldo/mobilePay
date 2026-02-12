@@ -3,7 +3,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, User, GoogleAuth
 import { app } from '../../firebase-config';
 import { Capacitor } from '@capacitor/core';
 import { Platform } from '@ionic/angular';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { SocialLogin } from '@capgo/capacitor-social-login';
 import { UserStorageService } from './storage/user-storage.service';
 import { UserDataService } from './user/data/user-data.service';
 import { GetUserService } from './user/requests/get-user.service';
@@ -22,19 +22,36 @@ export class GoogleAuthService {
   private provider = new GoogleAuthProvider();
 
   constructor(
+    private authState: AuthStateService,
     private userStorage: UserStorageService,
     private userData: UserDataService,
     private getUserService: GetUserService,
     private createUserService: CreateUserService,
     private updateUserService: UpdateUserService,
-    private authState: AuthStateService,
     private socketService: SocketService,
     private sessionSocketService: InitSessionSocketService,
     private fcmService: FcmService
   ) {
+    this.initializeSocialLogin();
     // Configurer le provider Google
     this.provider.addScope('email');
     this.provider.addScope('profile');
+  }
+
+  private async initializeSocialLogin() {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await SocialLogin.initialize({
+          google: {
+            webClientId: '583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com',
+            mode: 'online'
+          }
+        });
+        console.log('✓ SocialLogin initialisé');
+      } catch (e) {
+        console.error('Erreur initialisation SocialLogin:', e);
+      }
+    }
   }
 
   async signInWithGoogle(): Promise<User | null> {
@@ -46,16 +63,24 @@ export class GoogleAuthService {
       let firebaseUser: User;
 
       if (isNative) {
-        console.log('📱 Étape 1/6 : Authentification Google NATIVE (Capacitor)...');
-        const googleUser = await GoogleAuth.signIn();
-        console.log('✓ Google Native Auth réussie:', googleUser);
+        console.log('📱 Authentification Google NATIVE (SocialLogin)...');
+        const loginResult = await SocialLogin.login({
+          provider: 'google',
+          options: {
+            scopes: ['profile', 'email']
+          }
+        });
 
-        if (!googleUser.authentication.idToken) {
+        console.log('✓ SocialLogin réussie:', loginResult);
+
+        const idToken = (loginResult.result as any).idToken;
+
+        if (!idToken) {
           throw new Error('ID Token manquant dans l\'authentification native');
         }
 
         // Créer un credential Firebase à partir du token natif
-        const credential = FirebaseGoogleAuthProvider.credential(googleUser.authentication.idToken);
+        const credential = FirebaseGoogleAuthProvider.credential(idToken);
         const userCredential = await signInWithCredential(this.auth, credential);
         firebaseUser = userCredential.user;
       } else {

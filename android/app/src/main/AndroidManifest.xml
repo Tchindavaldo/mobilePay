@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
 
+        <meta-data android:name="com.codetrixstudio.capacitor.GoogleAuth.serverClientId" android:value="583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

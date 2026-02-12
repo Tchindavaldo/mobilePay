@@ -1,8 +1,16 @@
 export const environment = {
   production: true,
   apiUrl: 'https://netflix-automation.fly.dev',
-  // apiUrl: 'http://localhost:3000',
-  googleClientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  firebaseConfig: {
+    apiKey: "AIzaSyDib0xP1_YnK6Ct4PpW0cGge3eN-iSHFYw",
+    authDomain: "mobilpay-c1872.firebaseapp.com",
+    projectId: "mobilpay-c1872",
+    storageBucket: "mobilpay-c1872.firebasestorage.app",
+    messagingSenderId: "583417452577",
+    appId: "1:583417452577:web:e88f72c8082ab7ce04ab60",
+    measurementId: "G-MKWE460RDH"
+  },
+  googleClientId: '583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com',
 
   // Configuration des plans Netflix (modifiable facilement)
   plans: {
