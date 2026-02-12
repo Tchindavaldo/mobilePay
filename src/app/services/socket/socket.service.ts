@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { InitSessionSocketService } from './init-session-socket.service';
+import { NotificationSocketService } from './notification/notification-socket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,8 @@ export class SocketService {
   private apiUrl = environment.apiUrl;
 
   constructor(
-    private sessionSocketService: InitSessionSocketService
+    private sessionSocketService: InitSessionSocketService,
+    private notificationSocketService: NotificationSocketService
   ) {
     console.log('🔌 Initialisation Socket.IO vers:', this.apiUrl);
     this.socket = io(this.apiUrl, {
@@ -34,6 +36,9 @@ export class SocketService {
 
     // Initialiser le socket de session utilisateur
     this.sessionSocketService.initializeSocket(this.socket);
+
+    // Initialiser le socket des notifications
+    this.notificationSocketService.initializeSocket(this.socket);
 
     console.log('✅ Tous les sockets ont été initialisés');
   }

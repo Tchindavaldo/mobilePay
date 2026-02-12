@@ -10,17 +10,18 @@ export class InitSessionSocketService {
   user!: any;
   public socketReady = new BehaviorSubject<boolean>(false);
 
-  constructor(private userStorage: UserStorageService) {}
+  constructor(private userStorage: UserStorageService) { }
 
   public async initializeSocket(socket: Socket) {
     // Si le socket est DÉJÀ connecté, rejoindre la room immédiatement
     if (socket.connected) {
       const user = await this.userStorage.get('user');
-      
-      if (user?.id) {
-        socket.emit('join_user', user.id);
+      const userId = user?.uid || user?.id || user?._id;
+
+      if (userId) {
+        socket.emit('join_user', userId);
         console.log('🆔 Socket ID:', socket.id);
-        console.log('👤 Room ID:', user.id);
+        console.log('👤 Room ID (join_user):', userId);
         this.socketReady.next(true);
       }
     }
@@ -28,11 +29,12 @@ export class InitSessionSocketService {
     // Configurer les événements pour les futures connexions
     socket.on('connect', async () => {
       const user = await this.userStorage.get('user');
-      
-      if (user?.id) {
-        socket.emit('join_user', user.id);
-        console.log('🆔 Socket ID:', socket.id);
-        console.log('👤 Room ID:', user.id);
+      const userId = user?.uid || user?.id || user?._id;
+
+      if (userId) {
+        socket.emit('join_user', userId);
+        console.log('🆔 Socket ID (connect):', socket.id);
+        console.log('👤 Room ID (join_user):', userId);
         this.socketReady.next(true);
       }
     });

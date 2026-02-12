@@ -48,7 +48,7 @@ export class Tab1Page implements OnInit {
     public langService: LanguageService
   ) {
     addIcons({ chevronDownCircle, chevronForwardCircle, chevronUpCircle, ionDocument, globe });
-    
+
   }
 
   public alertButtons = [
@@ -59,7 +59,7 @@ export class Tab1Page implements OnInit {
     {
       text: 'oui',
       cssClass: 'alert-button-confirm',
-      
+
     },
   ];
 
@@ -143,15 +143,15 @@ export class Tab1Page implements OnInit {
         }
       ]
     });
-  
+
     await toast.present();
   }
-  
+
   numbers: number[] = [1, 2, 3, 4];
-  resetNumbers(){
-    this.numbers= this.numbers.map(()=> 0);
+  resetNumbers() {
+    this.numbers = this.numbers.map(() => 0);
   }
-  
+
 
 
 
@@ -167,7 +167,7 @@ export class Tab1Page implements OnInit {
     const notification: Notification = {
       title: 'Desabonner',
       message: 'Le desabonnement a bien ete efectuer.',
-      image: '../../assets/icon/opp.png',
+      image: 'assets/icon/opp.png',
       time: new Date(),
     };
     this.notificationService.addNotification(notification);
@@ -183,14 +183,14 @@ export class Tab1Page implements OnInit {
     try {
       // Récupérer l'utilisateur depuis notre UserStorageService centralisé
       const user = await this.userStorage.get('user');
-      
+
       if (user) {
         console.log('✅ User chargé depuis UserStorageService:', user);
-        
+
         // Récupérer le nom complet ou l'email
         this.userName = user.displayName || user.email?.split('@')[0] || 'Utilisateur';
         this.userPhoto = user.photoURL || null;
-        
+
         console.log('👤 UserName affiché:', this.userName);
         console.log('📸 UserPhoto affichée:', this.userPhoto);
       } else {
@@ -321,7 +321,7 @@ export class Tab1Page implements OnInit {
 
     // Ici tu peux ajouter la logique pour filtrer le contenu
     // Par exemple, filtrer les services selon la catégorie sélectionnée
-    switch(filter) {
+    switch (filter) {
       case 'all':
         console.log('Afficher tous les services');
         break;

@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, User, GoogleAuthProvider as FirebaseGoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { app } from '../../firebase-config';
+import { Capacitor } from '@capacitor/core';
+import { Platform } from '@ionic/angular';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { UserStorageService } from './storage/user-storage.service';
 import { UserDataService } from './user/data/user-data.service';
 import { GetUserService } from './user/requests/get-user.service';
@@ -35,17 +38,35 @@ export class GoogleAuthService {
   async signInWithGoogle(): Promise<User | null> {
     // Activer le flag pour bloquer les redirections automatiques
     this.authState.setGoogleLoginInProgress(true);
-    
-    try {
-      // ÉTAPE 1 : Authentification Firebase Google
-      console.log('🔐 Étape 1/6 : Authentification Google Firebase...');
-      this.provider.setCustomParameters({
-        prompt: 'select_account'
-      });
 
-      const result = await signInWithPopup(this.auth, this.provider);
-      const firebaseUser = result.user;
-      console.log('✓ Firebase Auth réussie:', firebaseUser);
+    try {
+      const isNative = Capacitor.isNativePlatform();
+      let firebaseUser: User;
+
+      if (isNative) {
+        console.log('📱 Étape 1/6 : Authentification Google NATIVE (Capacitor)...');
+        const googleUser = await GoogleAuth.signIn();
+        console.log('✓ Google Native Auth réussie:', googleUser);
+
+        if (!googleUser.authentication.idToken) {
+          throw new Error('ID Token manquant dans l\'authentification native');
+        }
+
+        // Créer un credential Firebase à partir du token natif
+        const credential = FirebaseGoogleAuthProvider.credential(googleUser.authentication.idToken);
+        const userCredential = await signInWithCredential(this.auth, credential);
+        firebaseUser = userCredential.user;
+      } else {
+        console.log('💻 Étape 1/6 : Authentification Google WEB (Popup)...');
+        this.provider.setCustomParameters({
+          prompt: 'select_account'
+        });
+
+        const result = await signInWithPopup(this.auth, this.provider);
+        firebaseUser = result.user;
+      }
+
+      console.log('✓ Firebase Auth finalisée:', firebaseUser);
 
       if (!firebaseUser || !firebaseUser.uid) {
         throw new Error('Aucune donnée utilisateur reçue de Firebase');
@@ -54,11 +75,11 @@ export class GoogleAuthService {
       // ÉTAPE 2 : Vérifier si l'utilisateur existe dans la BD backend (par email)
       console.log('🔍 Étape 2/6 : Vérification dans la base de données par email...');
       const userEmail = firebaseUser.email;
-      
+
       if (!userEmail) {
         throw new Error('Aucun email disponible pour cet utilisateur Google');
       }
-      
+
       let backendUser;
       try {
         backendUser = await this.getUserService.getUserByEmail(userEmail);
@@ -80,20 +101,20 @@ export class GoogleAuthService {
         displayName: firebaseUser.displayName || '',
         photoURL: firebaseUser.photoURL || '',
         phoneNumber: firebaseUser.phoneNumber || '',
-        
+
         // Tokens d'authentification
         accessToken: (firebaseUser as any).stsTokenManager?.accessToken || (firebaseUser as any).accessToken,
         refreshToken: (firebaseUser as any).stsTokenManager?.refreshToken || (firebaseUser as any).refreshToken,
         expirationTime: (firebaseUser as any).stsTokenManager?.expirationTime,
-        
+
         // Informations de vérification
         emailVerified: firebaseUser.emailVerified,
         isAnonymous: firebaseUser.isAnonymous,
-        
+
         // Provider info
         providerId: firebaseUser.providerId,
         providerData: firebaseUser.providerData,
-        
+
         // Métadonnées temporelles
         metadata: {
           createdAt: firebaseUser.metadata?.creationTime,
@@ -101,11 +122,11 @@ export class GoogleAuthService {
           lastSignInTime: firebaseUser.metadata?.lastSignInTime,
           creationTime: firebaseUser.metadata?.creationTime,
         },
-        
+
         // Tenant
         tenantId: firebaseUser.tenantId,
       };
-      
+
       console.log('📦 Données Google Auth complètes préparées:', {
         uid: googleAuthData.uid,
         email: googleAuthData.email,
@@ -119,12 +140,12 @@ export class GoogleAuthService {
       if (backendUser) {
         console.log('🔄 Étape 3/6 : Utilisateur trouvé - Mise à jour avec les données Google Auth...');
         console.log('ID utilisateur existant:', backendUser._id || backendUser.id);
-        
+
         const userId = backendUser._id || backendUser.id;
         if (!userId) {
           throw new Error('Impossible de récupérer l\'ID de l\'utilisateur existant');
         }
-        
+
         try {
           backendUser = await this.updateUserService.updateUser(userId, googleAuthData);
           console.log('✓ Utilisateur mis à jour dans la BD:', backendUser);
@@ -132,7 +153,7 @@ export class GoogleAuthService {
           console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
           throw new Error('Erreur lors de la mise à jour du profil. Veuillez réessayer.');
         }
-      } 
+      }
       // ÉTAPE 3 bis : Si l'utilisateur n'existe pas, le créer
       else {
         console.log('➕ Étape 3/6 : Nouvel utilisateur - Création dans la BD...');
@@ -177,16 +198,16 @@ export class GoogleAuthService {
       }
 
       console.log('🎉 Connexion complète réussie !');
-      
+
       // Désactiver le flag - tout est terminé avec succès
       this.authState.setGoogleLoginInProgress(false);
-      
+
       // Retourner l'utilisateur Firebase pour compatibilité avec le code existant
       return firebaseUser;
 
     } catch (error: any) {
       console.error('❌ Erreur lors de la connexion Google:', error);
-      
+
       // Désactiver le flag même en cas d'erreur
       this.authState.setGoogleLoginInProgress(false);
 
@@ -209,19 +230,19 @@ export class GoogleAuthService {
   async signOut(): Promise<void> {
     try {
       console.log('🔓 Déconnexion en cours...');
-      
+
       // Déconnexion Firebase
       await signOut(this.auth);
       console.log('✓ Déconnexion Firebase réussie');
-      
+
       // Supprimer les données du storage local
       await this.userStorage.remove('user');
       console.log('✓ Storage local nettoyé');
-      
+
       // Réinitialiser UserDataService
       this.userData.user = null;
       console.log('✓ UserData réinitialisé');
-      
+
       console.log('✓ Déconnexion complète réussie');
     } catch (error) {
       console.error('❌ Erreur lors de la déconnexion:', error);

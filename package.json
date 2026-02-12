@@ -31,6 +31,7 @@
     "@capacitor/local-notifications": "^6.1.0",
     "@capacitor/push-notifications": "^6.0.0",
     "@capacitor/status-bar": "6.0.0",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@ionic/angular": "8.0.0",
     "@ngrx/effects": "^16.3.0",
     "@ngrx/store": "^16.3.0",

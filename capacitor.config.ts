@@ -1,20 +1,24 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.moobilpay.app',
   appName: 'MoobilPay',
   webDir: 'www',
-  bundledWebRuntime: false ,     // Paramètre pour inclure le runtime Web
-  
+  bundledWebRuntime: false,     // Paramètre pour inclure le runtime Web
+
   plugins: {
     SplashScreen: {
-      // Chemin vers votre écran de démarrage
       launchShowDuration: 0,
-      backgroundColor: '#ffffff', // Couleur de fond de l'écran de démarrage
-      androidScaleType: 'CENTER_CROP', // Type d'échelle pour Android
-      showSpinner: false, // Affiche un spinner ou pas
-      splashFullScreen: true, // Écran complet
-      splashImmersive: true, // Immersif
+      backgroundColor: '#ffffff',
+      androidScaleType: 'CENTER_CROP',
+      showSpinner: false,
+      splashFullScreen: true,
+      splashImmersive: true,
+    },
+    GoogleAuth: {
+      scopes: ['profile', 'email'],
+      serverClientId: '583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com',
+      forceCodeForRefreshToken: true,
     },
   },
 };

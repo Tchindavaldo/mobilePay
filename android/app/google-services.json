@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "583417452577",
+    "project_id": "mobilpay-c1872",
+    "storage_bucket": "mobilpay-c1872.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583417452577:android:b08b05abb8af931f04ab60",
+        "android_client_info": {
+          "package_name": "com.moobilpay.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583417452577-lsepgvbevcsajcvpa722a7pqa1bhk2ml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moobilpay.app",
+            "certificate_hash": "fabab1465c51d8ad0cc8d86b3e39d7d83007374c"
+          }
+        },
+        {
+          "client_id": "583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1DsF1wUgapfhw4A9lVKadT6pmNdAoVZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "583417452577-d7qehp9t5bbtv3ptsu0m9ae8fog3hd80.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "583417452577-srefc2oi1160hlccgua07i0vjkg74l2l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.wiilloo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

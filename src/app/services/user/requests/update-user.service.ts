@@ -10,6 +10,7 @@ export interface UpdateUserDto {
   photoURL?: string;
   phoneNumber?: string;
   password?: string;
+  fcmToken?: string;
 
   // Tokens d'authentification
   accessToken?: string;

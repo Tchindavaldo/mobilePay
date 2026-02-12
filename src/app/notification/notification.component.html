@@ -1,67 +1,72 @@
+<ion-header class="ion-no-border">
+  <div class="header-glass">
+    <div class="header-content">
+      <ion-button fill="clear" (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+      <div class="header-titles">
+        <h1>{{ t('notification.my_notifications') }}</h1>
+        <p *ngIf="unreadNotifications > 0">{{ unreadNotifications }} {{ t('notification.new_count') }}</p>
+        <p *ngIf="unreadNotifications === 0">{{ t('notification.up_to_date') }}</p>
+      </div>
+      <ion-button fill="clear" class="settings-button">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-header>
+
 <ion-content [fullscreen]="true">
-  <!-- Overview Card pour Notifications -->
-  <div class="overview-card">
-    <div class="overview-content">
-      <div class="overview-icon">
-        <ion-icon name="notifications"></ion-icon>
-      </div>
-      <div class="overview-info">
-        <h2 class="overview-title">{{ t('notification.my_notifications') }}</h2>
-        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications > 0">{{ unreadNotifications }} {{ t('notification.new_count') }}</p>
-        <p class="overview-subtitle overview-amount" *ngIf="unreadNotifications === 0">{{ t('notification.up_to_date') }}</p>
-      </div>
-    </div>
-    <div class="overview-stats">
-      <div class="stat-item">
-        <span class="stat-value">{{ notifications.length }}</span>
-        <span class="stat-label">{{ t('notification.total') }}</span>
-      </div>
-    </div>
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
   </div>
 
-  <!-- Bouton Effacer tout -->
-  <div class="clear-all-section" *ngIf="notifications.length > 0">
-    <ion-button fill="solid" class="clear-all-btn" (click)="clearAllNotifications()">
-      <ion-icon name="trash-outline" slot="start"></ion-icon>
-      {{ t('notification.clear_all') }}
-    </ion-button>
-  </div>
-
-  <!-- Message vide si aucune notification -->
-  <div class="empty-state" *ngIf="notifications.length === 0">
-    <div class="empty-icon">
-      <ion-icon name="notifications-off-outline"></ion-icon>
+  <div class="main-container">
+    <!-- Filters / Tabs -->
+    <div class="tabs-container">
+      <div class="tab-item active">Tout</div>
+      <div class="tab-item">Paiements</div>
+      <div class="tab-item">Compte</div>
     </div>
-    <h2>{{ t('notification.no_notifications') }}</h2>
-    <p>{{ t('notification.no_notifications_desc') }}</p>
-  </div>
 
-  <!-- Liste des notifications -->
-  <div class="notifications-container" *ngIf="notifications.length > 0">
-    <div class="notification-card" *ngFor="let notification of notifications; let i = index" 
-         [style.animation-delay]="i * 0.1 + 's'">
-      <div class="notification-content">
-        <div class="notification-avatar">
-          <img [src]="notification.image" alt="Avatar" (error)="onImageError($event)">
-        </div>
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="notifications.length === 0">
+      <div class="icon-wrapper">
+        <div class="pulse-ring"></div>
+        <ion-icon name="notifications-off-outline"></ion-icon>
+      </div>
+      <h2>Plus rien ici !</h2>
+      <p>Vous n'avez pas de nouvelles notifications pour le moment.</p>
+    </div>
+
+    <!-- Notification List -->
+    <div class="notification-list" *ngIf="notifications.length > 0">
+      <div class="notification-card" 
+           *ngFor="let notification of notifications; let i = index"
+           [class.unread]="!isRead(notification)"
+           (click)="markAsRead(notification)"
+           [style.animation-delay]="i * 0.05 + 's'">
         
-        <div class="notification-details">
-          <h3 class="notification-title">{{ notification.title }}</h3>
-          <p class="notification-message">{{ notification.message }}</p>
-          <div class="notification-footer">
-            <span class="notification-time">
-              <ion-icon name="time-outline"></ion-icon>
-              {{ getTimeAgo(notification.time) }}
-            </span>
+        <div class="card-status" *ngIf="!isRead(notification)"></div>
+        
+        <div class="card-icon-wrapper" [class]="notification.type || 'default'">
+          <ion-icon [name]="getIconForType(notification.type)"></ion-icon>
+        </div>
+
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="title">{{ notification.title }}</h3>
+            <span class="time">{{ getTimeAgo(notification.createdAt) }}</span>
+          </div>
+          <p class="body">{{ notification.body }}</p>
+          
+          <div class="card-actions" *ngIf="!isRead(notification)">
+            <div class="mark-btn">Marquer comme lu</div>
           </div>
         </div>
-      </div>
 
-      <div class="notification-actions">
-        <ion-button fill="clear" size="small" class="action-btn view-btn">
-          <ion-icon name="eye-outline"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" size="small" class="action-btn delete-btn" (click)="deleteNotification(i)">
+        <ion-button fill="clear" class="delete-icon" (click)="deleteNotification(notification.id); $event.stopPropagation()">
           <ion-icon name="close-outline"></ion-icon>
         </ion-button>
       </div>

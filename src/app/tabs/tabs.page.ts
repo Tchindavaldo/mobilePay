@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { SocketService } from '../services/socket/socket.service';
 import { LanguageService } from '../services/language.service';
+import { FcmService } from '../services/notifications/FCM/fcm.service';
 
 @Component({
   selector: 'app-tabs',
@@ -16,12 +17,14 @@ export class TabsPage implements OnInit {
     private router: Router,
     private platform: Platform,
     private socketService: SocketService,
+    private fcmService: FcmService,
     public langService: LanguageService
   ) {
-    // Initialiser les sockets au démarrage de l'application
+    // Initialiser les sockets et notifications au démarrage
     this.platform.ready().then(() => {
-      console.log('🚀 Platform ready - Initialisation des sockets...');
+      console.log('🚀 Platform ready - Initialisation des sockets et FCM...');
       this.socketService.initializeAllSockets();
+      this.fcmService.setupPushNotifications();
     });
   }
 
