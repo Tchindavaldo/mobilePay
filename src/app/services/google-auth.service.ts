@@ -12,6 +12,7 @@ import { UpdateUserService, UpdateUserDto } from './user/requests/update-user.se
 import { AuthStateService } from './auth-state.service';
 import { SocketService } from './socket/socket.service';
 import { InitSessionSocketService } from './socket/init-session-socket.service';
+import { FcmService } from './notifications/FCM/fcm.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,8 @@ export class GoogleAuthService {
     private updateUserService: UpdateUserService,
     private authState: AuthStateService,
     private socketService: SocketService,
-    private sessionSocketService: InitSessionSocketService
+    private sessionSocketService: InitSessionSocketService,
+    private fcmService: FcmService
   ) {
     // Configurer le provider Google
     this.provider.addScope('email');
@@ -195,6 +197,17 @@ export class GoogleAuthService {
       } catch (error: any) {
         console.error('Erreur lors de l\'initialisation du socket:', error);
         // Ne pas bloquer la connexion pour cette erreur
+      }
+
+      // ÉTAPE 7 : Initialiser les notifications Push (Token FCM)
+      console.log('🔔 Étape 7/6 : Initialisation des notifications Push...');
+      try {
+        await this.fcmService.setupPushNotifications();
+        console.log('✓ Notifications Push initialisées');
+        // Petit délai pour laisser le temps au token d'être envoyé si nécessaire
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.warn('Erreur non bloquante lors de l\'init Push Notif:', error);
       }
 
       console.log('🎉 Connexion complète réussie !');

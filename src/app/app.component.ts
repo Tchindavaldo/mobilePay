@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../firebase-config';
 import { AuthStateService } from './services/auth-state.service';
+import { FcmService } from './services/notifications/FCM/fcm.service';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
@@ -14,12 +16,23 @@ export class AppComponent {
 
   constructor(
     private router: Router,
-    private authState: AuthStateService
+    private authState: AuthStateService,
+    private fcmService: FcmService,
+    private platform: Platform
   ) {
+    this.initializeApp();
+
     // Délai pour permettre à Angular de terminer l'initialisation
     setTimeout(() => {
       this.initializeAuth();
     }, 100);
+  }
+
+  initializeApp() {
+    this.platform.ready().then(() => {
+      // Initialiser les notifications push
+      this.fcmService.setupPushNotifications();
+    });
   }
 
   private initializeAuth() {
@@ -35,14 +48,14 @@ export class AppComponent {
 
       if (user) {
         // L'utilisateur est connecté
-        
+
         // ⚠️ NE PAS rediriger si un login Google est en cours
         // Le GoogleAuthService gère la redirection après les opérations backend
         if (this.authState.isGoogleLoginActive()) {
           console.log('🔒 Google login en cours - pas de redirection automatique');
           return; // Sortir sans rediriger
         }
-        
+
         if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/') {
           console.log('Redirecting authenticated user to tabs');
           this.navigateWithFlag(['/tabs/tab1']);

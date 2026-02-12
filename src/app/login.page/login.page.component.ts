@@ -13,6 +13,7 @@ import { UserStorageService } from '../services/storage/user-storage.service';
 import { UserDataService } from '../services/user/data/user-data.service';
 import { SocketService } from '../services/socket/socket.service';
 import { InitSessionSocketService } from '../services/socket/init-session-socket.service';
+import { FcmService } from '../services/notifications/FCM/fcm.service';
 
 @Component({
   selector: 'app-login.page',
@@ -45,7 +46,8 @@ export class LoginPageComponent implements OnInit {
     private userStorage: UserStorageService,
     private userData: UserDataService,
     private socketService: SocketService,
-    private sessionSocketService: InitSessionSocketService
+    private sessionSocketService: InitSessionSocketService,
+    private fcmService: FcmService
   ) { }
 
   ngOnInit() { }
@@ -130,6 +132,13 @@ export class LoginPageComponent implements OnInit {
         const socket = this.socketService.getSocket();
         await this.sessionSocketService.initializeSocket(socket);
 
+        // 7. Initialiser les notifications push
+        try {
+          await this.fcmService.setupPushNotifications();
+        } catch (e) {
+          console.warn('Erreur non bloquante init FCM:', e);
+        }
+
         await loading.dismiss();
 
         // Notification de succès
@@ -205,6 +214,13 @@ export class LoginPageComponent implements OnInit {
         // 5. Socket
         const socket = this.socketService.getSocket();
         await this.sessionSocketService.initializeSocket(socket);
+
+        // 6. Initialiser les notifications push
+        try {
+          await this.fcmService.setupPushNotifications();
+        } catch (e) {
+          console.warn('Erreur non bloquante init FCM:', e);
+        }
 
         await loading.dismiss();
 
