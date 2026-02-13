@@ -13,15 +13,21 @@ export class GetUserNotificationService {
     async getNotification(): Promise<void> {
         try {
             const user = await this.userStorage.get('user');
-            if (!user || (!user.uid && !user.id)) return;
+            if (!user) return;
 
-            const userId = user._id || user.id || user.uid;
-            const endpoint = user.fastFoodId !== undefined ? `/user?userId=${userId}&fastFoodId=${user.fastFoodId}` : `/user?userId=${userId}`;
+            const userId = user.uid || user.id;
+            if (!userId) return;
 
-            const response = await axios.get(`${this.apiUrl}/api/notification${endpoint}`);
+            // Alignement avec le backend MoobilPay : On utilise /api/notification/user?userId=...
+            // Retrait définitif de toute référence à fastFoodId ici aussi
+            const response = await axios.get(`${this.apiUrl}/api/notification/user`, {
+                params: { userId }
+            });
 
-            console.log('Notifications récupérées avec succès', response.data);
-            if (response.data && response.data.data) {
+            console.log('✅ [NOTIFICATION] Récupérées avec succès :', response.data);
+
+            if (response.data && response.data.success && response.data.data) {
+                // On dispatch dans le store pour mettre à jour l'UI instantanément
                 this.store.dispatch(setNotificationReducer({ NotificationTab: response.data.data }));
             }
         } catch (error: any) {
