@@ -20,7 +20,11 @@ export class GetUserNotificationService {
             const fullUrl = `${this.apiUrl}/api/notification${endpoint}`;
 
             console.log('📡 [NOTIFICATION] Calling:', fullUrl);
-            const response = await axios.get(fullUrl);
+            const response = await axios.get(fullUrl, {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true'
+                }
+            });
 
             console.log('✅ [NOTIFICATION] Récupérées avec succès :', response.data);
 
