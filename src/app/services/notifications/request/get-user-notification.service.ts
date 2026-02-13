@@ -21,7 +21,8 @@ export class GetUserNotificationService {
             // Alignement avec le backend MoobilPay : On utilise /api/notification/user?userId=...
             // Retrait définitif de toute référence à fastFoodId ici aussi
             const response = await axios.get(`${this.apiUrl}/api/notification/user`, {
-                params: { userId }
+                params: { userId },
+                headers: { 'ngrok-skip-browser-warning': 'true' }
             });
 
             console.log('✅ [NOTIFICATION] Récupérées avec succès :', response.data);

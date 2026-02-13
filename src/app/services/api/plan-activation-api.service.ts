@@ -42,7 +42,9 @@ export class PlanActivationApiService {
   getActivationById(activationId: string): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}`;
 
-    return this.http.get<{ success: boolean; data: PlanActivation }>(endpoint).pipe(
+    return this.http.get<{ success: boolean; data: PlanActivation }>(endpoint, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Activation récupérée avec succès:', response);
         return response.data;
@@ -59,7 +61,9 @@ export class PlanActivationApiService {
   createActivation(activation: Partial<PlanActivation>): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation`;
 
-    return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, activation).pipe(
+    return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, activation, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Activation créée avec succès:', response);
         return response.data;
@@ -77,7 +81,9 @@ export class PlanActivationApiService {
   updateActivation(activationId: string, updates: Partial<PlanActivation>): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}`;
 
-    return this.http.put<{ success: boolean; data: PlanActivation }>(endpoint, updates).pipe(
+    return this.http.put<{ success: boolean; data: PlanActivation }>(endpoint, updates, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Activation mise à jour avec succès:', response);
         return response.data;
@@ -94,7 +100,9 @@ export class PlanActivationApiService {
   deleteActivation(activationId: string): Observable<{ success: boolean; message: string }> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}`;
 
-    return this.http.delete<{ success: boolean; message: string }>(endpoint).pipe(
+    return this.http.delete<{ success: boolean; message: string }>(endpoint, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Activation supprimée avec succès:', response);
         return response;
@@ -111,7 +119,9 @@ export class PlanActivationApiService {
   activateActivation(activationId: string): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}/activate`;
 
-    return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, {}).pipe(
+    return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, {}, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Activation activée avec succès:', response);
         return response.data;
@@ -128,7 +138,9 @@ export class PlanActivationApiService {
   cancelActivation(activationId: string): Observable<PlanActivation> {
     const endpoint = `${this.apiUrl}/api/plan-activation/${activationId}/cancel`;
 
-    return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, {}).pipe(
+    return this.http.post<{ success: boolean; data: PlanActivation }>(endpoint, {}, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    }).pipe(
       map(response => {
         console.log('✅ Activation annulée avec succès:', response);
         return response.data;
