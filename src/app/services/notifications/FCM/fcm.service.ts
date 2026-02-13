@@ -108,7 +108,7 @@ export class FcmService {
 
         // 6. Gérer les actions (clic) sur notification Push
         PushNotifications.addListener('pushNotificationActionPerformed', async action => {
-            console.log('👆 Action de notification Push:', action);
+            console.log('🔔 [FCM] Notification Clicked! Data:', action.notification.data);
 
             const data = action.notification.data || {};
             const notification = action.notification;
@@ -127,7 +127,9 @@ export class FcmService {
             this.markAsReadOptimistic(notificationToStore);
 
             // Rediriger vers l'onglet des notifications (Tab 2)
+            console.log('🔔 [FCM] Navigating to /tabs/tab2...');
             await this.router.navigateByUrl('/tabs/tab2');
+            console.log('🔔 [FCM] Navigation trigger finished.');
         });
 
         // 7. Gérer les actions sur notification Locale

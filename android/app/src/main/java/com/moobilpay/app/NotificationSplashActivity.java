@@ -11,22 +11,24 @@ public class NotificationSplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        android.util.Log.d("NotificationSplash", "Activity started. isInstanceAlive: " + MainActivity.isInstanceAlive);
+        android.util.Log.d("MOOBILPAY_LOG", "🚩 NotificationSplashActivity: onCreate. isInstanceAlive: " + MainActivity.isInstanceAlive);
 
         if (MainActivity.isInstanceAlive) {
-            // L'application est déjà en arrière-plan : redirection immédiate et invisible
-            launchMainActivity(0);
+            android.util.Log.d("MOOBILPAY_LOG", "🚩 App already alive, redirecting immediately");
+            launchMainActivity(0); // 0ms delay (Warm start)
         } else {
-            // L'application est fermée : on affiche le splash dédié
+            android.util.Log.d("MOOBILPAY_LOG", "🚩 App closed, showing splash and scheduling redirect in 2.5s");
             setContentView(R.layout.activity_notification_splash);
-            launchMainActivity(2500); // 2.5 secondes pour être sûr que tout charge
+            launchMainActivity(2500); // 2.5s delay (Cold start)
         }
     }
 
     private void launchMainActivity(int delay) {
+        android.util.Log.d("MOOBILPAY_LOG", "🚩 Scheduling redirect in " + delay + "ms");
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
+                android.util.Log.d("MOOBILPAY_LOG", "🚩 EXECUTING REDIRECT NOW");
                 Intent intent = new Intent(NotificationSplashActivity.this, MainActivity.class);
                 if (getIntent().getExtras() != null) {
                     intent.putExtras(getIntent().getExtras());
@@ -42,5 +44,11 @@ public class NotificationSplashActivity extends AppCompatActivity {
                 }
             }
         }, delay);
+    }
+
+    @Override
+    protected void onDestroy() {
+        android.util.Log.d("MOOBILPAY_LOG", "🚩 NotificationSplashActivity: onDestroy");
+        super.onDestroy();
     }
 }

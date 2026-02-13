@@ -11,8 +11,6 @@ export class SplashPageComponent implements OnInit {
   constructor(private navCtrl: NavController) { }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.navCtrl.navigateRoot('/login'); // Rediriger vers la page de connexion
-    }, 6000);
+    console.log('🚪 [PAGE] SplashPage: ngOnInit (Page affichée - Chargement en cours)');
   }
 }

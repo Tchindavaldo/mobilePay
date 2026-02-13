@@ -68,12 +68,14 @@ export class AppComponent {
 
     onAuthStateChanged(auth, async (user) => {
       const currentUrl = this.router.url;
-      console.log('Auth state changed:', { user: !!user, currentUrl });
+      console.log('🧭 [ANGULAR] Auth state changed. User:', !!user, 'URL at start:', currentUrl);
 
       // Éviter le flash du login si on vient d'une notification
       if (this.isFirstLoad) {
+        console.log('🧭 [ANGULAR] isFirstLoad=true. Waiting 300ms for notification plugin...');
         // Laisser un court instant aux plugins Capacitor pour déclencher l'action de notification
         await new Promise(resolve => setTimeout(resolve, 300));
+        console.log('🧭 [ANGULAR] Delay finished. Current URL is:', this.router.url);
       }
 
       if (user) {
@@ -81,7 +83,7 @@ export class AppComponent {
 
         // Pas de redirection si login Google en cours
         if (this.authState.isGoogleLoginActive()) {
-          console.log('🔒 Google login en cours');
+          console.log('🧭 [ANGULAR] Google login in progress, stopping redirection.');
           if (this.isFirstLoad) {
             this.isFirstLoad = false;
             await SplashScreen.hide();
@@ -89,20 +91,20 @@ export class AppComponent {
           return;
         }
 
-        // Redirection vers le Home si sur une page d'auth/onboarding
-        if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/') {
-          console.log('Redirecting authenticated user to tabs');
+        // Redirection vers le Home si sur une page d'auth/onboarding/splash
+        if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/' || currentUrl === '/splash') {
+          console.log('🧭 [ANGULAR] Authenticated user on auth/splash page. Redirecting to /tabs/tab1');
           await this.navigateWithFlag(['/tabs/tab1']);
         }
       } else {
         // L'utilisateur n'est pas connecté
         if (!hasSeenOnboarding) {
-          console.log('Redirecting to onboarding');
+          console.log('🧭 [ANGULAR] New user. Redirecting to /explication');
           await this.navigateWithFlag(['/explication']);
         } else {
-          // Si on essaie d'aller sur une page protégée ou la racine, redirection vers login
-          if (currentUrl === '/' || currentUrl.includes('/tabs/')) {
-            console.log('Redirecting unauthenticated user to login');
+          // Si on essaie d'aller sur une page protégée ou la racine/splash, redirection vers login
+          if (currentUrl === '/' || currentUrl === '/splash' || currentUrl.includes('/tabs/')) {
+            console.log('🧭 [ANGULAR] Unauthenticated. Redirecting to /login');
             await this.navigateWithFlag(['/login']);
           }
         }
@@ -118,7 +120,7 @@ export class AppComponent {
             fadeOutDuration: 500
           });
           console.log(`✨ Splash Screen masqué après initialisation complète`);
-        }, 3000);
+        }, 1000);
       }
     });
   }
