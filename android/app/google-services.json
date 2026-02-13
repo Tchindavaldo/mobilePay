@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "583417452577-5e1maihrpomo33ar761oflblrajebaki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moobilpay.app",
+            "certificate_hash": "fcb2aeafc0785ca3b2147af05d15fb569d3ea1d0"
+          }
+        },
+        {
           "client_id": "583417452577-lsepgvbevcsajcvpa722a7pqa1bhk2ml.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
