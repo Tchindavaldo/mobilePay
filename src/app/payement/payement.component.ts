@@ -109,8 +109,12 @@ export class PayementComponent implements OnInit, OnDestroy {
               console.log('🏗️ PayementComponent: Constructor called');
        }
 
+       plansLoading: boolean = true;
+
        async ngOnInit() {
               console.log('🏁 [DEBUG] PayementComponent: Début ngOnInit');
+              this.plansLoading = true;
+
               try {
                      this.planManagement.reset();
                      console.log('🔄 [DEBUG] PlanManagement reset effectué');
@@ -128,10 +132,12 @@ export class PayementComponent implements OnInit, OnDestroy {
                                    } else {
                                           console.warn('⚠️ [DEBUG] Liste de plans vide');
                                    }
+                                   this.plansLoading = false;
                             },
                             error: (err) => {
                                    console.error('❌ [DEBUG] Erreur fetchPlans:', err);
                                    this.presentErrorToast('Impossible de charger les offres.');
+                                   this.plansLoading = false;
                             }
                      });
 
@@ -162,6 +168,7 @@ export class PayementComponent implements OnInit, OnDestroy {
                      // NOTE: initializePlanSelection est obsolète et a été supprimée car elle utilisait 
                      // du DOM direct incompatible avec le rendu dynamique Angular actuel.
               } catch (error) {
+                     this.plansLoading = false;
                      console.error('❌ [FATAL] Crash dans ngOnInit PayementComponent:', error);
                      this.presentErrorToast('Une erreur critique est survenue.');
               }
@@ -442,7 +449,7 @@ export class PayementComponent implements OnInit, OnDestroy {
        }
 
        // Nav
-       returnToHome() { window.history.back(); }
+       returnToHome() { this.router.navigate(['/tabs/tab1']); }
        returnToHomeNew() { this.router.navigate(['/']); } // Added wrapper for template
        goBack() { window.history.back(); } // Added wrapper for template
        goToActivations() { this.router.navigateByUrl('/tabs/activations'); }

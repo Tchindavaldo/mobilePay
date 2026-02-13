@@ -81,6 +81,19 @@
   </div>
 </ion-header>
 
+<!-- Loader step 1 (Full page style) -->
+<div class="plans-full-loader" *ngIf="plansLoading && page === 1">
+  <div class="loader-content">
+    <div class="spinner-animation">
+      <ion-icon name="sync-outline" color="danger"></ion-icon>
+    </div>
+    <p class="loader-text pulse">Chargement des offres en cours...</p>
+    <div class="loader-progress">
+      <div class="progress-bar-infinite"></div>
+    </div>
+  </div>
+</div>
+
 <ion-content>
 
 
@@ -88,11 +101,11 @@
   <!-- <div class="payment-container " [hidden]="page !== 1"> -->
 
   <!-- Étape 1: Sélection du plan -->
-  <div class="page-content" [hidden]="page !== 1">
+  <div class="page-content" [hidden]="page !== 1 || plansLoading">
 
 
     <!-- Nouveau design 4 cartes (2x2) -->
-    <div class="plans-container" *ngIf="(planManagement.plans$ | async) as backendPlans; else loadingPlans">
+    <div class="plans-container" *ngIf="(planManagement.plans$ | async) as backendPlans">
       <div *ngFor="let plan of backendPlans" class="plan-card" [class.selected]="selectedPlan === plan.id"
         [ngClass]="plan.id" (click)="selectPlan(plan.id)">
         <div class="plan-card-header">
@@ -113,13 +126,6 @@
         </div>
       </div>
     </div>
-    <ng-template #loadingPlans>
-      <div class="plans-loader"
-        style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; width: 100%;">
-        <ion-spinner name="crescent" color="danger"></ion-spinner>
-        <p style="margin-top: 15px; color: #666;">Chargement des offres...</p>
-      </div>
-    </ng-template>
 
     <!-- Informations dynamiques du plan sélectionné -->
     <div class="plan-info-section" *ngIf="selectedPlan">

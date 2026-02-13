@@ -42,6 +42,14 @@ export class TabsPage implements OnInit {
     this.selectedTab = event?.detail?.tab ?? this.selectedTab;
   }
 
+  ionViewDidEnter() {
+    // Force une recalcule du layout après l'entrée sur la page
+    // Cela règle souvent les problèmes d'éléments qui ne prennent leur taille qu'après un refresh
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+  }
+
   t(key: string): string {
     return this.langService.translate(key);
   }

@@ -21,9 +21,9 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg,
-      rgba(220, 38, 38, 0.1) 0%,
-      rgba(239, 68, 68, 0.05) 50%,
-      rgba(220, 38, 38, 0.1) 100%);
+        rgba(220, 38, 38, 0.1) 0%,
+        rgba(239, 68, 68, 0.05) 50%,
+        rgba(220, 38, 38, 0.1) 100%);
     opacity: 0.3;
   }
 }
@@ -36,7 +36,7 @@
   border: none !important;
   flex: 1;
   height: 55px;
-  margin: 0 2px;
+  margin: 0 1px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   // Match ripple/focus effects to red theme
   --ripple-color: rgba(239, 68, 68, 0.35);
@@ -90,7 +90,7 @@
   justify-content: center;
   min-height: 40px; // desktop pill minimum height
   max-width: 100%;
-  padding: 6px 12px; // compact, consistent padding
+  padding: 6px 8px; // Reduced from 12px for better fit
   box-sizing: border-box;
   overflow: hidden; // prevent any visual overflow beyond rounded pill
 }
@@ -130,7 +130,7 @@
   .tab-content {
     min-height: 36px; // mobile pill minimum height
     max-width: 100%;
-    padding: 6px 10px;
+    padding: 6px 4px; // Minimum padding on mobile to avoid overflow
   }
 
   .tab-label {

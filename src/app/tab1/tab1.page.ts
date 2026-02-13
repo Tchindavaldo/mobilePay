@@ -124,9 +124,8 @@ export class Tab1Page implements OnInit {
   async goToPay() {
     console.log('🔘 [DEBUG] Bouton "Réabonner" cliqué sur Tab1');
     try {
-      console.log('🚀 [DEBUG] Tentative de navigation vers /pay2 (TEST PAGE)...');
-      await this.router.navigate(['/pay'], { replaceUrl: true });
-      // this.router.navigate(['/pay2'], { replaceUrl: true, skipLocationChange: false });
+      console.log('🚀 [DEBUG] Tentative de navigation vers /pay...');
+      await this.router.navigate(['/pay']);
       console.log('✅ [DEBUG] Navigation réussie !');
     } catch (error) {
       console.error('❌ [DEBUG] Erreur navigation:', error);
@@ -152,7 +151,7 @@ export class Tab1Page implements OnInit {
     const toast = await this.toastController.create({
       message: 'cette fonction nest pas encore disponible contacter le cervice client pour plus dínformation.',
       duration: 3000,
-      position: 'middle',
+      position: 'bottom',
       cssClass: 'custom-toast',  // Classe CSS personnalisée
       buttons: [
         {
@@ -319,7 +318,7 @@ export class Tab1Page implements OnInit {
     const toast = await this.toastController.create({
       message: 'Vous avez été désabonné avec succès.',
       duration: 3000,
-      position: 'middle',
+      position: 'bottom',
       cssClass: 'custom-toast',  // Classe CSS personnalisée
       buttons: [
         {

@@ -23,7 +23,7 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/explication',
+    redirectTo: '/login', // Le app.component redirigera vers /tabs/tab1 si déjà connecté
     pathMatch: 'full'
   },
   {
@@ -65,10 +65,6 @@ const routes: Routes = [
   {
     path: 'forms',
     component: FormulaireComponent
-  },
-  {
-    path: 'chargement',
-    component: SplashPageComponent
   },
   {
     path: 'explication',
