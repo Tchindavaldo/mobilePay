@@ -8,26 +8,20 @@ import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
+    public static boolean isInstanceAlive = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // IMPORTANT: Ne pas changer le thème ici pour garder le splash screen visible
-        // Le thème AppTheme.NoActionBarLaunch du manifest affiche automatiquement le splash
-        // Capacitor le masquera après l'initialisation complète
-        
         super.onCreate(savedInstanceState);
-        
+        isInstanceAlive = true;
         // Création du canal de notification haute priorité
         createNotificationChannel();
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        
-        // Rendre la WebView transparente pour que le splash screen soit visible
-        if (this.bridge != null && this.bridge.getWebView() != null) {
-            this.bridge.getWebView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
-        }
+    public void onDestroy() {
+        isInstanceAlive = false;
+        super.onDestroy();
     }
 
     private void createNotificationChannel() {

@@ -70,6 +70,12 @@ export class AppComponent {
       const currentUrl = this.router.url;
       console.log('Auth state changed:', { user: !!user, currentUrl });
 
+      // Éviter le flash du login si on vient d'une notification
+      if (this.isFirstLoad) {
+        // Laisser un court instant aux plugins Capacitor pour déclencher l'action de notification
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+
       if (user) {
         // L'utilisateur est connecté
 
