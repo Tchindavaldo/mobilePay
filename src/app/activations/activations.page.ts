@@ -30,6 +30,7 @@ export class ActivationsPage implements OnInit, OnDestroy {
   activations: Activation[] = [];
   filteredActivations: Activation[] = [];
   isLoading: boolean = false;
+  hasError: boolean = false;
   selectedActivationId: string | null = null; // ID de l'activation sélectionnée
   selectedPassword: string = ''; // Mot de passe à afficher
   private subscriptions: Subscription[] = [];
@@ -92,11 +93,14 @@ export class ActivationsPage implements OnInit, OnDestroy {
   async loadActivations(): Promise<void> {
     try {
       this.isLoading = true;
+      this.hasError = false;
       console.log('📊 Chargement des activations depuis l\'API...');
       await this.activationManager.loadAndStoreActivations();
       console.log('✅ Activations chargées avec succès');
+      this.hasError = false;
     } catch (error) {
       console.error('❌ Erreur lors du chargement:', error);
+      this.hasError = true;
     } finally {
       this.isLoading = false;
     }

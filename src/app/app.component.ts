@@ -105,10 +105,14 @@ export class AppComponent {
       // Toujours masquer le splash screen natif dès que la première redirection est lancée/décidée
       if (this.isFirstLoad) {
         this.isFirstLoad = false;
-        // On attend un tout petit peu que le moteur de rendu commence la navigation
+
+        // Attendre que l'app soit complètement initialisée avant de masquer le splash
         setTimeout(async () => {
-          await SplashScreen.hide();
-        }, 500);
+          await SplashScreen.hide({
+            fadeOutDuration: 500
+          });
+          console.log(`✨ Splash Screen masqué après initialisation complète`);
+        }, 3000);
       }
     });
   }

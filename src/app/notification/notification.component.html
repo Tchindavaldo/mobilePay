@@ -31,8 +31,26 @@
       <div class="tab-item">Compte</div>
     </div> -->
 
+    <!-- Loader -->
+    <div class="loading-state" *ngIf="isLoading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Chargement des notifications...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="empty-state error-state" *ngIf="hasError && !isLoading">
+      <div class="icon-wrapper">
+        <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+      </div>
+      <h2>Oups !</h2>
+      <p>Impossible de charger vos notifications. Vérifiez votre connexion.</p>
+      <ion-button (click)="loadNotifications()" fill="outline" shape="round" class="retry-btn">
+        Réessayer
+      </ion-button>
+    </div>
+
     <!-- Empty State -->
-    <div class="empty-state" *ngIf="notifications.length === 0">
+    <div class="empty-state" *ngIf="!isLoading && !hasError && notifications.length === 0">
       <div class="icon-wrapper">
         <div class="pulse-ring"></div>
         <ion-icon name="notifications-off-outline"></ion-icon>
@@ -43,7 +61,8 @@
 
     <!-- Notification List -->
     <div class="notification-list" *ngIf="notifications.length > 0">
-      <div class="notification-card" *ngFor="let notification of notifications; let i = index"
+      <div class="notification-card"
+        *ngFor="let notification of notifications; let i = index; trackBy: trackByNotificationId"
         [class.unread]="!isRead(notification)" (click)="markAsRead(notification)"
         [style.animation-delay]="i * 0.05 + 's'">
 
@@ -61,7 +80,7 @@
           <p class="body">{{ notification.body }}</p>
 
           <div class="card-actions" *ngIf="!isRead(notification)">
-            <div class="mark-btn">Fermer</div>
+            <div class="mark-btn" (click)="markAsRead(notification); $event.stopPropagation()">Marquer comme lu</div>
           </div>
         </div>
 

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../store/indx';
+import { AppState } from '../../store/app-state.interface';
 import { UserStorageService } from '../../storage/user-storage.service';
 import { UpdateUserService } from '../../user/requests/update-user.service';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Router } from '@angular/router';
 import { addNotificationReducer } from '../../store/notification/notification-reducer';
+import { SocketService } from '../../socket/socket.service';
 
 @Injectable({ providedIn: 'root' })
 export class FcmService {
@@ -14,8 +15,11 @@ export class FcmService {
         private updateUserService: UpdateUserService,
         private store: Store<AppState>,
         private userStorage: UserStorageService,
-        private router: Router
+        private router: Router,
+        private socketService: SocketService
     ) { }
+
+    private serviceStartTime = Date.now();
 
     private isConfigured = false;
 
@@ -103,8 +107,9 @@ export class FcmService {
         });
 
         // 6. Gérer les actions (clic) sur notification Push
-        PushNotifications.addListener('pushNotificationActionPerformed', action => {
+        PushNotifications.addListener('pushNotificationActionPerformed', async action => {
             console.log('👆 Action de notification Push:', action);
+
             const data = action.notification.data || {};
             const notification = action.notification;
 
@@ -118,13 +123,17 @@ export class FcmService {
 
             this.store.dispatch(addNotificationReducer({ Notification: notificationToStore }));
 
+            // Marquer comme lu
+            this.markAsReadOptimistic(notificationToStore);
+
             // Rediriger vers l'onglet des notifications (Tab 2)
-            this.router.navigateByUrl('/tabs/tab2');
+            await this.router.navigateByUrl('/tabs/tab2');
         });
 
         // 7. Gérer les actions sur notification Locale
-        LocalNotifications.addListener('localNotificationActionPerformed', event => {
+        LocalNotifications.addListener('localNotificationActionPerformed', async event => {
             console.log('👆 Action sur notification locale:', event);
+
             const data = event.notification.extra || {};
             const notification = event.notification;
 
@@ -138,8 +147,11 @@ export class FcmService {
 
             this.store.dispatch(addNotificationReducer({ Notification: notificationToStore }));
 
+            // Marquer comme lu
+            this.markAsReadOptimistic(notificationToStore);
+
             // Rediriger vers l'onglet des notifications (Tab 2)
-            this.router.navigateByUrl('/tabs/tab2');
+            await this.router.navigateByUrl('/tabs/tab2');
         });
 
         // Créer le channel pour Android
@@ -153,6 +165,19 @@ export class FcmService {
             lightColor: '#ff0000'
         });
         this.isConfigured = true;
+    }
+
+    private async markAsReadOptimistic(notification: any) {
+        const user = await this.userStorage.get('user');
+        const userId = user?.id;
+
+        if (userId) {
+            this.socketService.getSocket().emit('isReadNotification', {
+                userId: userId,
+                notificationId: notification.id,
+                notificationIdGroup: notification.idGroup
+            });
+        }
     }
 
     // Envoi du token FCM au backend via UpdateUserService

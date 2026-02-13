@@ -8,11 +8,11 @@ import { AppState } from '../indx';
 })
 export class NotificationStoreService {
 
-  constructor(private store: Store<AppState>) {}
+  constructor(private store: Store<AppState>) { }
 
   // Sélecteurs pour accéder aux données du store
-  getNotifications(): Observable<any> {
-    return this.store.select(state => state.userNotification);
+  getNotifications(): Observable<any[]> {
+    return this.store.select(state => state.userNotification?.Notification || []);
   }
 
   // Méthodes utilitaires pour les notifications
@@ -20,8 +20,9 @@ export class NotificationStoreService {
   // Obtenir une notification par ID
   getNotificationById(id: string): Observable<any | undefined> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.find(notification => notification.id === id);
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.find((notification: any) => notification.id === id);
       }
       return undefined;
     });
@@ -30,8 +31,9 @@ export class NotificationStoreService {
   // Obtenir les notifications par type
   getNotificationsByType(type: string): Observable<any[]> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.filter(notification => notification.type === type);
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.filter((notification: any) => notification.type === type);
       }
       return [];
     });
@@ -40,8 +42,9 @@ export class NotificationStoreService {
   // Obtenir les notifications non lues
   getUnreadNotifications(): Observable<any[]> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.filter(notification => !notification.read);
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.filter((notification: any) => !notification.read);
       }
       return [];
     });
@@ -50,8 +53,9 @@ export class NotificationStoreService {
   // Obtenir les notifications lues
   getReadNotifications(): Observable<any[]> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.filter(notification => notification.read);
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.filter((notification: any) => notification.read);
       }
       return [];
     });
@@ -60,8 +64,9 @@ export class NotificationStoreService {
   // Obtenir le nombre de notifications non lues
   getUnreadCount(): Observable<number> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.filter(notification => !notification.read).length;
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.filter((notification: any) => !notification.read).length;
       }
       return 0;
     });
@@ -70,8 +75,9 @@ export class NotificationStoreService {
   // Obtenir le nombre total de notifications
   getNotificationCount(): Observable<number> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.length;
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.length;
       }
       return 0;
     });
@@ -80,8 +86,9 @@ export class NotificationStoreService {
   // Vérifier si des notifications existent
   hasNotifications(): Observable<boolean> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.length > 0;
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.length > 0;
       }
       return false;
     });
@@ -90,8 +97,9 @@ export class NotificationStoreService {
   // Vérifier s'il y a des notifications non lues
   hasUnreadNotifications(): Observable<boolean> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.some(notification => !notification.read);
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.some((notification: any) => !notification.read);
       }
       return false;
     });
@@ -100,9 +108,10 @@ export class NotificationStoreService {
   // Obtenir les notifications récentes (dernières N notifications)
   getRecentNotifications(limit: number = 10): Observable<any[]> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification
-          .sort((a, b) => new Date(b.createdAt || b.timestamp || 0).getTime() - new Date(a.createdAt || a.timestamp || 0).getTime())
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return [...notifs]
+          .sort((a: any, b: any) => new Date(b.createdAt || b.timestamp || 0).getTime() - new Date(a.createdAt || a.timestamp || 0).getTime())
           .slice(0, limit);
       }
       return [];
@@ -112,8 +121,9 @@ export class NotificationStoreService {
   // Obtenir les notifications par priorité
   getNotificationsByPriority(priority: 'low' | 'medium' | 'high'): Observable<any[]> {
     return this.store.select(state => {
-      if (Array.isArray(state.userNotification)) {
-        return state.userNotification.filter(notification => notification.priority === priority);
+      const notifs = state.userNotification?.Notification;
+      if (Array.isArray(notifs)) {
+        return notifs.filter((notification: any) => notification.priority === priority);
       }
       return [];
     });

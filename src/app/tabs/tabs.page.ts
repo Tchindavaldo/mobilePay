@@ -5,7 +5,7 @@ import { SocketService } from '../services/socket/socket.service';
 import { LanguageService } from '../services/language.service';
 import { FcmService } from '../services/notifications/FCM/fcm.service';
 import { Store } from '@ngrx/store';
-import { AppState } from '../services/store/indx';
+import { AppState } from '../services/store/app-state.interface';
 import { UserStorageService } from '../services/storage/user-storage.service';
 
 @Component({
@@ -31,7 +31,7 @@ export class TabsPage implements OnInit {
     this.platform.ready().then(async () => {
       const user = await this.userStorage.get('user');
       if (user) {
-        this.userId = user.uid || user.id;
+        this.userId = user.id;
       }
 
       setTimeout(() => {
