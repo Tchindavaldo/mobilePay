@@ -69,25 +69,34 @@ export class FcmService {
         PushNotifications.addListener('pushNotificationReceived', async (notification) => {
             console.log('🔔 Notification push reçue:', notification);
 
-            const data = notification.data;
-            if (data) {
-                // Mettre à jour le Store local
-                this.store.dispatch(addNotificationReducer({ Notification: data }));
-            }
+            const data = notification.data || {};
+            const persistentId = data.id || notification.id || Date.now().toString();
+
+            // Préparer l'objet pour le store
+            const notificationToStore = {
+                ...data,
+                id: persistentId,
+                title: notification.title || data.title || 'Notification',
+                body: notification.body || data.body || data.message || 'Nouveau message',
+                createdAt: data.createdAt || new Date().toISOString()
+            };
+
+            // Mettre à jour le Store local
+            this.store.dispatch(addNotificationReducer({ Notification: notificationToStore }));
 
             // Afficher une notification locale pour forcer le "heads-up"
-            const notificationId = Math.floor(Math.random() * 100000);
+            const internalId = Math.floor(Math.random() * 100000);
             LocalNotifications.schedule({
                 notifications: [
                     {
-                        id: notificationId,
-                        title: notification.title || 'Notification',
-                        body: notification.body || 'Nouveau message',
+                        id: internalId,
+                        title: notificationToStore.title,
+                        body: notificationToStore.body,
                         schedule: { at: new Date(Date.now() + 100) },
                         channelId: 'high_priority_channel',
                         sound: 'default',
                         smallIcon: 'ic_launcher',
-                        extra: data
+                        extra: notificationToStore // On passe l'objet complet avec l'ID persistant
                     },
                 ],
             });
@@ -96,21 +105,41 @@ export class FcmService {
         // 6. Gérer les actions (clic) sur notification Push
         PushNotifications.addListener('pushNotificationActionPerformed', action => {
             console.log('👆 Action de notification Push:', action);
-            const data = action.notification.data;
-            if (data) {
-                this.store.dispatch(addNotificationReducer({ Notification: data }));
-            }
-            this.router.navigateByUrl('/tabs/tab4'); // Ou l'onglet des notifications
+            const data = action.notification.data || {};
+            const notification = action.notification;
+
+            const notificationToStore = {
+                ...data,
+                id: data.id || notification.id || Date.now().toString(),
+                title: notification.title || data.title || 'Notification',
+                body: notification.body || data.body || data.message || 'Nouveau message',
+                createdAt: data.createdAt || new Date().toISOString()
+            };
+
+            this.store.dispatch(addNotificationReducer({ Notification: notificationToStore }));
+
+            // Rediriger vers l'onglet des notifications (Tab 2)
+            this.router.navigateByUrl('/tabs/tab2');
         });
 
         // 7. Gérer les actions sur notification Locale
         LocalNotifications.addListener('localNotificationActionPerformed', event => {
             console.log('👆 Action sur notification locale:', event);
-            const data = event.notification.extra;
-            if (data) {
-                this.store.dispatch(addNotificationReducer({ Notification: data }));
-            }
-            this.router.navigateByUrl('/tabs/tab4');
+            const data = event.notification.extra || {};
+            const notification = event.notification;
+
+            const notificationToStore = {
+                ...data,
+                id: data.id || notification.id || Date.now().toString(),
+                title: notification.title || data.title || 'Notification',
+                body: notification.body || data.body || data.message || 'Nouveau message',
+                createdAt: data.createdAt || new Date().toISOString()
+            };
+
+            this.store.dispatch(addNotificationReducer({ Notification: notificationToStore }));
+
+            // Rediriger vers l'onglet des notifications (Tab 2)
+            this.router.navigateByUrl('/tabs/tab2');
         });
 
         // Créer le channel pour Android

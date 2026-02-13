@@ -111,6 +111,25 @@
   text-align: center;
 }
 
+.tab-badge {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  --padding-start: 4px;
+  --padding-end: 4px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #1e293b;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
 // Responsive
 @media (max-width: 768px) {
   .futuristic-tab-bar {

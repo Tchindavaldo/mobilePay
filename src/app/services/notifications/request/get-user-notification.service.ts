@@ -15,7 +15,7 @@ export class GetUserNotificationService {
             const user = await this.userStorage.get('user');
             if (!user || (!user.uid && !user.id)) return;
 
-            const userId = user.uid || user.id;
+            const userId = user._id || user.id || user.uid;
             const endpoint = user.fastFoodId !== undefined ? `/user?userId=${userId}&fastFoodId=${user.fastFoodId}` : `/user?userId=${userId}`;
 
             const response = await axios.get(`${this.apiUrl}/api/notification${endpoint}`);
@@ -24,8 +24,16 @@ export class GetUserNotificationService {
             if (response.data && response.data.data) {
                 this.store.dispatch(setNotificationReducer({ NotificationTab: response.data.data }));
             }
-        } catch (error) {
-            console.error('Erreur lors de la récupération des notifications:', error);
+        } catch (error: any) {
+            console.error('❌ Erreur lors de la récupération des notifications:', error);
+            if (error.response) {
+                console.error('Data:', error.response.data);
+                console.error('Status:', error.response.status);
+            } else if (error.request) {
+                console.error('Request:', error.request);
+            } else {
+                console.error('Message:', error.message);
+            }
         }
     }
 }

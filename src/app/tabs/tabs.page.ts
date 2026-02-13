@@ -4,6 +4,9 @@ import { Platform } from '@ionic/angular';
 import { SocketService } from '../services/socket/socket.service';
 import { LanguageService } from '../services/language.service';
 import { FcmService } from '../services/notifications/FCM/fcm.service';
+import { Store } from '@ngrx/store';
+import { AppState } from '../services/store/indx';
+import { UserStorageService } from '../services/storage/user-storage.service';
 
 @Component({
   selector: 'app-tabs',
@@ -12,16 +15,25 @@ import { FcmService } from '../services/notifications/FCM/fcm.service';
 })
 export class TabsPage implements OnInit {
   selectedTab: string = 'tab1';
+  unreadCount: number = 0;
+  private userId: string | null = null;
 
   constructor(
     private router: Router,
     private platform: Platform,
     private socketService: SocketService,
     private fcmService: FcmService,
-    public langService: LanguageService
+    public langService: LanguageService,
+    private store: Store<AppState>,
+    private userStorage: UserStorageService
   ) {
     // Initialiser les sockets et notifications après un court délai pour éviter de bloquer le rendu initial
-    this.platform.ready().then(() => {
+    this.platform.ready().then(async () => {
+      const user = await this.userStorage.get('user');
+      if (user) {
+        this.userId = user.uid || user.id;
+      }
+
       setTimeout(() => {
         console.log('🚀 [DELAYED INIT] Initialisation des sockets et FCM...');
         this.socketService.initializeAllSockets();
@@ -36,6 +48,17 @@ export class TabsPage implements OnInit {
     if (match && match[1]) {
       this.selectedTab = match[1];
     }
+
+    // Suivre le compteur de notifications non lues
+    this.store.select(state => state.userNotification?.Notification).subscribe(notifications => {
+      if (notifications && this.userId) {
+        this.unreadCount = notifications.filter((n: any) => {
+          const isReadArray = Array.isArray(n.isRead) ? n.isRead :
+            (typeof n.isRead === 'string' ? JSON.parse(n.isRead) : []);
+          return !isReadArray.includes(this.userId);
+        }).length;
+      }
+    });
   }
 
   onTabsDidChange(event: any) {

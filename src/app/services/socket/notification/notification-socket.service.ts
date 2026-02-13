@@ -14,15 +14,23 @@ export class NotificationSocketService {
     public initializeSocket(socket: Socket) {
         socket.on('isRead', (data: any) => {
             const { notificationId, userId } = data;
-            console.log('🔔 Notification lue :', data);
-            if (this.notificationData.getNotification() !== null) {
-                this.store.dispatch(markNotificationAsReadReducer({ notificationId, userId }));
-            }
+            console.log('🔔 [Socket] Notification lue :', data);
+            this.store.dispatch(markNotificationAsReadReducer({ notificationId, userId }));
         });
 
         socket.on('newNotification', (data: any) => {
-            console.log('🔔 Nouvelle notification reçue :', data);
-            this.store.dispatch(addNotificationReducer({ Notification: data }));
+            console.log('🔔 [Socket] Nouvelle notification reçue :', data);
+
+            // Normalisation pour correspondre à FCM et éviter les doublons
+            const notification = {
+                ...data,
+                id: data.id || data._id || Date.now().toString(),
+                title: data.title || 'Notification',
+                body: data.body || data.message || '',
+                createdAt: data.createdAt || data.date || new Date().toISOString()
+            };
+
+            this.store.dispatch(addNotificationReducer({ Notification: notification }));
         });
     }
 }

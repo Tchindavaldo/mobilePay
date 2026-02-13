@@ -36,23 +36,31 @@ export class NotificationComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     const user = await this.userStorage.get('user');
     if (user) {
-      this.userId = user.uid || user.id;
+      this.userId = user._id || user.id || user.uid;
       this.getUserNotificationService.getNotification();
     }
 
     this.sub = this.store.select(state => state.userNotification?.Notification).subscribe(notifications => {
       if (notifications) {
-        // Trier par date décroissante
-        this.notifications = [...notifications].sort((a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+        // Normaliser et trier les notifications
+        this.notifications = [...notifications].map(n => ({
+          ...n,
+          // Unifier body et message
+          body: n.body || n.message || '',
+          // S'assurer qu'on a une date
+          createdAt: n.createdAt || n.date || new Date().toISOString()
+        })).sort((a, b) => {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+        });
 
         // Calculer les non lues (où userId n'est pas dans isRead)
         if (this.userId) {
           this.unreadNotifications = this.notifications.filter(n => {
-            const isRead = Array.isArray(n.isRead) ? n.isRead :
+            const isReadArray = Array.isArray(n.isRead) ? n.isRead :
               (typeof n.isRead === 'string' ? JSON.parse(n.isRead) : []);
-            return !isRead.includes(this.userId);
+            return !isReadArray.includes(this.userId!);
           }).length;
         }
       }
@@ -81,13 +89,10 @@ export class NotificationComponent implements OnInit, OnDestroy {
   }
 
   async clearAllNotifications() {
-    // Dans la logique YO, on ne semble pas avoir de "clear all" global qui supprime tout direct,
-    // mais on peut marquer tout comme lu ou vider localement.
-    // L'utilisateur pourra toujours les re-récupérer du backend.
+    // Logic for clearing notifications if needed
   }
 
   deleteNotification(id: string) {
-    // Suppression locale pour l'instant si nécessaire
     this.notifications = this.notifications.filter(n => n.id !== id);
   }
 
@@ -100,11 +105,11 @@ export class NotificationComponent implements OnInit, OnDestroy {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return this.t('notification.just_now');
-    if (diffMins < 60) return `${diffMins} ${this.t('notification.min_ago')}`;
-    if (diffHours < 24) return `${diffHours}h ${this.t('notification.ago')}`;
-    if (diffDays === 1) return this.t('notification.yesterday');
-    if (diffDays < 7) return `${diffDays} ${this.t('notification.days_ago')}`;
+    if (diffMins < 1) return this.t('notification.just_now') || 'À l\'instant';
+    if (diffMins < 60) return `${diffMins} ${this.t('notification.min_ago') || 'min'}`;
+    if (diffHours < 24) return `${diffHours}h ${this.t('notification.ago') || ''}`;
+    if (diffDays === 1) return this.t('notification.yesterday') || 'Hier';
+    if (diffDays < 7) return `${diffDays} ${this.t('notification.days_ago') || 'jours'}`;
 
     return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
   }
@@ -115,10 +120,17 @@ export class NotificationComponent implements OnInit, OnDestroy {
 
   getIconForType(type: string): string {
     switch (type) {
-      case 'payment': return 'card-outline';
-      case 'subscription': return 'ribbon-outline';
-      case 'security': return 'shield-checkmark-outline';
-      default: return 'notifications-outline';
+      case 'payment':
+      case 'success':
+        return 'card-outline';
+      case 'subscription':
+      case 'info':
+        return 'ribbon-outline';
+      case 'security':
+      case 'warning':
+        return 'shield-checkmark-outline';
+      default:
+        return 'notifications-outline';
     }
   }
 
