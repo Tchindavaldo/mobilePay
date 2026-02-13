@@ -100,7 +100,7 @@ export class FcmService {
             if (data) {
                 this.store.dispatch(addNotificationReducer({ Notification: data }));
             }
-            this.router.navigateByUrl('/tabs/tab4'); // Ou l'onglet des notifications
+            this.router.navigateByUrl('/tabs/tab2'); // Rediriger vers l'onglet des notifications (Tab2)
         });
 
         // 7. Gérer les actions sur notification Locale
@@ -110,7 +110,7 @@ export class FcmService {
             if (data) {
                 this.store.dispatch(addNotificationReducer({ Notification: data }));
             }
-            this.router.navigateByUrl('/tabs/tab4');
+            this.router.navigateByUrl('/tabs/tab2');
         });
 
         // Créer le channel pour Android
