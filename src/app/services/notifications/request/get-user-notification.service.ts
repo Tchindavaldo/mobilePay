@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Store } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { setNotificationReducer } from 'src/app/services/store/notification/notification-reducer';
+import { setNotificationReducer } from '../../store/notification/notification-reducer';
 import { UserStorageService } from 'src/app/services/storage/user-storage.service';
 
 @Injectable({ providedIn: 'root' })
@@ -15,25 +15,26 @@ export class GetUserNotificationService {
             const user = await this.userStorage.get('user');
             if (!user || (!user.uid && !user.id)) return;
 
-            const userId = user._id || user.id || user.uid;
+            const userId = String(user.id);
             const endpoint = user.fastFoodId !== undefined ? `/user?userId=${userId}&fastFoodId=${user.fastFoodId}` : `/user?userId=${userId}`;
+            const fullUrl = `${this.apiUrl}/api/notification${endpoint}`;
 
-            const response = await axios.get(`${this.apiUrl}/api/notification${endpoint}`);
+            console.log('📡 [NOTIFICATION] Calling:', fullUrl);
+            const response = await axios.get(fullUrl);
 
-            console.log('Notifications récupérées avec succès', response.data);
+            console.log('✅ [NOTIFICATION] Récupérées avec succès :', response.data);
+
             if (response.data && response.data.data) {
+                // On dispatch dans le store pour mettre à jour l'UI instantanément
                 this.store.dispatch(setNotificationReducer({ NotificationTab: response.data.data }));
             }
         } catch (error: any) {
-            console.error('❌ Erreur lors de la récupération des notifications:', error);
+            console.error('❌ [NOTIFICATION] Erreur complète:', JSON.stringify(error, null, 2));
             if (error.response) {
-                console.error('Data:', error.response.data);
-                console.error('Status:', error.response.status);
-            } else if (error.request) {
-                console.error('Request:', error.request);
-            } else {
-                console.error('Message:', error.message);
+                console.error('📡 [NOTIFICATION] Erreur Data:', JSON.stringify(error.response.data, null, 2));
+                console.error('📡 [NOTIFICATION] Erreur Status:', error.response.status);
             }
+            throw error;
         }
     }
 }

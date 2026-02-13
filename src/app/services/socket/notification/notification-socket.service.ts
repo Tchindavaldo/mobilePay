@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'socket.io-client';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../store/indx';
+import { AppState } from '../../store/app-state.interface';
 import { NotificationDataService } from '../../notifications/data/notification-data.service';
 import { markNotificationAsReadReducer, addNotificationReducer } from '../../store/notification/notification-reducer';
 

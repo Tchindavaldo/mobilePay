@@ -2,21 +2,11 @@
 
 import { ActionReducerMap } from '@ngrx/store';
 import { bonusReducer } from './bonus/bonus-reducer';
-import { planActivationReducer, PlanActivationState } from './plan-activation/plan-activation-reducer';
-
-// import { MenuReducer } from './menu/menu-reducer';
-// import { fastFoodReducer } from './fastFood/fastfoods-reducer';
-// import { orderReducer } from './order/order-fastfood-reducer';
-// import { userOrderReducer } from './order/order-user-reducer';
+import { planActivationReducer } from './plan-activation/plan-activation-reducer';
 import { TransactionReducer } from './transaction/transaction-reducer';
 import { NotificationReducer } from './notification/notification-reducer';
-
-export interface AppState {
-  bonus: any;
-  planActivation: PlanActivationState;
-  transaction: any;
-  userNotification: any;
-}
+import { AppState } from './app-state.interface';
+export { AppState };
 
 export const reducers: ActionReducerMap<AppState> = {
   bonus: bonusReducer,

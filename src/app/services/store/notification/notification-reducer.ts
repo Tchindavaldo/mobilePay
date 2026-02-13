@@ -28,16 +28,21 @@ export const NotificationReducer = createReducer(
   }),
 
   on(markNotificationAsReadReducer, (state, { notificationId, userId }) => {
-    if (!state.Notification) return { Notification: [] };
+    if (!state.Notification) return state;
 
+    let changed = false;
     const updatedNotifications = state.Notification.map(notif => {
-      if (notif.id === notificationId) {
+      // Comparaison flexible des IDs (string/number)
+      if (String(notif.id) === String(notificationId)) {
         const isReadArray = Array.isArray(notif.isRead) ? notif.isRead : [];
-        if (!isReadArray.includes(userId)) return { ...notif, isRead: [...isReadArray, userId] };
+        if (!isReadArray.includes(userId)) {
+          changed = true;
+          return { ...notif, isRead: [...isReadArray, userId] };
+        }
       }
       return notif;
     });
 
-    return { Notification: updatedNotifications };
+    return changed ? { ...state, Notification: updatedNotifications } : state;
   })
 );

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { PayementComponent } from './payement/payement.component';
-import { NotificationComponent } from './notification/notification.component';
 import { SupportComponent } from './support/support.component';
 import { PartageComponent } from './partage/partage.component';
 import { CompteComponent } from './compte/compte.component';
@@ -36,7 +35,7 @@ const routes: Routes = [
   },
   {
     path: 'notif',
-    component: NotificationComponent
+    loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule)
   },
   {
     path: 'support',
