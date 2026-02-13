@@ -50,7 +50,13 @@ export class LoginPageComponent implements OnInit {
     private fcmService: FcmService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    console.log('🚪 [PAGE] LoginPage: ngOnInit (Page affichée)');
+  }
+
+  ngOnDestroy() {
+    console.log('🚪 [PAGE] LoginPage: ngOnDestroy (Page quittée)');
+  }
 
   showEmailLogin() {
     this.showEmailForm = true;

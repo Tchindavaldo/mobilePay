@@ -38,10 +38,10 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @NgModule({
-  declarations: [AppComponent, PayementComponent,SupportComponent,PartageComponent,CompteComponent,AddEditAccountComponent,ActusComponent,ComptepartagerComponent,FormulaireComponent,LoginPageComponent,SplashPageComponent,OnboardingPageComponent,JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent, AboutComponent, SubscriptionsComponent],
+  declarations: [AppComponent, PayementComponent, SupportComponent, PartageComponent, CompteComponent, AddEditAccountComponent, ActusComponent, ComptepartagerComponent, FormulaireComponent, LoginPageComponent, SplashPageComponent, OnboardingPageComponent, JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent, AboutComponent, SubscriptionsComponent],
   imports: [
-    BrowserModule, 
-    IonicModule.forRoot(), 
+    BrowserModule,
+    IonicModule.forRoot(),
     AppRoutingModule,
     FormsModule,
     CommonModule,
@@ -58,4 +58,4 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] // Utilisé pour supporter les composants Ionic
 })
-export class AppModule {}
+export class AppModule { }

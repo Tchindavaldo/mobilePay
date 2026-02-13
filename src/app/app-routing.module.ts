@@ -22,8 +22,12 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/login', // Le app.component redirigera vers /tabs/tab1 si déjà connecté
+    redirectTo: '/splash',
     pathMatch: 'full'
+  },
+  {
+    path: 'splash',
+    component: SplashPageComponent
   },
   {
     path: 'tabs',

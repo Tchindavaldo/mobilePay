@@ -47,6 +47,7 @@
 
 // Mode sombre global
 [data-theme="dark"] {
+
   // Ionic components
   ion-content {
     --background: var(--background-secondary) !important;
@@ -105,7 +106,8 @@
     --indicator-color: var(--mobilpay-primary);
   }
 
-  ion-input, ion-textarea {
+  ion-input,
+  ion-textarea {
     --background: var(--background-card);
     --color: var(--text-primary);
     --placeholder-color: var(--text-muted);
@@ -134,16 +136,27 @@
   }
 
   // Textes généraux
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: var(--text-primary);
   }
 
-  p, span, label {
+  p,
+  span,
+  label {
     color: var(--text-secondary);
   }
 
   // Backgrounds communs
-  .card, .settings-card, .info-card, .action-card, .stat-card {
+  .card,
+  .settings-card,
+  .info-card,
+  .action-card,
+  .stat-card {
     background: var(--background-card) !important;
     border: 1px solid var(--border-primary) !important;
   }
@@ -158,24 +171,29 @@
   }
 
   // Inputs et formulaires
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     background: var(--background-card);
     color: var(--text-primary);
     border-color: var(--border-primary);
   }
 
   // Modals et overlays
-  .modal-content, .dialog-content {
+  .modal-content,
+  .dialog-content {
     background: var(--background-card);
     border: 1px solid var(--border-primary);
   }
 
-  .overlay, .dialog-overlay {
+  .overlay,
+  .dialog-overlay {
     background: rgba(0, 0, 0, 0.8);
   }
 
   // Badges et labels
-  .badge, .label {
+  .badge,
+  .label {
     background: var(--background-tertiary);
     color: var(--text-primary);
   }
