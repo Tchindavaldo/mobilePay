@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AppState } from '../indx';
-import { 
-  PlanActivation, 
+import {
+  PlanActivation,
   PlanActivationState,
   initPlanActivationsReducer,
   addPlanActivationReducer,
@@ -18,7 +18,7 @@ import {
 })
 export class PlanActivationService {
 
-  constructor(private store: Store<AppState>) {}
+  constructor(private store: Store<AppState>) { }
 
   // Sélecteurs pour accéder aux données du store
   getPlanActivations(): Observable<PlanActivation[] | null> {
@@ -35,22 +35,22 @@ export class PlanActivationService {
 
   // Sélecteur pour obtenir une activation spécifique par ID
   getPlanActivationById(id: string): Observable<PlanActivation | undefined> {
-    return this.store.select(state => 
-      state.planActivation.planActivations?.find(activation => activation.id === id)
+    return this.store.select(state =>
+      state.planActivation.planActivations?.find((activation: PlanActivation) => activation.id === id)
     );
   }
 
   // Sélecteur pour obtenir les activations d'un utilisateur spécifique
   getPlanActivationsByUserId(userId: string): Observable<PlanActivation[]> {
-    return this.store.select(state => 
-      state.planActivation.planActivations?.filter(activation => activation.userId === userId) || []
+    return this.store.select(state =>
+      state.planActivation.planActivations?.filter((activation: PlanActivation) => activation.userId === userId) || []
     );
   }
 
   // Sélecteur pour obtenir les activations par statut
   getPlanActivationsByStatus(status: 'pending' | 'active' | 'expired' | 'cancelled'): Observable<PlanActivation[]> {
-    return this.store.select(state => 
-      state.planActivation.planActivations?.filter(activation => activation.status === status) || []
+    return this.store.select(state =>
+      state.planActivation.planActivations?.filter((activation: PlanActivation) => activation.status === status) || []
     );
   }
 
@@ -90,9 +90,9 @@ export class PlanActivationService {
 
   // Créer une nouvelle activation avec des valeurs par défaut
   createPlanActivation(
-    userId: string, 
-    planType: string, 
-    netflixEmail?: string, 
+    userId: string,
+    planType: string,
+    netflixEmail?: string,
     paymentId?: string
   ): PlanActivation {
     const now = new Date().toISOString();

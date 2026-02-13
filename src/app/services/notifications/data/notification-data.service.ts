@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../store/indx';
+import { AppState } from '../../store/app-state.interface';
 
 @Injectable({
     providedIn: 'root',

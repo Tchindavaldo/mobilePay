@@ -78,8 +78,20 @@
         <p class="loading-text">{{ t('activations.loading') }}</p>
       </div>
 
+      <!-- Message d'erreur -->
+      <div class="empty-state error-state" *ngIf="hasError && !isLoading">
+        <div class="empty-icon error">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+        </div>
+        <h3>Oups !</h3>
+        <p>Impossible de charger vos activations.</p>
+        <ion-button (click)="loadActivations()" fill="outline" shape="round" class="retry-btn">
+          Réessayer
+        </ion-button>
+      </div>
+
       <!-- Message si aucune activation -->
-      <div class="empty-state" *ngIf="!isLoading && filteredActivations.length === 0">
+      <div class="empty-state" *ngIf="!isLoading && !hasError && filteredActivations.length === 0">
         <div class="empty-icon">
           <ion-icon name="list-outline"></ion-icon>
         </div>
@@ -89,13 +101,10 @@
 
       <!-- Liste des activations en format stat-item-row -->
       <div class="stats-card" *ngIf="!isLoading && filteredActivations.length > 0">
-        <div
-          class="stat-item-row activation-row"
-          *ngFor="let activation of filteredActivations"
+        <div class="stat-item-row activation-row" *ngFor="let activation of filteredActivations"
           (click)="viewActivationDetails(activation)">
 
-          <div class="stat-icon-wrapper"
-            [ngClass]="{
+          <div class="stat-icon-wrapper" [ngClass]="{
               'green': activation.status === 'activated',
               'orange': activation.status === 'pending',
               'red': activation.status === 'expired'
@@ -112,11 +121,12 @@
                 <ion-icon name="mail-outline"></ion-icon>
                 {{ activation.email }}
               </div>
-              
+
               <!-- Mot de passe caché/visible -->
               <div class="activation-password">
                 <ion-icon name="key-outline"></ion-icon>
-                <span>{{ activation.id === selectedActivationId ? (selectedPassword || '••••••••') : '••••••••' }}</span>
+                <span>{{ activation.id === selectedActivationId ? (selectedPassword || '••••••••') : '••••••••'
+                  }}</span>
               </div>
 
               <!-- Pour les activations en attente -->
@@ -147,15 +157,15 @@
 
           <div class="stat-value-group">
             <div class="stat-value">{{ activation.amount }}</div>
-            <span
-              class="status-badge"
-              [ngClass]="{
+            <span class="status-badge" [ngClass]="{
                 'status-pending': activation.status === 'pending',
                 'status-active': activation.status === 'activated',
                 'status-expired': activation.status === 'expired'
               }">
-              <ion-icon [name]="activation.status === 'pending' ? 'time' : (activation.status === 'expired' ? 'close-circle' : 'checkmark-circle')"></ion-icon>
-              {{ activation.status === 'activated' ? t('activations.status_activated') : (activation.status === 'expired' ? t('activations.status_expired') : t('activations.status_pending')) }}
+              <ion-icon
+                [name]="activation.status === 'pending' ? 'time' : (activation.status === 'expired' ? 'close-circle' : 'checkmark-circle')"></ion-icon>
+              {{ activation.status === 'activated' ? t('activations.status_activated') : (activation.status ===
+              'expired' ? t('activations.status_expired') : t('activations.status_pending')) }}
             </span>
           </div>
         </div>

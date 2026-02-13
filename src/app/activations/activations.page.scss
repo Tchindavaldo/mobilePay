@@ -52,6 +52,7 @@ ion-content {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -101,7 +102,7 @@ ion-content {
   font-size: 13px;
   font-weight: 400;
   margin: 0;
-  
+
   &.overview-amount {
     font-size: 24px;
     font-weight: 700;
@@ -140,8 +141,13 @@ ion-content {
   margin-bottom: 24px;
   animation: fadeInUp 0.6s ease-out backwards;
 
-  &:nth-child(2) { animation-delay: 0.1s; }
-  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.2s;
+  }
 }
 
 @keyframes fadeInUp {
@@ -149,6 +155,7 @@ ion-content {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -423,6 +430,7 @@ ion-content {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -470,7 +478,7 @@ ion-content {
     backdrop-filter: blur(10px);
     transition: all 0.2s ease;
     z-index: 2;
-    
+
     &:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: scale(1.1);
@@ -478,7 +486,7 @@ ion-content {
   }
 
   // Content wrapper
-  > div:not(.simple-close) {
+  >div:not(.simple-close) {
     position: relative;
     z-index: 1;
     padding: 40px 28px 28px;
@@ -486,11 +494,11 @@ ion-content {
 
   .simple-item {
     margin-bottom: 20px;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
-    
+
     strong {
       display: block;
       font-size: 13px;
@@ -499,7 +507,7 @@ ion-content {
       font-weight: 600;
       letter-spacing: 0.3px;
     }
-    
+
     span {
       display: block;
       font-size: 17px;
@@ -513,7 +521,7 @@ ion-content {
       word-break: break-all;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       transition: all 0.2s ease;
-      
+
       &:hover {
         background: rgba(255, 255, 255, 0.22);
         border-color: rgba(255, 255, 255, 0.3);
@@ -631,6 +639,7 @@ ion-content {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -673,5 +682,27 @@ ion-content {
     color: #64748b;
     font-size: 14px;
     margin: 0;
+  }
+
+  &.error-state {
+    .empty-icon.error {
+      background: #fef2f2;
+
+      ion-icon {
+        color: #ef4444;
+      }
+    }
+
+    h3 {
+      color: #b91c1c;
+    }
+  }
+
+  .retry-btn {
+    margin-top: 20px;
+    --color: #dc2626;
+    --border-color: #dc2626;
+    --border-radius: 12px;
+    font-weight: 700;
   }
 }

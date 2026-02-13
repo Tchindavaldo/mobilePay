@@ -16,13 +16,15 @@ const config: CapacitorConfig = {
 
   plugins: {
     SplashScreen: {
-      launchShowDuration: 30000,
+      launchShowDuration: 5000,
       launchAutoHide: false,
-      backgroundColor: '#bc0e0eff',
+      backgroundColor: '#F8F9FA',
       androidScaleType: 'CENTER_CROP',
       showSpinner: false,
       splashFullScreen: true,
       splashImmersive: true,
+      layoutName: "launch_screen",
+      launchFadeOutDuration: 500,
     },
     SocialLogin: {
       google: {

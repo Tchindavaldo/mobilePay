@@ -70,6 +70,12 @@ export class AppComponent {
       const currentUrl = this.router.url;
       console.log('Auth state changed:', { user: !!user, currentUrl });
 
+      // Éviter le flash du login si on vient d'une notification
+      if (this.isFirstLoad) {
+        // Laisser un court instant aux plugins Capacitor pour déclencher l'action de notification
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+
       if (user) {
         // L'utilisateur est connecté
 
@@ -105,10 +111,14 @@ export class AppComponent {
       // Toujours masquer le splash screen natif dès que la première redirection est lancée/décidée
       if (this.isFirstLoad) {
         this.isFirstLoad = false;
-        // On attend un tout petit peu que le moteur de rendu commence la navigation
+
+        // Attendre que l'app soit complètement initialisée avant de masquer le splash
         setTimeout(async () => {
-          await SplashScreen.hide();
-        }, 500);
+          await SplashScreen.hide({
+            fadeOutDuration: 500
+          });
+          console.log(`✨ Splash Screen masqué après initialisation complète`);
+        }, 3000);
       }
     });
   }

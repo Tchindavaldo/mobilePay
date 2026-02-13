@@ -8,12 +8,20 @@ import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
+    public static boolean isInstanceAlive = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        isInstanceAlive = true;
         // Création du canal de notification haute priorité
         createNotificationChannel();
+    }
+
+    @Override
+    public void onDestroy() {
+        isInstanceAlive = false;
+        super.onDestroy();
     }
 
     private void createNotificationChannel() {

@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { LanguageService } from '../services/language.service';
 import { Store } from '@ngrx/store';
-import { AppState } from '../services/store/indx';
+import { AppState } from '../services/store/app-state.interface';
 import { GetUserNotificationService } from '../services/notifications/request/get-user-notification.service';
 import { UserStorageService } from '../services/storage/user-storage.service';
 import { Subscription } from 'rxjs';
 import { SocketService } from '../services/socket/socket.service';
+import { markNotificationAsReadReducer } from '../services/store/notification/notification-reducer';
 
 @Component({
   selector: 'app-notification',
@@ -17,6 +18,8 @@ export class NotificationComponent implements OnInit, OnDestroy {
   notifications: any[] = [];
   unreadNotifications = 0;
   userId: string | null = null;
+  isLoading = false;
+  hasError = false;
   private sub: Subscription | null = null;
 
   constructor(
@@ -36,27 +39,52 @@ export class NotificationComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     const user = await this.userStorage.get('user');
     if (user) {
-      this.userId = user.uid || user.id;
-      this.getUserNotificationService.getNotification();
+      this.userId = user.id;
     }
 
+    // Abonnement simple au store
     this.sub = this.store.select(state => state.userNotification?.Notification).subscribe(notifications => {
       if (notifications) {
-        // Trier par date décroissante
-        this.notifications = [...notifications].sort((a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+        this.notifications = [...notifications].map(n => ({
+          ...n,
+          body: n.body || n.message || '',
+          createdAt: n.createdAt || n.date || new Date().toISOString()
+        })).sort((a, b) => {
+          const dateB = new Date(b.createdAt).getTime();
+          const dateA = new Date(a.createdAt).getTime();
+          return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+        });
 
-        // Calculer les non lues (où userId n'est pas dans isRead)
         if (this.userId) {
           this.unreadNotifications = this.notifications.filter(n => {
-            const isRead = Array.isArray(n.isRead) ? n.isRead :
-              (typeof n.isRead === 'string' ? JSON.parse(n.isRead) : []);
-            return !isRead.includes(this.userId);
+            const isReadArray = Array.isArray(n.isRead) ? n.isRead : [];
+            return !isReadArray.includes(this.userId!);
           }).length;
         }
       }
     });
+
+    // Chargement initial
+    if (this.notifications.length === 0) {
+      this.loadNotifications();
+    } else {
+      this.getUserNotificationService.getNotification().catch(() => { });
+    }
+
+    this.processPendingReadActions();
+  }
+
+  async loadNotifications() {
+    try {
+      this.isLoading = true;
+      this.hasError = false;
+      await this.getUserNotificationService.getNotification();
+    } catch (error) {
+      console.error('❌ Erreur chargement notifications:', error);
+      this.hasError = true;
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   ngOnDestroy() {
@@ -68,26 +96,52 @@ export class NotificationComponent implements OnInit, OnDestroy {
   }
 
   async markAsRead(notification: any) {
-    const isRead = Array.isArray(notification.isRead) ? notification.isRead :
-      (typeof notification.isRead === 'string' ? JSON.parse(notification.isRead) : []);
+    if (!this.userId) return;
 
-    if (this.userId && !isRead.includes(this.userId)) {
-      this.socketService.getSocket().emit('isReadNotification', {
+    const isReadArray = Array.isArray(notification.isRead) ? notification.isRead : [];
+
+    if (!isReadArray.includes(this.userId)) {
+      this.store.dispatch(markNotificationAsReadReducer({
+        notificationId: notification.id,
+        userId: this.userId
+      }));
+
+      const markData = {
         userId: this.userId,
         notificationId: notification.id,
         notificationIdGroup: notification.idGroup
-      });
+      };
+
+      try {
+        this.socketService.getSocket().emit('isReadNotification', markData);
+      } catch (e) {
+        this.savePendingReadAction(markData);
+      }
     }
   }
 
-  async clearAllNotifications() {
-    // Dans la logique YO, on ne semble pas avoir de "clear all" global qui supprime tout direct,
-    // mais on peut marquer tout comme lu ou vider localement.
-    // L'utilisateur pourra toujours les re-récupérer du backend.
+  private async savePendingReadAction(data: any) {
+    try {
+      const pending = await this.userStorage.get('pending_read_notifications') || [];
+      pending.push(data);
+      await this.userStorage.set('pending_read_notifications', pending);
+    } catch (e) { }
+  }
+
+  private async processPendingReadActions() {
+    try {
+      const pending = await this.userStorage.get('pending_read_notifications');
+      if (pending && pending.length > 0) {
+        const socket = this.socketService.getSocket();
+        if (socket && socket.connected) {
+          pending.forEach((data: any) => socket.emit('isReadNotification', data));
+          await this.userStorage.remove('pending_read_notifications');
+        }
+      }
+    } catch (e) { }
   }
 
   deleteNotification(id: string) {
-    // Suppression locale pour l'instant si nécessaire
     this.notifications = this.notifications.filter(n => n.id !== id);
   }
 
@@ -100,11 +154,11 @@ export class NotificationComponent implements OnInit, OnDestroy {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return this.t('notification.just_now');
-    if (diffMins < 60) return `${diffMins} ${this.t('notification.min_ago')}`;
-    if (diffHours < 24) return `${diffHours}h ${this.t('notification.ago')}`;
-    if (diffDays === 1) return this.t('notification.yesterday');
-    if (diffDays < 7) return `${diffDays} ${this.t('notification.days_ago')}`;
+    if (diffMins < 1) return this.t('notification.just_now') || 'À l\'instant';
+    if (diffMins < 60) return `${diffMins} ${this.t('notification.min_ago') || 'min'}`;
+    if (diffHours < 24) return `${diffHours}h ${this.t('notification.ago') || ''}`;
+    if (diffDays === 1) return this.t('notification.yesterday') || 'Hier';
+    if (diffDays < 7) return `${diffDays} ${this.t('notification.days_ago') || 'jours'}`;
 
     return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
   }
@@ -115,17 +169,27 @@ export class NotificationComponent implements OnInit, OnDestroy {
 
   getIconForType(type: string): string {
     switch (type) {
-      case 'payment': return 'card-outline';
-      case 'subscription': return 'ribbon-outline';
-      case 'security': return 'shield-checkmark-outline';
-      default: return 'notifications-outline';
+      case 'payment':
+      case 'success':
+        return 'card-outline';
+      case 'subscription':
+      case 'info':
+        return 'ribbon-outline';
+      case 'security':
+      case 'warning':
+        return 'shield-checkmark-outline';
+      default:
+        return 'notifications-outline';
     }
   }
 
   isRead(notification: any): boolean {
     if (!this.userId) return true;
-    const isRead = Array.isArray(notification.isRead) ? notification.isRead :
-      (typeof notification.isRead === 'string' ? JSON.parse(notification.isRead) : []);
-    return isRead.includes(this.userId);
+    const isReadArray = Array.isArray(notification.isRead) ? notification.isRead : [];
+    return isReadArray.includes(this.userId);
+  }
+
+  trackByNotificationId(index: number, notification: any) {
+    return notification.id;
   }
 }
