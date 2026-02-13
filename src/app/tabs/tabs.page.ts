@@ -20,11 +20,13 @@ export class TabsPage implements OnInit {
     private fcmService: FcmService,
     public langService: LanguageService
   ) {
-    // Initialiser les sockets et notifications au démarrage
+    // Initialiser les sockets et notifications après un court délai pour éviter de bloquer le rendu initial
     this.platform.ready().then(() => {
-      console.log('🚀 Platform ready - Initialisation des sockets et FCM...');
-      this.socketService.initializeAllSockets();
-      this.fcmService.setupPushNotifications();
+      setTimeout(() => {
+        console.log('🚀 [DELAYED INIT] Initialisation des sockets et FCM...');
+        this.socketService.initializeAllSockets();
+        this.fcmService.setupPushNotifications();
+      }, 2000);
     });
   }
 

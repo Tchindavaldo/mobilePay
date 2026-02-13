@@ -32,63 +32,63 @@ const routes: Routes = [
   },
   {
     path: 'pay',
-    component:PayementComponent
+    component: PayementComponent
   },
   {
     path: 'notif',
-    component:NotificationComponent
+    component: NotificationComponent
   },
   {
     path: 'support',
-    component:SupportComponent
+    component: SupportComponent
   },
   {
     path: 'partage',
-    component:PartageComponent
+    component: PartageComponent
   },
   {
     path: 'compte',
-    component:CompteComponent
+    component: CompteComponent
   },
   {
     path: 'add',
-    component:AddEditAccountComponent
+    component: AddEditAccountComponent
   },
   {
     path: 'actus',
-    component:ActusComponent
+    component: ActusComponent
   },
   {
     path: 'plan',
-    component:ComptepartagerComponent
+    component: ComptepartagerComponent
   },
   {
     path: 'forms',
-    component:FormulaireComponent
+    component: FormulaireComponent
   },
   {
     path: 'chargement',
-    component:SplashPageComponent
+    component: SplashPageComponent
   },
   {
     path: 'explication',
-    component:OnboardingPageComponent
+    component: OnboardingPageComponent
   },
   {
     path: 'login',
-    component:LoginPageComponent
+    component: LoginPageComponent
   },
   {
     path: 'jeux',
-    component:JeuxComponent
+    component: JeuxComponent
   },
   {
     path: 'site',
-    component:SiteComponent
+    component: SiteComponent
   },
   {
     path: 'achats',
-    component:AchatsComponent
+    component: AchatsComponent
   },
   {
     path: 'phone-auth',
@@ -96,7 +96,7 @@ const routes: Routes = [
   },
   {
     path: 'activations',
-    loadChildren: () => import('./activations/activations.module').then( m => m.ActivationsPageModule)
+    loadChildren: () => import('./activations/activations.module').then(m => m.ActivationsPageModule)
   },
   {
     path: 'profile',
@@ -110,6 +110,10 @@ const routes: Routes = [
     path: 'subscriptions',
     component: SubscriptionsComponent
   },
+  {
+    path: 'pay2',
+    loadChildren: () => import('./pay2/pay2.module').then(m => m.Pay2PageModule)
+  },
 ];
 @NgModule({
   imports: [
@@ -117,4 +121,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

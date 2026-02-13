@@ -124,11 +124,12 @@ export class Tab1Page implements OnInit {
   async goToPay() {
     console.log('🔘 [DEBUG] Bouton "Réabonner" cliqué sur Tab1');
     try {
-      console.log('🚀 [DEBUG] Tentative de navigation vers /pay...');
-      await this.router.navigate(['/pay']);
+      console.log('🚀 [DEBUG] Tentative de navigation vers /pay2 (TEST PAGE)...');
+      // await this.router.navigate(['/pay'], { replaceUrl: true });
+      this.router.navigate(['/pay2'], { replaceUrl: true, skipLocationChange: false });
       console.log('✅ [DEBUG] Navigation réussie !');
     } catch (error) {
-      console.error('❌ [DEBUG] Erreur fatale lors de la navigation:', error);
+      console.error('❌ [DEBUG] Erreur navigation:', error);
     }
   }
 

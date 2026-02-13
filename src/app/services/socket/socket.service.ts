@@ -30,12 +30,19 @@ export class SocketService {
     });
   }
 
+  private isInitialized = false; // Flag pour éviter les doubles init
+
   /**
    * Initialise tous les sockets de l'application
    * Appelé au démarrage dans tabs.page.ts
    */
   public initializeAllSockets() {
-    console.log('🚀 Initialisation de tous les sockets...');
+    if (this.isInitialized) {
+      console.log('⚠️ [SOCKET] Déjà initialisé, on ignore.');
+      return;
+    }
+
+    console.log('🚀 [SOCKET] Initialisation de tous les sockets...');
 
     // Initialiser le socket de session utilisateur
     this.sessionSocketService.initializeSocket(this.socket);
@@ -43,7 +50,8 @@ export class SocketService {
     // Initialiser le socket des notifications
     this.notificationSocketService.initializeSocket(this.socket);
 
-    console.log('✅ Tous les sockets ont été initialisés');
+    this.isInitialized = true;
+    console.log('✅ [SOCKET] Tous les sockets ont été initialisés');
   }
 
   /**

@@ -17,7 +17,14 @@ export class FcmService {
         private router: Router
     ) { }
 
+    private isConfigured = false;
+
     async setupPushNotifications() {
+        if (this.isConfigured) {
+            console.log('⚠️ [FCM] Déjà configuré, on ignore.');
+            return;
+        }
+
         // 1. Récupérer un token non envoyé et tenter de l'envoyer au backend
         const unsentToken = await this.userStorage.get('unsentFcmToken');
         if (unsentToken) {
@@ -116,6 +123,7 @@ export class FcmService {
             lights: true,
             lightColor: '#ff0000'
         });
+        this.isConfigured = true;
     }
 
     // Envoi du token FCM au backend via UpdateUserService

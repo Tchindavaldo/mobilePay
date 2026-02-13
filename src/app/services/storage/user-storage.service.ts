@@ -8,6 +8,7 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 export class UserStorageService {
   private isPlatformReady = false;
   private isNative = false;
+  private cache: Map<string, any> = new Map(); // Cache local pour éviter de bloquer le thread principal
 
   constructor(private platform: Platform) {
     this.init();
@@ -20,84 +21,77 @@ export class UserStorageService {
   }
 
   async set(key: string, value: any) {
+    // Mettre à jour le cache immédiatement
+    this.cache.set(key, value);
+
     if (this.isPlatformReady && this.isNative) {
-      await SecureStoragePlugin.set({ key, value: JSON.stringify(value) });
+      try {
+        await SecureStoragePlugin.set({ key, value: JSON.stringify(value) });
+      } catch (e) {
+        console.error('Erreur SecureStorage set:', e);
+      }
     } else {
       localStorage.setItem(key, JSON.stringify(value));
-    }
-
-    // console.log('donne set', value, 'key', key);
-  }
-
-  async listAll(): Promise<void> {
-    if (this.isPlatformReady && this.isNative) {
-      try {
-        const allKeys = await SecureStoragePlugin.keys();
-        console.log('🔐 SecureStorage - Clés existantes :', allKeys.value);
-
-        for (const key of allKeys.value) {
-          try {
-            const result = await SecureStoragePlugin.get({ key });
-            console.log(`Clé: ${key} - Valeur: ${result.value}`);
-          } catch (err) {
-            console.warn(`Erreur lors de la récupération de la clé ${key}`, err);
-          }
-        }
-      } catch (err) {
-        console.error('Erreur lors de l’accès à SecureStorage :', err);
-      }
-    } else {
-      try {
-        const allKeys = Object.keys(localStorage);
-        console.log('🌐 localStorage - Clés existantes :', allKeys);
-
-        for (const key of allKeys) {
-          try {
-            const value = localStorage.getItem(key);
-            console.log(`Clé: ${key} - Valeur: ${value}`);
-          } catch (err) {
-            console.warn(`Erreur avec la clé localStorage ${key}`, err);
-          }
-        }
-      } catch (err) {
-        console.error('Erreur avec localStorage :', err);
-      }
     }
   }
 
   async get(key: string): Promise<any> {
+    // 1. Vérifier si on a la valeur en cache (RÉPONSE INSTANTANÉE)
+    if (this.cache.has(key)) {
+      return this.cache.get(key);
+    }
+
+    // 2. Sinon, aller chercher dans le stockage physique
+    let value: any = null;
     if (this.isPlatformReady && this.isNative) {
       try {
         const result = await SecureStoragePlugin.get({ key });
-        return JSON.parse(result.value);
+        value = result.value ? JSON.parse(result.value) : null;
       } catch (error) {
-        console.warn(`[Storage] Utilisateur non connecté ou clé absente (${key})`, error);
-        return null;
+        // console.warn(`[Storage] Clé absente (${key})`);
+        value = null;
       }
     } else {
-      const value = localStorage.getItem(key);
-      if (!value) {
-        console.warn(`[LocalStorage] Utilisateur non connecté ou clé absente (${key})`);
-        return null;
-      }
-
-      return JSON.parse(value);
+      const storageValue = localStorage.getItem(key);
+      value = storageValue ? JSON.parse(storageValue) : null;
     }
+
+    // Sauvegarder dans le cache pour la prochaine fois
+    if (value !== null) {
+      this.cache.set(key, value);
+    }
+    return value;
   }
 
   async remove(key: string) {
+    this.cache.delete(key);
     if (this.isPlatformReady && this.isNative) {
-      await SecureStoragePlugin.remove({ key });
+      try {
+        await SecureStoragePlugin.remove({ key });
+      } catch (e) { }
     } else {
       localStorage.removeItem(key);
     }
   }
 
   async clear() {
+    this.cache.clear();
     if (this.isPlatformReady && this.isNative) {
-      await SecureStoragePlugin.clear();
+      try {
+        await SecureStoragePlugin.clear();
+      } catch (e) { }
     } else {
       localStorage.clear();
+    }
+  }
+
+  async listAll(): Promise<void> {
+    // Cette méthode est utilisée pour le debug, elle peut rester lente
+    if (this.isPlatformReady && this.isNative) {
+      try {
+        const allKeys = await SecureStoragePlugin.keys();
+        console.log('🔐 SecureStorage - Clés existantes :', allKeys.value);
+      } catch (err) { }
     }
   }
 }
