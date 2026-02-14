@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://netflix-automation.fly.dev',
-  // apiUrl: 'https://a6ea-143-105-152-207.ngrok-free.app',
+  // apiUrl: 'https://netflix-automation.fly.dev',
+  apiUrl: 'https://c613-165-210-39-194.ngrok-free.app',
   firebaseConfig: {
     apiKey: "AIzaSyDib0xP1_YnK6Ct4PpW0cGge3eN-iSHFYw",
     authDomain: "mobilpay-c1872.firebaseapp.com",

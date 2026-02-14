@@ -19,59 +19,69 @@ export class FcmService {
         private socketService: SocketService
     ) { }
 
-    private serviceStartTime = Date.now();
-
     private isConfigured = false;
 
     async setupPushNotifications() {
-        if (this.isConfigured) {
-            console.log('⚠️ [FCM] Déjà configuré, on ignore.');
-            return;
-        }
-
         // 1. Récupérer un token non envoyé et tenter de l'envoyer au backend
+        // On fait ça AVANT le guard isConfigured car on veut pouvoir retenter l'envoi même si l'init est déjà faite
         const unsentToken = await this.userStorage.get('unsentFcmToken');
         if (unsentToken) {
+            // console.log('🔄 [FCM] Token non envoyé trouvé dans le stockage local. Tentative de synchronisation...');
             try {
-                await this.sendTokenToBackend(unsentToken);
-                await this.userStorage.remove('unsentFcmToken');
+                const user = await this.userStorage.get('user');
+                if (user?.id) {
+                    await this.sendTokenToBackend(unsentToken);
+                    await this.userStorage.remove('unsentFcmToken');
+                    // console.log('✅ [FCM] Token en attente synchronisé avec succès');
+                } else {
+                    // console.log('⏳ [FCM] Token trouvé mais l\'utilisateur n\'est toujours pas connecté. En attente...');
+                }
             } catch (e) {
-                console.warn('⚠️ Échec du renvoi du token FCM stocké localement:', e);
+                console.warn('⚠️ [FCM] Échec du renvoi du token FCM stocké localement:', e);
             }
         }
 
-        // 2. Demander la permission pour les notifications
+        if (!this.isConfigured) {
+            // console.log('📡 [FCM] Configuration des écouteurs de notifications...');
+            this.setupListeners();
+            this.isConfigured = true;
+        }
+
+        // 2. Demander la permission et enregistrer l'appareil
+        // On le fait à chaque appel (notamment après login) pour s'assurer que le token est à jour
         try {
             const permissionStatus = await PushNotifications.requestPermissions();
             if (permissionStatus.receive === 'granted') {
-                // Enregistrer l'appareil pour recevoir des notifications push
+                // console.log('📲 [FCM] Enregistrement de l\'appareil pour les notifications push...');
                 await PushNotifications.register();
             } else {
-                console.warn('🚫 Permission pour les notifications push refusée');
-                return;
+                console.warn('🚫 [FCM] Permission pour les notifications push refusée');
             }
         } catch (error) {
-            console.error('❌ Erreur lors de la demande de permission:', error);
-            return;
+            console.error('❌ [FCM] Erreur lors de l\'enregistrement:', error);
         }
+    }
 
-        // 3. Vérifier si un token FCM existe déjà pour l'utilisateur
-        const user = await this.userStorage.get('user');
-        const existingToken = user?.fcmToken;
-
+    private setupListeners() {
         // 4. Écran de "registration" (Récupération du Token)
-        PushNotifications.addListener('registration', token => {
-            console.log('📱 Token FCM enregistré (registration):', token.value);
+        PushNotifications.addListener('registration', async token => {
+            // console.log('📱 [FCM] Token reçu (registration event):', token.value);
 
-            // Si le token a changé ou s'il n'est pas encore stocké, l'envoyer au backend
+            // Récupérer l'utilisateur actuel pour voir si on doit envoyer le token
+            const user = await this.userStorage.get('user');
+            const existingToken = user?.fcmToken;
+
+            // Si le token a changé ou s'il n'est pas encore stocké au backend pour cet utilisateur
             if (!existingToken || token.value !== existingToken) {
                 this.sendTokenToBackend(token.value);
+            } else {
+                // console.log('ℹ️ [FCM] Le token est identique à celui déjà stocké localement.');
             }
         });
 
         // 5. Gérer les notifications reçues quand l'app est au PREMIER PLAN
         PushNotifications.addListener('pushNotificationReceived', async (notification) => {
-            console.log('🔔 Notification push reçue:', notification);
+            // console.log('🔔 Notification push reçue:', notification);
 
             const data = notification.data || {};
             const persistentId = data.id || notification.id || Date.now().toString();
@@ -108,7 +118,7 @@ export class FcmService {
 
         // 6. Gérer les actions (clic) sur notification Push
         PushNotifications.addListener('pushNotificationActionPerformed', async action => {
-            console.log('🔔 [FCM] Notification Clicked! Data:', action.notification.data);
+            // console.log('🔔 [FCM] Notification Clicked! Data:', action.notification.data);
 
             const data = action.notification.data || {};
             const notification = action.notification;
@@ -127,14 +137,14 @@ export class FcmService {
             this.markAsReadOptimistic(notificationToStore);
 
             // Rediriger vers l'onglet des notifications (Tab 2)
-            console.log('🔔 [FCM] Navigating to /tabs/tab2...');
+            // console.log('🔔 [FCM] Navigating to /tabs/tab2...');
             await this.router.navigateByUrl('/tabs/tab2');
-            console.log('🔔 [FCM] Navigation trigger finished.');
+            // console.log('🔔 [FCM] Navigation trigger finished.');
         });
 
         // 7. Gérer les actions sur notification Locale
         LocalNotifications.addListener('localNotificationActionPerformed', async event => {
-            console.log('👆 Action sur notification locale:', event);
+            // console.log('👆 Action sur notification locale:', event);
 
             const data = event.notification.extra || {};
             const notification = event.notification;
@@ -166,7 +176,6 @@ export class FcmService {
             lights: true,
             lightColor: '#ff0000'
         });
-        this.isConfigured = true;
     }
 
     private async markAsReadOptimistic(notification: any) {
@@ -185,35 +194,26 @@ export class FcmService {
     // Envoi du token FCM au backend via UpdateUserService
     async sendTokenToBackend(token: string) {
         try {
-            console.log('🔄 Tentative d\'envoi du token FCM au backend:', token);
+            // console.log('🔄 [FCM] Tentative d\'envoi du token FCM au backend:', token);
             const user = await this.userStorage.get('user');
-            // Log pour debugger l'objet user
-            console.log('👤 Utilisateur récupéré pour mise à jour FCM:', user);
-
             const userId = user?.id;
 
             if (userId) {
-                console.log(`📤 Envoi du token pour userId: ${userId}`);
+                // console.log(`📤 [FCM] Envoi du token pour userId: ${userId}`);
                 await this.updateUserService.updateUser(userId, { fcmToken: token });
-                console.log('✅ Token FCM envoyé avec succès au backend');
+                // console.log('✅ [FCM] Token FCM envoyé avec succès au backend');
 
                 // Mettre à jour le stockage local
                 await this.userStorage.set('user', { ...user, fcmToken: token });
+                // Supprimer le token non envoyé si c'était celui-là
+                await this.userStorage.remove('unsentFcmToken');
             } else {
-                console.warn('⚠️ Impossible d\'envoyer le token : Utilisateur non identifié localement (userId manquant)');
+                console.warn('⚠️ [FCM] Impossible d\'envoyer le token : Utilisateur non identifié localement (userId manquant)');
                 await this.userStorage.set('unsentFcmToken', token);
             }
         } catch (error) {
-            console.error("❌ Erreur d'envoi du token FCM au backend (Détails):", JSON.stringify(error, null, 2));
-            if (error instanceof Error) {
-                console.error("❌ Message d'erreur:", error.message);
-                console.error("❌ Stack trace:", error.stack);
-            }
-            // Essayer d'afficher la réponse serveur si disponible (cas Axios/Http)
-            if ((error as any).error) {
-                console.error("❌ Réponse serveur:", JSON.stringify((error as any).error, null, 2));
-            }
-            this.userStorage.set('unsentFcmToken', token);
+            console.error("❌ [FCM] Erreur d'envoi du token FCM au backend:", error);
+            await this.userStorage.set('unsentFcmToken', token);
         }
     }
 }
