@@ -1,18 +1,22 @@
 <ion-header class="ion-no-border">
   <div class="header-glass">
     <div class="header-content">
-      <ion-button fill="clear" (click)="goBack()" class="back-button">
-        <ion-icon name="chevron-back-outline"></ion-icon>
-      </ion-button>
-      <div class="header-titles">
-        <h1>{{ t('notification.my_notifications') || 'Notifications' }}</h1>
-        <p *ngIf="unreadNotifications > 0" class="new-count">{{ unreadNotifications }} {{ t('notification.new_count') ||
-          'nouvelles' }}</p>
-        <p *ngIf="unreadNotifications === 0" class="up-to-date">{{ t('notification.up_to_date') || 'À jour' }}</p>
+      <div class="header-left">
+        <div class="header-icon-main">
+          <ion-icon name="notifications"></ion-icon>
+        </div>
+        <div class="header-titles">
+          <h1>{{ t('notification.my_notifications') || 'Notifications' }}</h1>
+          <p *ngIf="unreadNotifications > 0" class="new-count">{{ unreadNotifications }} {{ t('notification.new_count')
+            || 'nouvelles' }}</p>
+          <p *ngIf="unreadNotifications === 0" class="up-to-date">{{ t('notification.up_to_date') || 'À jour' }}</p>
+        </div>
       </div>
-      <ion-button fill="clear" class="settings-button">
-        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-      </ion-button>
+      <div class="header-right">
+        <ion-button fill="clear" class="settings-button">
+          <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+        </ion-button>
+      </div>
     </div>
   </div>
 </ion-header>
@@ -31,10 +35,28 @@
       <div class="tab-item">Compte</div>
     </div> -->
 
-    <!-- Loader -->
-    <div class="loading-state" *ngIf="isLoading">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Chargement des notifications...</p>
+    <!-- Skeleton Loading State -->
+    <div class="notification-list skeleton-list" *ngIf="isLoading">
+      <div class="notification-card skeleton-card" *ngFor="let i of [1,2,3,4]">
+        <div class="card-icon-wrapper skeleton-icon">
+          <ion-skeleton-text animated style="width: 100%; height: 100%; border-radius: 14px;"></ion-skeleton-text>
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="title" style="width: 60%;">
+              <ion-skeleton-text animated style="width: 100%; height: 16px; border-radius: 4px;"></ion-skeleton-text>
+            </h3>
+            <span class="time" style="width: 40px;">
+              <ion-skeleton-text animated style="width: 100%; height: 12px; border-radius: 4px;"></ion-skeleton-text>
+            </span>
+          </div>
+          <p class="body" style="margin-top: 8px;">
+            <ion-skeleton-text animated
+              style="width: 90%; height: 12px; border-radius: 4px; margin-bottom: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 70%; height: 12px; border-radius: 4px;"></ion-skeleton-text>
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Error State -->
@@ -66,7 +88,7 @@
         [class.unread]="!isRead(notification)" (click)="markAsRead(notification)"
         [style.animation-delay]="i * 0.05 + 's'">
 
-        <div class="card-status" *ngIf="!isRead(notification)"></div>
+        <!-- Unread Badge is handled via CSS ::before on .unread -->
 
         <div class="card-icon-wrapper" [class]="notification.type || 'default'">
           <ion-icon [name]="getIconForType(notification.type)"></ion-icon>
@@ -79,15 +101,8 @@
           </div>
           <p class="body">{{ notification.body }}</p>
 
-          <div class="card-actions" *ngIf="!isRead(notification)">
-            <div class="mark-btn" (click)="markAsRead(notification); $event.stopPropagation()">Marquer comme lu</div>
-          </div>
+          <!-- Actions removed to prevent layout shift (flickering) when marking as read -->
         </div>
-
-        <ion-button fill="clear" class="delete-icon"
-          (click)="deleteNotification(notification.id); $event.stopPropagation()">
-          <ion-icon name="close-outline"></ion-icon>
-        </ion-button>
       </div>
     </div>
   </div>

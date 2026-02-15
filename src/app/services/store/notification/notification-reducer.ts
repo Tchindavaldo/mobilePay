@@ -21,7 +21,10 @@ export const NotificationReducer = createReducer(
   })),
 
   on(addNotificationReducer, (state, { Notification }) => {
-    if (!state.Notification) return { Notification: [Notification] };
+    // Si la liste n'a pas encore été chargée (null), on n'ajoute rien.
+    // L'utilisateur chargera la liste complète (y compris cette nouvelle notif) quand il ira sur la page.
+    if (!state.Notification) return state;
+
     const notificationExists = state.Notification.some(notif => notif.id === Notification.id);
     if (!notificationExists) return { Notification: [Notification, ...state.Notification] };
     return state;

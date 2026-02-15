@@ -1,27 +1,26 @@
-<!-- Pas de header - directement le contenu -->
-<ion-content [fullscreen]="true">
-
-  <!-- Page de transactions simple -->
-  <div class="transactions-container">
-
-    <!-- Overview Card - Design exact de la page activations -->
-    <div class="overview-card">
-      <div class="overview-content">
-        <div class="overview-icon">
-          <ion-icon name="card"></ion-icon>
-        </div>
-        <div class="overview-info">
-          <h2 class="overview-title">{{ t('transactions.my_transactions') }}</h2>
-          <p class="overview-subtitle overview-amount">12,500F</p>
-        </div>
+<ion-header class="ion-no-border">
+  <div class="overview-card">
+    <div class="overview-content">
+      <div class="overview-icon">
+        <ion-icon name="card"></ion-icon>
       </div>
-      <div class="overview-stats">
-        <div class="stat-item">
-          <span class="stat-value">8</span>
-          <span class="stat-label">{{ t('transactions.total') }}</span>
-        </div>
+      <div class="overview-info">
+        <h2 class="overview-title">{{ t('transactions.my_transactions') }}</h2>
+        <p class="overview-subtitle overview-amount">12,500F</p>
       </div>
     </div>
+    <div class="overview-stats">
+      <div class="stat-item">
+        <span class="stat-value">8</span>
+        <span class="stat-label">{{ t('transactions.total') }}</span>
+      </div>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content>
+  <!-- Page de transactions simple -->
+  <div class="transactions-container">
 
 
 

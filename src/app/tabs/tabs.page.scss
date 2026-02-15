@@ -1,31 +1,23 @@
-// Pill-Style Tab Bar
+// Pill-Style Tab Bar - WHITE THEME
+$primary-color: #ef4444;
+$text-inactive: #64748b; // Darker gray for inactive icons (Slate 500)
+$bg-white: #ffffff;
+
 .futuristic-tab-bar {
   position: relative;
-  height: 75px;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  border: none;
-  padding: 12px 16px;
+  height: 65px; // Reduced height as requested
+  background: $bg-white; // White background
+  border-top: 1px solid #f1f5f9; // Subtle border
+  padding: 4px 12px; // Adjusted padding
   display: flex;
   align-items: center;
   justify-content: center;
-  // Ensure Ionic tab defaults don't force blue on selected state
-  --color: rgba(255, 255, 255, 0.6);
-  --color-selected: #ffffff;
-  --background: transparent;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04); // Soft shadow upwards
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg,
-        rgba(220, 38, 38, 0.1) 0%,
-        rgba(239, 68, 68, 0.05) 50%,
-        rgba(220, 38, 38, 0.1) 100%);
-    opacity: 0.3;
-  }
+  // Ionic Defaults
+  --color: $text-inactive;
+  --color-selected: $primary-color;
+  --background: $bg-white;
 }
 
 // Individual tab styling
@@ -38,65 +30,57 @@
   height: 55px;
   margin: 0 1px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  // Match ripple/focus effects to red theme
-  --ripple-color: rgba(239, 68, 68, 0.35);
-  --background-focused: rgba(239, 68, 68, 0.08);
-
-  // Remove local background; rely on global slider
+  --ripple-color: rgba(239, 68, 68, 0.1);
 
   &.tab-selected .tab-icon,
   &[aria-selected='true'] .tab-icon {
-    color: #ffffff !important;
+    color: $primary-color !important; // RED
     transform: scale(1.1);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 4px 12px rgba(239, 68, 68, 0.2)); // Red glow
   }
 
   &.tab-selected .tab-label,
   &[aria-selected='true'] .tab-label {
-    color: #ffffff !important;
+    color: $primary-color !important; // RED
     font-weight: 700;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   &:not(.tab-selected) {
     .tab-icon {
-      color: rgba(255, 255, 255, 0.6) !important;
+      color: $text-inactive !important; // Gray
     }
 
     .tab-label {
-      color: rgba(255, 255, 255, 0.6) !important;
+      color: $text-inactive !important; // Gray
       font-weight: 500;
     }
 
     &:hover {
       .tab-icon {
-        color: rgba(255, 255, 255, 0.9) !important;
+        color: #64748b !important; // Darker gray on hover
         transform: scale(1.05);
       }
 
       .tab-label {
-        color: rgba(255, 255, 255, 0.9) !important;
+        color: #64748b !important;
       }
     }
   }
 }
-
-// No global sliding indicator
 
 .tab-content {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 40px; // desktop pill minimum height
+  min-height: 40px;
   max-width: 100%;
-  padding: 6px 8px; // Reduced from 12px for better fit
+  padding: 6px 8px;
   box-sizing: border-box;
-  overflow: hidden; // prevent any visual overflow beyond rounded pill
 }
 
 .tab-icon {
-  font-size: 28px !important; // increased desktop icon size
+  font-size: 28px !important;
   margin-bottom: 4px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -125,16 +109,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid #1e293b;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  background: $primary-color;
+  color: white;
+  border: 1.5px solid white;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3);
   z-index: 10;
 }
 
 // Responsive
 @media (max-width: 768px) {
   .futuristic-tab-bar {
-    height: 70px;
-    padding: 10px 12px;
+    height: 65px; // Unified height
+    padding: 4px 12px; // Match desktop/universal padding
   }
 
   .futuristic-tab {

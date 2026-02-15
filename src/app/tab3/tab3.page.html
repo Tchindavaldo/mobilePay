@@ -1,6 +1,4 @@
-<ion-content class="main-content settings-content">
-  
-  <!-- Overview Card pour Paramètres - FIXED HEADER -->
+<ion-header class="ion-no-border">
   <div class="overview-card">
     <div class="overview-content">
       <div class="overview-icon">
@@ -12,211 +10,215 @@
       </div>
     </div>
   </div>
+</ion-header>
 
+<ion-content class="main-content settings-content">
   <!-- Content Wrapper pour le padding -->
   <div class="settings-wrapper">
     <!-- Général Section -->
-  <div class="settings-section">
-    <h3 class="section-title">{{ t('general') }}</h3>
-    
-    <div class="settings-card">
-      <div class="setting-item" lines="none">
-        <div class="setting-icon-wrapper blue">
-          <ion-icon name="language-outline"></ion-icon>
+    <div class="settings-section">
+      <h3 class="section-title">{{ t('general') }}</h3>
+
+      <div class="settings-card">
+        <div class="setting-item" lines="none">
+          <div class="setting-icon-wrapper blue">
+            <ion-icon name="language-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('language') }}</div>
+            <div class="setting-description">{{ t('language.description') }}</div>
+          </div>
+          <ion-select class="modern-select" interface="action-sheet" [value]="selectedLanguage"
+            (ionChange)="onLanguageChange($event)">
+            <ion-select-option value="fr">🇫🇷 Français</ion-select-option>
+            <ion-select-option value="en">🇬🇧 English</ion-select-option>
+            <ion-select-option value="es">🇪🇸 Español</ion-select-option>
+          </ion-select>
         </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('language') }}</div>
-          <div class="setting-description">{{ t('language.description') }}</div>
+      </div>
+
+      <div class="settings-card">
+        <div class="setting-item">
+          <div class="setting-icon-wrapper purple">
+            <ion-icon name="moon-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('dark_mode') }}</div>
+            <div class="setting-description">{{ t('dark_mode.description') }}</div>
+          </div>
+          <ion-toggle class="modern-toggle" [checked]="darkModeEnabled"
+            (ionChange)="onDarkModeChange($event)"></ion-toggle>
         </div>
-        <ion-select class="modern-select" interface="action-sheet" [value]="selectedLanguage" (ionChange)="onLanguageChange($event)">
-          <ion-select-option value="fr">🇫🇷 Français</ion-select-option>
-          <ion-select-option value="en">🇬🇧 English</ion-select-option>
-          <ion-select-option value="es">🇪🇸 Español</ion-select-option>
-        </ion-select>
       </div>
     </div>
 
-    <div class="settings-card">
-      <div class="setting-item">
-        <div class="setting-icon-wrapper purple">
-          <ion-icon name="moon-outline"></ion-icon>
+    <!-- Notifications Section -->
+    <div class="settings-section">
+      <h3 class="section-title">{{ t('notifications') }}</h3>
+
+      <div class="settings-card">
+        <div class="setting-item">
+          <div class="setting-icon-wrapper red">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('push_notifications') }}</div>
+            <div class="setting-description">{{ t('push_notifications.description') }}</div>
+          </div>
+          <ion-toggle class="modern-toggle" [(ngModel)]="notificationsEnabled"></ion-toggle>
         </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('dark_mode') }}</div>
-          <div class="setting-description">{{ t('dark_mode.description') }}</div>
+
+        <div class="setting-item" *ngIf="notificationsEnabled">
+          <div class="setting-icon-wrapper orange">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('email_notifications') }}</div>
+            <div class="setting-description">{{ t('email_notifications.description') }}</div>
+          </div>
+          <ion-toggle class="modern-toggle" [(ngModel)]="emailNotificationsEnabled"></ion-toggle>
         </div>
-        <ion-toggle class="modern-toggle" [checked]="darkModeEnabled" (ionChange)="onDarkModeChange($event)"></ion-toggle>
+
+        <div class="setting-item" *ngIf="notificationsEnabled">
+          <div class="setting-icon-wrapper yellow">
+            <ion-icon name="chatbox-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('messages') }}</div>
+            <div class="setting-description">{{ t('messages.description') }}</div>
+          </div>
+          <ion-toggle class="modern-toggle" [(ngModel)]="messageNotificationsEnabled"></ion-toggle>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Notifications Section -->
-  <div class="settings-section">
-    <h3 class="section-title">{{ t('notifications') }}</h3>
-    
-    <div class="settings-card">
-      <div class="setting-item">
-        <div class="setting-icon-wrapper red">
-          <ion-icon name="notifications-outline"></ion-icon>
-        </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('push_notifications') }}</div>
-          <div class="setting-description">{{ t('push_notifications.description') }}</div>
-        </div>
-        <ion-toggle class="modern-toggle" [(ngModel)]="notificationsEnabled"></ion-toggle>
-      </div>
+    <!-- Sécurité Section -->
+    <div class="settings-section">
+      <h3 class="section-title">{{ t('security') }}</h3>
 
-      <div class="setting-item" *ngIf="notificationsEnabled">
-        <div class="setting-icon-wrapper orange">
-          <ion-icon name="mail-outline"></ion-icon>
+      <div class="settings-card">
+        <div class="setting-item clickable" (click)="changePassword()">
+          <div class="setting-icon-wrapper green">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('password') }}</div>
+            <div class="setting-description">{{ t('password.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('email_notifications') }}</div>
-          <div class="setting-description">{{ t('email_notifications.description') }}</div>
-        </div>
-        <ion-toggle class="modern-toggle" [(ngModel)]="emailNotificationsEnabled"></ion-toggle>
-      </div>
 
-      <div class="setting-item" *ngIf="notificationsEnabled">
-        <div class="setting-icon-wrapper yellow">
-          <ion-icon name="chatbox-outline"></ion-icon>
+        <div class="setting-item clickable">
+          <div class="setting-icon-wrapper teal">
+            <ion-icon name="finger-print-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('biometrics') }}</div>
+            <div class="setting-description">{{ t('biometrics.description') }}</div>
+          </div>
+          <ion-toggle class="modern-toggle" [(ngModel)]="biometricEnabled"></ion-toggle>
         </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('messages') }}</div>
-          <div class="setting-description">{{ t('messages.description') }}</div>
-        </div>
-        <ion-toggle class="modern-toggle" [(ngModel)]="messageNotificationsEnabled"></ion-toggle>
-      </div>
-    </div>
-  </div>
 
-  <!-- Sécurité Section -->
-  <div class="settings-section">
-    <h3 class="section-title">{{ t('security') }}</h3>
-    
-    <div class="settings-card">
-      <div class="setting-item clickable" (click)="changePassword()">
-        <div class="setting-icon-wrapper green">
-          <ion-icon name="lock-closed-outline"></ion-icon>
+        <div class="setting-item clickable">
+          <div class="setting-icon-wrapper indigo">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('two_factor') }}</div>
+            <div class="setting-description">{{ t('two_factor.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('password') }}</div>
-          <div class="setting-description">{{ t('password.description') }}</div>
-        </div>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-
-      <div class="setting-item clickable">
-        <div class="setting-icon-wrapper teal">
-          <ion-icon name="finger-print-outline"></ion-icon>
-        </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('biometrics') }}</div>
-          <div class="setting-description">{{ t('biometrics.description') }}</div>
-        </div>
-        <ion-toggle class="modern-toggle" [(ngModel)]="biometricEnabled"></ion-toggle>
-      </div>
-
-      <div class="setting-item clickable">
-        <div class="setting-icon-wrapper indigo">
-          <ion-icon name="shield-checkmark-outline"></ion-icon>
-        </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('two_factor') }}</div>
-          <div class="setting-description">{{ t('two_factor.description') }}</div>
-        </div>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
     </div>
-  </div>
 
-  <!-- Compte Section -->
-  <div class="settings-section">
-    <h3 class="section-title">{{ t('my_account') }}</h3>
-    
-    <div class="settings-card">
-      <div class="setting-item clickable" routerLink="/profile">
-        <div class="setting-icon-wrapper blue">
-          <ion-icon name="person-outline"></ion-icon>
-        </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('profile') }}</div>
-          <div class="setting-description">{{ t('profile.description') }}</div>
-        </div>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
+    <!-- Compte Section -->
+    <div class="settings-section">
+      <h3 class="section-title">{{ t('my_account') }}</h3>
 
-      <div class="setting-item clickable" [routerLink]="['/subscriptions']">
-        <div class="setting-icon-wrapper cyan">
-          <ion-icon name="card-outline"></ion-icon>
+      <div class="settings-card">
+        <div class="setting-item clickable" routerLink="/profile">
+          <div class="setting-icon-wrapper blue">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('profile') }}</div>
+            <div class="setting-description">{{ t('profile.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('subscription') }}</div>
-          <div class="setting-description">{{ t('subscription.description') }}</div>
-        </div>
-        <ion-badge color="danger" class="premium-badge">{{ t('premium') }}</ion-badge>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-    </div>
-  </div>
 
-  <!-- Support Section -->
-  <div class="settings-section">
-    <h3 class="section-title">{{ t('help_support') }}</h3>
-    
-    <div class="settings-card">
-      <div class="setting-item clickable" (click)="contactSupport()" [routerLink]="['/support']">
-        <div class="setting-icon-wrapper blue">
-          <ion-icon name="headset-outline"></ion-icon>
+        <div class="setting-item clickable" [routerLink]="['/subscriptions']">
+          <div class="setting-icon-wrapper cyan">
+            <ion-icon name="card-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('subscription') }}</div>
+            <div class="setting-description">{{ t('subscription.description') }}</div>
+          </div>
+          <ion-badge color="danger" class="premium-badge">{{ t('premium') }}</ion-badge>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('customer_support') }}</div>
-          <div class="setting-description">{{ t('customer_support.description') }}</div>
-        </div>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-
-      <div class="setting-item clickable" [routerLink]="['/support']" [queryParams]="{ page: 'faq' }">
-        <div class="setting-icon-wrapper purple">
-          <ion-icon name="help-circle-outline"></ion-icon>
-        </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('faq') }}</div>
-          <div class="setting-description">{{ t('faq.description') }}</div>
-        </div>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-
-      <div class="setting-item clickable" [routerLink]="['/about']">
-        <div class="setting-icon-wrapper gray">
-          <ion-icon name="information-circle-outline"></ion-icon>
-        </div>
-        <div class="setting-content">
-          <div class="setting-label">{{ t('about') }}</div>
-          <div class="setting-description">{{ t('about.description') }}</div>
-        </div>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
       </div>
     </div>
-  </div>
 
-  <!-- Danger Zone -->
-  <div class="settings-section danger-zone">
-    <h3 class="section-title danger">{{ t('danger_zone') }}</h3>
-    
-    <div class="settings-card danger-card">
-      <div class="setting-item clickable" (click)="deleteAccount()">
-        <div class="setting-icon-wrapper danger">
-          <ion-icon name="trash-outline"></ion-icon>
+    <!-- Support Section -->
+    <div class="settings-section">
+      <h3 class="section-title">{{ t('help_support') }}</h3>
+
+      <div class="settings-card">
+        <div class="setting-item clickable" (click)="contactSupport()" [routerLink]="['/support']">
+          <div class="setting-icon-wrapper blue">
+            <ion-icon name="headset-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('customer_support') }}</div>
+            <div class="setting-description">{{ t('customer_support.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>
-        <div class="setting-content">
-          <div class="setting-label danger">{{ t('delete_account') }}</div>
-          <div class="setting-description">{{ t('delete_account.description') }}</div>
+
+        <div class="setting-item clickable" [routerLink]="['/support']" [queryParams]="{ page: 'faq' }">
+          <div class="setting-icon-wrapper purple">
+            <ion-icon name="help-circle-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('faq') }}</div>
+            <div class="setting-description">{{ t('faq.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
         </div>
-        <ion-icon name="chevron-forward" class="arrow-icon danger"></ion-icon>
+
+        <div class="setting-item clickable" [routerLink]="['/about']">
+          <div class="setting-icon-wrapper gray">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label">{{ t('about') }}</div>
+            <div class="setting-description">{{ t('about.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
+        </div>
       </div>
     </div>
-  </div>
+
+    <!-- Danger Zone -->
+    <div class="settings-section danger-zone">
+      <h3 class="section-title danger">{{ t('danger_zone') }}</h3>
+
+      <div class="settings-card danger-card">
+        <div class="setting-item clickable" (click)="deleteAccount()">
+          <div class="setting-icon-wrapper danger">
+            <ion-icon name="trash-outline"></ion-icon>
+          </div>
+          <div class="setting-content">
+            <div class="setting-label danger">{{ t('delete_account') }}</div>
+            <div class="setting-description">{{ t('delete_account.description') }}</div>
+          </div>
+          <ion-icon name="chevron-forward" class="arrow-icon danger"></ion-icon>
+        </div>
+      </div>
+    </div>
 
     <!-- App Version Footer -->
     <div class="app-footer">
@@ -224,5 +226,5 @@
       <p class="copyright">© 2025 MoobilPay. {{ t('all_rights_reserved') }}</p>
     </div>
   </div>
-  
+
 </ion-content>

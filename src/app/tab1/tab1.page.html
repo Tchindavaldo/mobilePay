@@ -42,25 +42,29 @@
 <ion-header class="simple-header">
   <div class="header-bg"></div>
   <div class="header-inner">
-    <!-- Ligne principale -->
-    <div class="header-row">
-      <h1 class="page-title">{{ t('home') }}</h1>
+    <!-- Ligne: Recherche + Actions -->
+    <div class="header-row bottom-row">
+      <!-- Barre de recherche -->
+      <div class="search-input-container">
+        <ion-icon name="search-outline"></ion-icon>
+        <input type="text" [placeholder]="t('home.search')">
+      </div>
 
+      <!-- Icônes Actions -->
       <div class="header-icons">
+        <!-- Notification -->
         <div class="icon-btn" routerLink="/tabs/tab2">
           <ion-icon name="notifications-outline"></ion-icon>
           <span class="badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
         </div>
-        <div class="avatar" (click)="openProfileMenu()">
-          <img [src]="getUserPhoto()" [alt]="userName" (error)="onImageError($event)">
+
+        <!-- Profil -->
+        <div class="avatar-container" (click)="openProfileMenu()">
+          <div class="avatar">
+            <img [src]="getUserPhoto()" [alt]="userName" (error)="onImageError($event)">
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Barre de recherche -->
-    <div class="search-bar">
-      <ion-icon name="search-outline"></ion-icon>
-      <input type="text" [placeholder]="t('home.search')">
     </div>
   </div>
 </ion-header>

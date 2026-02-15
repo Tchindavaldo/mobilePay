@@ -1,77 +1,166 @@
-// Variables & Mixins
-$primary-color: #dc2626;
-$primary-gradient: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-$glass-bg: rgba(255, 255, 255, 0.7);
-$shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-$shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+// Variables & Mixins - Modern Palette
+$primary-color: #ef4444; // Vibrant Red
+$primary-soft: rgba(239, 68, 68, 0.12);
+$text-main: #1e293b;
+$text-secondary: #64748b;
+$bg-color: #f8fafc;
+$card-bg: #ffffff;
+$border-color: #e2e8f0;
+$shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
 
-@mixin no-scrollbar {
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 ion-header {
   background: transparent;
-  padding: env(safe-area-inset-top) 16px 10px;
+  padding: 0; // Remove padding so it touches edges
 
   .header-glass {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    padding: 12px 16px;
-    box-shadow: $shadow-md;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #230f0f 0%, #2e1a1a 50%, #3e1616 100%); // Dark Red Theme
+    border-radius: 0; // No Radius
+    padding: 30px 20px 25px; // Exact requested padding
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    border: none; // Remove glass border
+
+    // Graphic Overlay
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 30% 70%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+      z-index: 1;
+    }
   }
 
   .header-content {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between; // Space between left and right groups
+    gap: 16px;
+    width: 100%;
   }
 
-  .back-button,
-  .settings-button {
-    --padding-start: 0;
-    --padding-end: 0;
-    width: 44px;
-    height: 44px;
-    --color: #1e293b;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 12px;
-    margin: 0;
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+
+  // Styled Icon (Circle) - Replaces back-button
+  .header-icon-main {
+    width: 64px; // Match Activations
+    height: 64px; // Match Activations
+    border-radius: 50%; // Circle
+    background: rgba(255, 255, 255, 0.2); // Match Activations
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.3); // Match Activations
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
 
     ion-icon {
-      font-size: 22px;
+      font-size: 32px; // Match Activations
+      color: #ffffff; // White icon
     }
   }
 
   .header-titles {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; // Left aligned
+    text-align: left; // Left aligned text
+    flex: 1; // Take available space
 
     h1 {
       margin: 0;
-      font-size: 18px;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.5px;
+      font-size: 19px; // Slightly larger for left align
+      font-weight: 700;
+      color: #ffffff; // White text
+      letter-spacing: -0.01em;
     }
 
-    p {
+    .new-count,
+    .up-to-date {
       margin: 0;
-      font-size: 12px;
-      color: $primary-color;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 500;
+
+      &.new-count {
+        color: #ffffff; // White as requested
+        opacity: 0.9;
+      }
+
+      &.up-to-date {
+        color: rgba(255, 255, 255, 0.7); // Light gray
+      }
     }
+  }
+
+  .settings-button {
+    --color: $text-secondary;
+    margin: 0;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// Animations
+.slide-in-top {
+  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-in-bottom {
+  animation: slideInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
 ion-content {
-  --background: #fdfdfd;
-  position: relative;
+  --background: #f8fafc;
 
   .background-blobs {
     position: fixed;
@@ -80,134 +169,104 @@ ion-content {
     width: 100%;
     height: 100%;
     z-index: -1;
-    overflow: hidden;
+    pointer-events: none;
 
     .blob {
       position: absolute;
       border-radius: 50%;
       filter: blur(80px);
-      opacity: 0.15;
+      opacity: 0.6;
     }
 
     .blob-1 {
       width: 300px;
       height: 300px;
-      background: $primary-color;
-      top: -100px;
-      right: -100px;
-      animation: float 20s infinite alternate;
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+      top: -50px;
+      right: -50px;
     }
 
     .blob-2 {
       width: 250px;
       height: 250px;
-      background: #3b82f6;
-      bottom: -50px;
-      left: -50px;
-      animation: float 25s infinite alternate-reverse;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+      bottom: 10%;
+      left: -20px;
     }
   }
 }
 
 .main-container {
-  padding: 10px 16px 40px;
+  padding: 8px 16px 40px;
+  max-width: 600px; // Limit width on tablets
+  margin: 0 auto;
 }
 
-.tabs-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 24px;
-  overflow-x: auto;
-  padding: 4px;
-  @include no-scrollbar;
-
-  .tab-item {
-    padding: 10px 20px;
-    border-radius: 14px;
-    background: white;
-    box-shadow: $shadow-sm;
-    font-size: 14px;
-    font-weight: 600;
-    color: #64748b;
-    white-space: nowrap;
-    border: 1px solid #f1f5f9;
-    transition: all 0.3s ease;
-
-    &.active {
-      background: $primary-color;
-      color: white;
-      border-color: $primary-color;
-      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-    }
-  }
-}
-
+// Notification List & Cards
 .notification-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .notification-card {
   background: white;
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 16px;
   display: flex;
-  gap: 14px;
+  gap: 16px;
   position: relative;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f1f5f9;
-  transition: all 0.3s ease;
-  animation: slideInUp 0.5s ease-out backwards;
-  margin-bottom: 2px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03); // Very subtle initially
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
 
-  &:active {
-    transform: scale(0.98);
-    background: #f8fafc;
-  }
-
+  // Unread State - More prominent but clean
   &.unread {
     background: #ffffff;
-    border-left: 4px solid $primary-color;
-    box-shadow: 0 4px 20px rgba($primary-color, 0.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 8px;
+      height: 8px;
+      background: $primary-color;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
 
     .title {
-      color: #0f172a !important;
-      font-weight: 800 !important;
+      color: $text-main; // Darker text for unread
+      font-weight: 700 !important;
     }
   }
 
-  .card-status {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 10px;
-    height: 10px;
-    background: $primary-color;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 0 10px rgba($primary-color, 0.4);
+  // Active/Hover State
+  &:active {
+    transform: scale(0.985);
+    background: #fdfdfd;
   }
 
+  // Icon Wrapper - cleaner
   .card-icon-wrapper {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: transform 0.3s ease;
+    font-size: 22px;
 
-    ion-icon {
-      font-size: 24px;
-    }
+    // Default style
+    background: #f1f5f9;
+    color: #64748b;
 
-    &.default {
-      background: #f1f5f9;
-      color: #64748b;
-    }
-
+    // Dynamic Styles based on type
     &.payment,
     &.success {
       background: rgba(16, 185, 129, 0.1);
@@ -216,222 +275,171 @@ ion-content {
 
     &.subscription,
     &.info {
-      background: rgba($primary-color, 0.1);
-      color: $primary-color;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
     }
 
-    &.security,
+    &.alert,
     &.warning {
       background: rgba(245, 158, 11, 0.1);
       color: #f59e0b;
+    }
+
+    &.security,
+    &.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
     }
   }
 
   .card-content {
     flex: 1;
     min-width: 0;
-    padding-top: 2px;
+    display: flex;
+    flex-direction: column;
 
     .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 4px;
+      align-items: baseline;
+      margin-bottom: 6px;
+      padding-right: 16px; // Space for unread dot
 
       .title {
         margin: 0;
         font-size: 15px;
-        font-weight: 700;
+        font-weight: 600;
         color: #334155;
         line-height: 1.3;
+        letter-spacing: -0.01em;
       }
 
       .time {
         font-size: 11px;
         color: #94a3b8;
         font-weight: 500;
-        white-space: nowrap;
         margin-left: 8px;
+        white-space: nowrap;
       }
     }
 
     .body {
       margin: 0;
-      font-size: 13px;
+      font-size: 13.5px;
       color: #64748b;
-      line-height: 1.4;
+      line-height: 1.5;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
+    // Clean Action Button
     .card-actions {
-      margin-top: 12px;
+      margin-top: 10px;
+      display: flex;
 
       .mark-btn {
-        display: inline-block;
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 600;
         color: $primary-color;
-        padding: 6px 12px;
-        background: rgba($primary-color, 0.08);
-        border-radius: 8px;
+        background: transparent;
+        padding: 0;
         cursor: pointer;
-        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        opacity: 0.9;
 
-        &:active {
-          transform: scale(0.95);
-          opacity: 0.8;
+        &:hover {
+          opacity: 1;
+          text-decoration: underline;
         }
       }
     }
   }
-
-  .delete-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    --color: #94a3b8;
-    margin: 0;
-    height: 32px;
-    width: 32px;
-
-    &:hover {
-      --color: $primary-color;
-    }
-  }
 }
 
+// Empy State - More elegant
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 100px;
+  padding: 80px 20px;
   text-align: center;
+  animation: fadeIn 0.6s ease-out;
 
   .icon-wrapper {
-    position: relative;
-    width: 120px;
-    height: 120px;
+    width: 90px;
+    height: 90px;
+    background: #fff;
+    border-radius: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
-
-    .pulse-ring {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border: 4px solid rgba($primary-color, 0.1);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+    position: relative;
 
     ion-icon {
-      font-size: 60px;
-      color: $primary-color;
-      background: white;
-      padding: 20px;
-      border-radius: 40px;
-      box-shadow: $shadow-md;
+      font-size: 42px;
+      color: #cbd5e1;
+    }
+
+    // Decorative dots
+    &::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: $primary-color;
+      border-radius: 50%;
+      top: 20px;
+      right: 20px;
+      opacity: 0.8;
     }
   }
 
   h2 {
-    font-size: 24px;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0 0 10px;
-  }
-
-  p {
-    font-size: 15px;
-    color: #64748b;
-    max-width: 250px;
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  &.error-state {
-    padding-top: 60px;
-
-    .icon-wrapper ion-icon {
-      background: #fef2f2;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15);
-    }
-
-    h2 {
-      color: #b91c1c;
-    }
-  }
-
-  .retry-btn {
-    margin-top: 30px;
-    --color: $primary-color;
-    --border-color: $primary-color;
-    --border-radius: 12px;
+    font-size: 18px;
     font-weight: 700;
-    text-transform: none;
-    height: 48px;
-    width: 160px;
-  }
-}
-
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 120px;
-
-  ion-spinner {
-    width: 48px;
-    height: 48px;
-    color: $primary-color;
-    margin-bottom: 20px;
+    color: $text-main;
+    margin: 0 0 8px;
   }
 
   p {
-    font-size: 15px;
-    color: #64748b;
-    font-weight: 500;
+    font-size: 14px;
+    color: $text-secondary;
+    max-width: 260px;
+    line-height: 1.6;
+    margin: 0;
   }
 }
 
-// Animations
-@keyframes slideInUp {
+// Loading Spinner
+// Skeleton Loading
+.skeleton-list {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.skeleton-card {
+  pointer-events: none; // Disable interaction on skeletons
+
+  .skeleton-icon {
+    background: transparent !important; // Let skeleton handle background
+    padding: 0;
+  }
+}
+
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    transform: translateY(10px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes float {
-  from {
-    transform: translate(0, 0);
-  }
-
-  to {
-    transform: translate(50px, 50px);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: scale(1.3);
-    opacity: 0;
+    transform: translateY(0);
   }
 }

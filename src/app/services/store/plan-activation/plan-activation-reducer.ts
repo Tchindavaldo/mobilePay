@@ -75,26 +75,21 @@ export const planActivationReducer = createReducer(
 
   // Ajouter une nouvelle activation
   on(addPlanActivationReducer, (state, { planActivation }) => {
-    let newPlanActivations: PlanActivation[];
+    // Si la liste n'a pas encore été chargée (null), on n'ajoute rien.
+    if (!state.planActivations) return state;
 
-    if (!state.planActivations) {
-      newPlanActivations = [planActivation];
-    } else {
-      // Vérifier si l'activation existe déjà
-      const activationExists = state.planActivations.some(activation => activation.id === planActivation.id);
-      if (!activationExists) {
-        newPlanActivations = [planActivation, ...state.planActivations];
-      } else {
-        return state; // Ne pas ajouter si elle existe déjà
-      }
+    // Vérifier si l'activation existe déjà
+    const activationExists = state.planActivations.some(activation => activation.id === planActivation.id);
+    if (!activationExists) {
+      return {
+        ...state,
+        planActivations: [planActivation, ...state.planActivations],
+        loading: false,
+        error: null
+      };
     }
 
-    return {
-      ...state,
-      planActivations: newPlanActivations,
-      loading: false,
-      error: null
-    };
+    return state;
   }),
 
   // Modifier une activation existante
@@ -108,7 +103,7 @@ export const planActivationReducer = createReducer(
         // Fusionner les mises à jour avec l'activation existante
         // Ne modifier que les champs différents
         const updatedActivation = { ...activation };
-        
+
         // Parcourir les mises à jour et ne modifier que les champs différents
         Object.keys(updates).forEach(key => {
           if (updates[key] !== activation[key]) {
@@ -118,7 +113,7 @@ export const planActivationReducer = createReducer(
 
         // Mettre à jour le timestamp de modification
         updatedActivation.updatedAt = new Date().toISOString();
-        
+
         return updatedActivation;
       }
       return activation;

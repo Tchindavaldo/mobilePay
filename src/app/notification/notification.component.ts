@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { LanguageService } from '../services/language.service';
 import { Store } from '@ngrx/store';
@@ -22,6 +22,8 @@ export class NotificationComponent implements OnInit, OnDestroy {
   hasError = false;
   private sub: Subscription | null = null;
 
+  localReadStatus: Set<string> = new Set(); // Radical : Gestion locale de l'état "lu" pour l'UI instantanée
+
   constructor(
     private alertController: AlertController,
     private languageService: LanguageService,
@@ -29,7 +31,8 @@ export class NotificationComponent implements OnInit, OnDestroy {
     private getUserNotificationService: GetUserNotificationService,
     private userStorage: UserStorageService,
     private navCtrl: NavController,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   t(key: string): string {
@@ -42,9 +45,17 @@ export class NotificationComponent implements OnInit, OnDestroy {
       this.userId = user.id;
     }
 
-    // Abonnement simple au store
+    // Abonnement "Paresseux" (Lazy) au store
     this.sub = this.store.select(state => state.userNotification?.Notification).subscribe(notifications => {
       if (notifications) {
+        // RADICAL : Si on a déjà des notifications et que le nombre est le même, ON NE TOUCHE À RIEN.
+        // On suppose que c'est juste une mise à jour de statut qu'on gère déjà localement.
+        // Seul un changement de nombre (nouvelle notif ou suppression) déclenchera un re-rendu de la liste.
+        if (this.notifications.length > 0 && notifications.length === this.notifications.length) {
+          this.updateUnreadCount(notifications); // On met juste à jour le compteur global
+          return;
+        }
+
         this.notifications = [...notifications].map(n => ({
           ...n,
           body: n.body || n.message || '',
@@ -55,12 +66,8 @@ export class NotificationComponent implements OnInit, OnDestroy {
           return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
         });
 
-        if (this.userId) {
-          this.unreadNotifications = this.notifications.filter(n => {
-            const isReadArray = Array.isArray(n.isRead) ? n.isRead : [];
-            return !isReadArray.includes(this.userId!);
-          }).length;
-        }
+        this.updateUnreadCount(this.notifications);
+        this.cdr.markForCheck();
       }
     });
 
@@ -72,6 +79,12 @@ export class NotificationComponent implements OnInit, OnDestroy {
     }
 
     this.processPendingReadActions();
+  }
+
+  updateUnreadCount(currentList: any[]) {
+    if (this.userId) {
+      this.unreadNotifications = currentList.filter(n => !this.isRead(n)).length;
+    }
   }
 
   async loadNotifications() {
@@ -98,25 +111,32 @@ export class NotificationComponent implements OnInit, OnDestroy {
   async markAsRead(notification: any) {
     if (!this.userId) return;
 
-    const isReadArray = Array.isArray(notification.isRead) ? notification.isRead : [];
+    // 1. Mise à jour VISUELLE INSTANTANÉE (Aucun appel réseau/store pour l'UI)
+    if (!this.isRead(notification)) {
+      this.localReadStatus.add(notification.id); // On le marque lu localement
+      this.unreadNotifications = Math.max(0, this.unreadNotifications - 1); // On décrémente le compteur
+      this.cdr.detectChanges(); // On force juste la mise à jour visuelle (le point rouge disparaît)
+    } else {
+      return; // Déjà lu, on ne fait rien
+    }
 
-    if (!isReadArray.includes(this.userId)) {
-      this.store.dispatch(markNotificationAsReadReducer({
-        notificationId: notification.id,
-        userId: this.userId
-      }));
+    // 2. Logique métier en arrière-plan (Silent)
+    // On envoie au store et au socket mais on s'en fiche du retour car on a bloqué le rafraîchissement liste dans le subscribe
+    this.store.dispatch(markNotificationAsReadReducer({
+      notificationId: notification.id,
+      userId: this.userId
+    }));
 
-      const markData = {
-        userId: this.userId,
-        notificationId: notification.id,
-        notificationIdGroup: notification.idGroup
-      };
+    const markData = {
+      userId: this.userId,
+      notificationId: notification.id,
+      notificationIdGroup: notification.idGroup
+    };
 
-      try {
-        this.socketService.getSocket().emit('isReadNotification', markData);
-      } catch (e) {
-        this.savePendingReadAction(markData);
-      }
+    try {
+      this.socketService.getSocket().emit('isReadNotification', markData);
+    } catch (e) {
+      this.savePendingReadAction(markData);
     }
   }
 
@@ -179,11 +199,15 @@ export class NotificationComponent implements OnInit, OnDestroy {
       case 'warning':
         return 'shield-checkmark-outline';
       default:
+      case 'default':
         return 'notifications-outline';
     }
   }
 
   isRead(notification: any): boolean {
+    // Vérifie d'abord notre set local instantané
+    if (this.localReadStatus.has(notification.id)) return true;
+
     if (!this.userId) return true;
     const isReadArray = Array.isArray(notification.isRead) ? notification.isRead : [];
     return isReadArray.includes(this.userId);

@@ -36,6 +36,8 @@ export class Tab1Page implements OnInit {
   currentSlide: number = 0;
   totalSlides: number = 3;
   autoSlideInterval: any;
+  isSearchActive: boolean = false;
+  @ViewChild('searchInput') searchInput: ElementRef | undefined;
 
   constructor(
     private alertController: AlertController,
@@ -119,6 +121,15 @@ export class Tab1Page implements OnInit {
       this.selectedPlanName = plan;
       this.selectedPlanPrice = price;
     });
+  }
+
+  toggleSearch() {
+    this.isSearchActive = !this.isSearchActive;
+    if (this.isSearchActive) {
+      setTimeout(() => {
+        if (this.searchInput) this.searchInput.nativeElement.focus();
+      }, 100);
+    }
   }
 
   async goToPay() {

@@ -1,27 +1,27 @@
-<!-- Pas de header - directement le contenu -->
-<ion-content [fullscreen]="true">
-
-  <!-- Page d'activations simple -->
-  <div class="activations-container">
-
-    <!-- Overview Card - Design exact de la page transactions -->
-    <div class="overview-card">
-      <div class="overview-content">
-        <div class="overview-icon">
-          <ion-icon name="sync-circle"></ion-icon>
-        </div>
-        <div class="overview-info">
-          <h2 class="overview-title">{{ t('activations.my_activations') }}</h2>
-          <p class="overview-subtitle overview-amount">{{ getTotalSpent() }} XAF</p>
-        </div>
+<ion-header class="ion-no-border">
+  <div class="overview-card">
+    <div class="overview-content">
+      <div class="overview-icon">
+        <ion-icon name="sync-circle"></ion-icon>
       </div>
-      <div class="overview-stats">
-        <div class="stat-item">
-          <span class="stat-value">{{ getTotalActivations() }}</span>
-          <span class="stat-label">{{ t('activations.total') }}</span>
-        </div>
+      <div class="overview-info">
+        <h2 class="overview-title">{{ t('activations.my_activations') }}</h2>
+        <p class="overview-subtitle overview-amount">{{ getTotalSpent() }} XAF</p>
       </div>
     </div>
+    <div class="overview-stats">
+      <div class="stat-item">
+        <span class="stat-value">{{ getTotalActivations() }}</span>
+        <span class="stat-label">{{ t('activations.total') }}</span>
+      </div>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content>
+  <!-- Page d'activations simple -->
+  <div class="activations-container">
+    <!-- Rest of content starts here -->
 
 
 
@@ -72,10 +72,32 @@
         </ion-button>
       </div>
 
-      <!-- Loader pendant le chargement -->
-      <div class="loading-container" *ngIf="isLoading">
-        <ion-spinner name="crescent" color="primary"></ion-spinner>
-        <p class="loading-text">{{ t('activations.loading') }}</p>
+      <!-- Skeleton Loading State -->
+      <div class="stats-card skeleton-card" *ngIf="isLoading" style="margin-top: 10px;">
+        <div class="stat-item-row" *ngFor="let i of [1,2,3,4,5]">
+          <!-- Icon Skeleton -->
+          <div class="stat-icon-wrapper skeleton-icon">
+            <ion-skeleton-text animated style="width: 100%; height: 100%; border-radius: 12px;"></ion-skeleton-text>
+          </div>
+
+          <!-- Content Skeleton -->
+          <div class="stat-content">
+            <div class="stat-label">
+              <ion-skeleton-text animated style="width: 50%; height: 16px; border-radius: 4px;"></ion-skeleton-text>
+            </div>
+            <div class="stat-description">
+              <ion-skeleton-text animated
+                style="width: 70%; height: 12px; border-radius: 4px; margin-top: 6px;"></ion-skeleton-text>
+            </div>
+          </div>
+
+          <!-- Value Skeleton -->
+          <div class="stat-value-group">
+            <ion-skeleton-text animated
+              style="width: 60px; height: 16px; border-radius: 4px; margin-bottom: 4px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 40px; height: 12px; border-radius: 8px;"></ion-skeleton-text>
+          </div>
+        </div>
       </div>
 
       <!-- Message d'erreur -->

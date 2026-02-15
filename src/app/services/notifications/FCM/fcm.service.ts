@@ -8,6 +8,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Router } from '@angular/router';
 import { addNotificationReducer } from '../../store/notification/notification-reducer';
 import { SocketService } from '../../socket/socket.service';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({ providedIn: 'root' })
 export class FcmService {
@@ -42,7 +43,23 @@ export class FcmService {
         }
 
         if (!this.isConfigured) {
-            // console.log('📡 [FCM] Configuration des écouteurs de notifications...');
+            console.log('📡 [FCM] Configuration initiale...');
+
+            // Créer le channel pour Android IMMÉDIATEMENT (seulement sur Android)
+            if (Capacitor.getPlatform() === 'android') {
+                LocalNotifications.createChannel({
+                    id: 'moobilpay_channel_v2', // On passe en V2 pour forcer la réactivation du son
+                    name: 'Notifications MoobilPay',
+                    importance: 5, // IMPORTANCE_HIGH (Obligatoire pour le son/popup)
+                    sound: 'default', // Son par défaut du système
+                    vibration: true,
+                    lights: true,
+                    lightColor: '#dc2626',
+                    visibility: 1 // VISIBILITY_PUBLIC
+                }).then(() => console.log('✅ [FCM] Channel "moobilpay_channel_v2" créé (SON ACTIVÉ)'))
+                    .catch(err => console.error('❌ [FCM] Erreur création channel:', err));
+            }
+
             this.setupListeners();
             this.isConfigured = true;
         }
@@ -81,7 +98,7 @@ export class FcmService {
 
         // 5. Gérer les notifications reçues quand l'app est au PREMIER PLAN
         PushNotifications.addListener('pushNotificationReceived', async (notification) => {
-            // console.log('🔔 Notification push reçue:', notification);
+            console.log('🔔 [FCM] Notification Reçue au premier plan:', notification);
 
             const data = notification.data || {};
             const persistentId = data.id || notification.id || Date.now().toString();
@@ -107,9 +124,10 @@ export class FcmService {
                         title: notificationToStore.title,
                         body: notificationToStore.body,
                         schedule: { at: new Date(Date.now() + 100) },
-                        channelId: 'high_priority_channel',
+                        channelId: 'moobilpay_channel_v2',
                         sound: 'default',
-                        smallIcon: 'ic_launcher',
+                        smallIcon: 'ic_notification',
+                        iconColor: '#dc2626',
                         extra: notificationToStore // On passe l'objet complet avec l'ID persistant
                     },
                 ],
@@ -168,13 +186,14 @@ export class FcmService {
 
         // Créer le channel pour Android
         LocalNotifications.createChannel({
-            id: 'high_priority_channel',
-            name: 'Notifications Importantes',
+            id: 'moobilpay_channel_v2',
+            name: 'Notifications MoobilPay',
             importance: 5,
             sound: 'default',
             vibration: true,
             lights: true,
-            lightColor: '#ff0000'
+            lightColor: '#dc2626',
+            visibility: 1
         });
     }
 

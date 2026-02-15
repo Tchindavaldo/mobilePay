@@ -33,6 +33,17 @@
 
         <meta-data android:name="com.codetrixstudio.capacitor.GoogleAuth.serverClientId" android:value="583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com" />
 
+        <!-- FCM a BESOIN de ça pour afficher la notif quand l'app est fermée -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="moobilpay_channel_v2" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
