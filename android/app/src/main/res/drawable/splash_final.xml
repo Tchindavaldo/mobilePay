@@ -8,7 +8,7 @@
     </item>
 
     <!-- Cercle blanc -->
-    <item android:gravity="center" android:width="120dp" android:height="120dp">
+    <item android:gravity="center" android:width="140dp" android:height="140dp">
         <shape android:shape="oval">
             <solid android:color="#FFFFFF" />
         </shape>

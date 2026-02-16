@@ -21,5 +21,6 @@
         <item name="windowSplashScreenBackground">#F8F9FA</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_final</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+        <item name="windowSplashScreenAnimationDuration">0</item>
     </style>
 </resources>

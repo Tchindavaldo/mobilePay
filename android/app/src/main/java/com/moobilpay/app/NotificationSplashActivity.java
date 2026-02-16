@@ -38,7 +38,7 @@ public class NotificationSplashActivity extends AppCompatActivity {
                 finish();
                 
                 if (delay > 0) {
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    overridePendingTransition(0, 0); // Pas d'animation
                 } else {
                     overridePendingTransition(0, 0); // Pas d'animation pour plus de fluidité
                 }
