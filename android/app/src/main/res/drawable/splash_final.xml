@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fond de l'écran -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#F8F9FA" />
+        </shape>
+    </item>
+
+    <!-- Cercle blanc -->
+    <item android:gravity="center" android:width="120dp" android:height="120dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+    </item>
+
+    <!-- Icône ic_launcher -->
+    <item android:gravity="center" android:width="90dp" android:height="90dp" android:drawable="@mipmap/ic_launcher" />
+</layer-list>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+    
+    <!-- Cercle de fond -->
+    <path
+        android:fillColor="#F8F9FA"
+        android:pathData="M40,40m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0"/>
+    
+    <!-- Cercle blanc intérieur -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,40m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0"/>
+    
+    <!-- Icône simple (placeholder) -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M40,20L50,30L50,50L30,50L30,30Z"/>
+</vector>
