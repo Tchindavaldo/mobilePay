@@ -1,41 +1,32 @@
 `UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
-Could not create a sandbox extension for '/var/containers/Bundle/Application/BF15CCDE-AA9C-4D28-AB1A-C5C7C900F855/App.app'
+Could not create a sandbox extension for '/var/containers/Bundle/Application/9A229DC1-556A-4DB2-90F6-ADB0F451C156/App.app'
 ⚡️  Loading app at capacitor://localhost...
-Networking process (0x112068190) took 1.546897 seconds to launch
-WebContent process (0x1120ec100) took 1.015363 seconds to launch
-WebContent[14649] Unable to hide query parameters from script (missing data)
-To Native Cordova ->  NetworkStatus getConnectionInfo NetworkStatus662414239 ⚡️  [log] - onscript loading complete
+Networking process (0x110068190) took 1.530851 seconds to launch
+WebContent[14675] Unable to hide query parameters from script (missing data)
+To Native Cordova ->  NetworkStatus getConnectionInfo NetworkStatus1307184347 ⚡️  [log] - onscript loading complete
 ["options": []]
 ⚡️  WebView loaded
 ⚡️  [log] - 🔌 Initialisation Socket.IO vers: https://netflix-automation.fly.dev
 ⚡️  [log] - 🚪 [PAGE] LoginPage: ngOnInit (Page affichée)
-⚡️  To Native ->  SocialLogin initialize 64369963
-ERROR MESSAGE:  {"message":"No provider was initialized","errorMessage":"No provider was initialized"}
+⚡️  To Native ->  SocialLogin initialize 84619050
+⚡️  TO JS undefined
 ⚡️  [warn] - 🚫 [FCM] Notifications désactivées sur iOS pour débogage (soupçon de blocage au démarrage)
-⚡️  [error] - {"message":"No provider was initialized","errorMessage":"No provider was initialized"}
-⚡️  [error] - Erreur initialisation SocialLogin: {"errorMessage":"No provider was initialized"}
-⚡️  To Native ->  App addListener 64369964
-⚡️  To Native ->  SocialLogin login 64369965
+⚡️  [log] - ✓ SocialLogin initialisé
+⚡️  To Native ->  App addListener 84619051
+⚡️  To Native ->  SocialLogin login 84619052
 ⚡️  [log] - 🔐 Début de l'authentification Google...
 ⚡️  [log] - 🔒 Google login in progress: true
 ⚡️  [log] - 📱 Authentification Google NATIVE (SocialLogin)...
-*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: 'No active configuration.  Make sure GIDClientID is set in Info.plist.'
-*** First throw call stack:
-(0x1990968c8 0x19600d7c4 0x1991218d4 0x10614d450 0x10614be14 0x1060c70dc 0x1060c68cc 0x105f70294 0x10577c63c 0x1057962d0 0x1057b74c0 0x10578c778 0x10578c6b4 0x199038520 0x198fead14 0x198fe9c44 0x2383c2498 0x19e964ddc 0x19e909b0c 0x105e195b0 0x196062e28)
-libc++abi: terminating due to uncaught exception of type NSException
-
-
-
-  if (options.interactive) {
-    // Ensure that a configuration has been provided.
-    if (!_configuration) {
-      // NOLINTNEXTLINE(google-objc-avoid-throwing-exception)
-      [NSException raise:NSInvalidArgumentException
-                  format:@"No active configuration.  Make sure GIDClientID is set in Info.plist."];
-      return;
-    }
-
-     Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: 'No active configuration.  Make sure GIDClientID is set in Info.plist.'
-*** First throw call stack:
-(0x1990968c8 0x19600d7c4 0x1991218d4 0x10614d450 0x10614be14 0x1060c70dc 0x1060c68cc 0x105f70294 0x10577c63c 0x1057962d0 0x1057b74c0 0x10578c778 0x10578c6b4 0x199038520 0x198fead14 0x198fe9c44 0x2383c2498 0x19e964ddc 0x19e909b0c 0x105e195b0 0x196062e28)
-terminating due to uncaught exception of type NSException
+Error acquiring assertion: <Error Domain=RBSAssertionErrorDomain Code=2 "Could not find attribute name in domain plist" UserInfo={NSLocalizedFailureReason=Could not find attribute name in domain plist}>
+(501) Invalidation handler invoked, clearing connection
+(501) personaAttributesForPersonaType for type:0 failed with error Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.mobile.usermanagerd.xpc was invalidated from this process." UserInfo={NSDebugDescription=The connection to service named com.apple.mobile.usermanagerd.xpc was invalidated from this process.}
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+⚡️  TO JS {"result":{"responseType":"online","profile":{"name":"Valdo Tchinda","email":"tchindavaldoblair@gmail.com","id":"110766367525991526764","imageUrl":"https:\/\/lh3.googleusercontent.com\/a\/ACg8ocLqIgX5EkWZhOyEvzoNRIijybCoS_xMfLbgap2VzmuLfIY_jA=s100","family
+⚡️  [log] - ✓ SocialLogin réussie: {"result":{"responseType":"online","profile":{"name":"Valdo Tchinda","email":"tchindavaldoblair@gmail.com","id":"110766367525991526764","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocLqIgX5EkWZhOyEvzoNRIijybCoS_xMfLbgap2VzmuLfIY_jA=s100","familyName":"Tchinda","givenName":"Valdo"},"accessToken":{"token":"ya29.a0ATkoCc47LDqrIMwQNyqY3ENe8L90asrMoFADh3vTffBt1tYy_KF617yrN4jFSGunCoCYZDqjyMWTUwdiMm9PuLn5pdtsjRWXnQaAGLgZAqRVIXaj0gf1wLfcMTtkzuZEK2ucyVBiDGqDT5W2yYmoT6UsL7U-13LYLiQ88PerZnhm1SgWNhUpnmYoAWSi0QL2E2Hh5zMaCgYKAfESARASFQHGX2Mi02uiQdCyPh22SRWTQ2TO_w0206","refreshToken":"1//03Ip0mjladFzACgYIARAAGAMSNwF-L9IrO7rbpod31YpB3Mnomdiy2pVHtCTNRj7mxsYm6ndx-Xgabumw4goeJMRtrZc3psbWVJI","userId":"110766367525991526764"},"idToken":"eyJhbGciOiJSUzI1NiIsImtpZCI6ImM4MTZkMzM3YjgzNjVhMDZhODUxYWQ4MDAxNmMxNzEwOTk0OTI2MDkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI1ODM0MTc0NTI1NzctMWVkdW4zbTgzdHRzbGRoc2FhMmd2ZXNtZGo2ZmcybXQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI1ODM0MTc0NTI1NzctMWVkdW4zbTgzdHRzbGRoc2FhMmd2ZXNtZGo2ZmcybXQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTA3NjYzNjc1MjU5OTE1MjY3NjQiLCJlbWFpbCI6InRjaGluZGF2YWxkb2JsYWlyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoicjVXaUM1dUt2cTNMWVZkZ2Q1YTF3ZyIsIm5vbmNlIjoiQjZsNXFvVWJndmdGOTZCWGFyMjBYNng3OWg3djF1NTlndTdmOTFoNWJZSSIsIm5hbWUiOiJWYWxkbyBUY2hpbmRhIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0xxSWdYNUVrV1poT3lFdnpvTlJJaWp5YkNvU194TWZMYmdhcDJWem11TGZJWV9qQT1zOTYtYyIsImdpdmVuX25hbWUiOiJWYWxkbyIsImZhbWlseV9uYW1lIjoiVGNoaW5kYSIsImlhdCI6MTc3MTYwNDQ3NiwiZXhwIjoxNzcxNjA4MDc2fQ.I1ud-FBdijupUDUQQ-MTyOuVrOQGF0ZZWRcTSq_ZI9FABSWa5zIbuPYqT292ojbwW5FjbBzLfgRHd0OjbJMpDecE1XMlHWrAG-TUnsRu4EQIVqCOe21k0LPMQg8774xMZjKe-fISJ46jp_V9BcMBn0sa48B1KJy7TGI2d2eGX-1V3Jvb8HJS8I0afNg8xv0rVGL2RKHGmVudu_x12Fjn06FAtHqYfNgwoLGCQIsYRJOPrpU3lxmm70xHS1s_LM3VIGOtUeBRqmOeWDnRJKUzqTq7y0o5tKutq8P-3Xov8WZB_PYZ0PiBep8MycHIpKC1N9nklQoVjteQ4ZT5rEmtSQ"},"provider":"google"}
