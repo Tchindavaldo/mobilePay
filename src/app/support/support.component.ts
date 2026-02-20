@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -37,6 +38,9 @@ interface GuideItem {
   selector: 'app-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss'],
+  standalone: true,
+  imports: [IonicModule, CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SupportComponent implements OnInit {
   // Form data
@@ -44,28 +48,28 @@ export class SupportComponent implements OnInit {
   userEmail: string = '';
   subject: string = '';
   message: string = '';
-  
+
   // Search functionality
   searchQuery: string = '';
-  
+
   // Form management
   showContactForm: boolean = false;
   currentFormStep: number = 1;
   selectedCategory: string = '';
   selectedPriority: string = 'medium';
-  
+
   // Pages de support
   currentPage: string = 'main'; // main, chat, faq, guides
-  
+
   // Chat functionality
   chatMessage: string = '';
-  
+
   // Resource counts
   faqCount: number = 25;
   docsCount: number = 12;
   tutorialsCount: number = 8;
   communityCount: number = 1247;
-  
+
   // Support categories
   supportCategories: SupportCategory[] = [
     {
@@ -105,7 +109,7 @@ export class SupportComponent implements OnInit {
       icon: 'help-circle'
     }
   ];
-  
+
   // Priority levels
   priorities: Priority[] = [
     { value: 'low', label: 'Faible' },
@@ -194,7 +198,7 @@ export class SupportComponent implements OnInit {
   constructor(
     public langService: LanguageService,
     private route: ActivatedRoute,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -305,11 +309,11 @@ export class SupportComponent implements OnInit {
     };
 
     console.log('Ticket de support créé:', supportTicket);
-    
+
     // Here you would typically send the data to your backend
     // For now, we'll just show a success message
     alert('Votre demande a été envoyée avec succès ! Nous vous répondrons dans les plus brefs délais.');
-    
+
     // Reset form
     this.resetForm();
   }
