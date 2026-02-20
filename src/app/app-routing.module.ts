@@ -8,7 +8,7 @@ import { AddEditAccountComponent } from './add-edit-account/add-edit-account.com
 import { ActusComponent } from './actus/actus.component';
 import { ComptepartagerComponent } from './comptepartager/comptepartager.component';
 import { FormulaireComponent } from './formulaire/formulaire.component';
-
+import { SplashPageComponent } from './splash.page/splash.page.component';
 import { LoginPageComponent } from './login.page/login.page.component';
 import { OnboardingPageComponent } from './onboarding.page/onboarding.page.component';
 import { JeuxComponent } from './jeux/jeux.component';
@@ -22,7 +22,7 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/login',
+    redirectTo: '/splash',
     pathMatch: 'full'
   },
   {
@@ -108,6 +108,10 @@ const routes: Routes = [
   {
     path: 'pay2',
     loadChildren: () => import('./pay2/pay2.module').then(m => m.Pay2PageModule)
+  },
+  {
+    path: 'splash',
+    component: SplashPageComponent
   },
 ];
 @NgModule({

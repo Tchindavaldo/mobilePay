@@ -1,0 +1,29 @@
+.splash-screen {
+    --background: #F8F9FA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.splash-center-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.white-circle {
+    width: 140px;
+    height: 140px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.splash-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}
