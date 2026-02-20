@@ -92,7 +92,7 @@ export class AppComponent {
         }
 
         // Redirection vers le Home si sur une page d'auth/onboarding/splash
-        if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/' || currentUrl === '/splash') {
+        if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/') {
           console.log('🧭 [ANGULAR] Authenticated user on auth/splash page. Redirecting to /tabs/tab1');
           await this.navigateWithFlag(['/tabs/tab1']);
         }
@@ -103,7 +103,7 @@ export class AppComponent {
           await this.navigateWithFlag(['/explication']);
         } else {
           // Si on essaie d'aller sur une page protégée ou la racine/splash, redirection vers login
-          if (currentUrl === '/' || currentUrl === '/splash' || currentUrl.includes('/tabs/')) {
+          if (currentUrl === '/' || currentUrl.includes('/tabs/')) {
             console.log('🧭 [ANGULAR] Unauthenticated. Redirecting to /login');
             await this.navigateWithFlag(['/login']);
           }
