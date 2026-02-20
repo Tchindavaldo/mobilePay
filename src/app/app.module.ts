@@ -18,7 +18,7 @@ import { AddEditAccountComponent } from './add-edit-account/add-edit-account.com
 import { ActusComponent } from './actus/actus.component';
 import { ComptepartagerComponent } from './comptepartager/comptepartager.component';
 import { FormulaireComponent } from './formulaire/formulaire.component';
-import { SplashPageComponent } from './splash.page/splash.page.component';
+
 import { LoginPageComponent } from './login.page/login.page.component';
 import { OnboardingPageComponent } from './onboarding.page/onboarding.page.component';
 // import { CarouselModule } from 'ngx-bootstrap/carousel';
@@ -38,7 +38,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @NgModule({
-  declarations: [AppComponent, PayementComponent, SupportComponent, PartageComponent, CompteComponent, AddEditAccountComponent, ActusComponent, ComptepartagerComponent, FormulaireComponent, LoginPageComponent, SplashPageComponent, OnboardingPageComponent, JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent, AboutComponent, SubscriptionsComponent],
+  declarations: [AppComponent, PayementComponent, PartageComponent, CompteComponent, AddEditAccountComponent, ActusComponent, ComptepartagerComponent, FormulaireComponent, LoginPageComponent, OnboardingPageComponent, JeuxComponent, AchatsComponent, SiteComponent, PhoneAuthComponent, AboutComponent, SubscriptionsComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

@@ -204,12 +204,10 @@
             {{ t('support.billing_question') }}
           </ion-button>
         </div>
-        
+
         <div class="chat-input">
-          <ion-input 
-            [placeholder]="t('support.type_message')"
-            [(ngModel)]="chatMessage"
-            (keyup.enter)="sendChatMessage()">
+          <ion-input [placeholder]="t('support.type_message')" [ngModel]="chatMessage"
+            (ionChange)="chatMessage = $event.detail.value || ''" (keyup.enter)="sendChatMessage()">
           </ion-input>
           <ion-button fill="clear" (click)="sendChatMessage()">
             <ion-icon name="send"></ion-icon>
@@ -234,10 +232,8 @@
         <div class="form-step" *ngIf="currentFormStep === 1">
           <h4>{{ t('support.request_type') }}</h4>
           <div class="category-list">
-            <div class="category-item" 
-                 *ngFor="let category of supportCategories"
-                 [class.selected]="selectedCategory === category.id"
-                 (click)="selectCategory(category.id)">
+            <div class="category-item" *ngFor="let category of supportCategories"
+              [class.selected]="selectedCategory === category.id" (click)="selectCategory(category.id)">
               <ion-icon [name]="category.icon"></ion-icon>
               <span>{{ category.name }}</span>
             </div>
@@ -246,30 +242,20 @@
 
         <div class="form-step" *ngIf="currentFormStep === 2">
           <div class="form-fields-compact">
-            <ion-input 
-              [(ngModel)]="userName" 
-              [placeholder]="t('support.your_name')"
-              fill="outline">
+            <ion-input [ngModel]="userName" (ionChange)="userName = $event.detail.value || ''"
+              [placeholder]="t('support.your_name')" fill="outline">
             </ion-input>
-            
-            <ion-input 
-              [(ngModel)]="userEmail" 
-              type="email"
-              [placeholder]="t('support.your_email')"
-              fill="outline">
+
+            <ion-input [ngModel]="userEmail" (ionChange)="userEmail = $event.detail.value || ''" type="email"
+              [placeholder]="t('support.your_email')" fill="outline">
             </ion-input>
-            
-            <ion-input 
-              [(ngModel)]="subject" 
-              [placeholder]="t('support.subject')"
-              fill="outline">
+
+            <ion-input [ngModel]="subject" (ionChange)="subject = $event.detail.value || ''"
+              [placeholder]="t('support.subject')" fill="outline">
             </ion-input>
-            
-            <ion-textarea 
-              [(ngModel)]="message" 
-              [placeholder]="t('support.your_message')"
-              rows="4"
-              fill="outline">
+
+            <ion-textarea [ngModel]="message" (ionChange)="message = $event.detail.value || ''"
+              [placeholder]="t('support.your_message')" rows="4" fill="outline">
             </ion-textarea>
           </div>
         </div>
@@ -285,24 +271,15 @@
 
       <!-- Navigation simplifiée -->
       <div class="form-actions">
-        <ion-button 
-          fill="outline" 
-          *ngIf="currentFormStep > 1"
-          (click)="previousFormStep()">
+        <ion-button fill="outline" *ngIf="currentFormStep > 1" (click)="previousFormStep()">
           {{ t('back') }}
         </ion-button>
 
-        <ion-button 
-          *ngIf="currentFormStep < 3"
-          [disabled]="!canProceedToNextStep()"
-          (click)="nextFormStep()">
+        <ion-button *ngIf="currentFormStep < 3" [disabled]="!canProceedToNextStep()" (click)="nextFormStep()">
           {{ t('next') }}
         </ion-button>
 
-        <ion-button 
-          color="success"
-          *ngIf="currentFormStep === 3"
-          (click)="sendMessage()">
+        <ion-button color="success" *ngIf="currentFormStep === 3" (click)="sendMessage()">
           {{ t('send') }}
         </ion-button>
       </div>
