@@ -88,10 +88,16 @@ export class GoogleAuthService {
         console.log('🔑 Étape 1.2 : Création du Credential Firebase...');
         const credential = FirebaseGoogleAuthProvider.credential(idToken);
 
-        console.log('🔥 Étape 1.3 : Tentative de signInWithCredential avec Firebase...');
+        // S'assurer que le moteur Firebase est totalement prêt avant de lui parler (Fix iOS hang)
+        if ((this.auth as any).authStateReady) {
+          console.log('⏳ Firebase Étape 1.3 : Attente de authStateReady...');
+          await (this.auth as any).authStateReady();
+        }
+
+        console.log('🔥 Firebase Étape 1.4 : Envoi du Credential au serveur Firebase...');
         const userCredential = await signInWithCredential(this.auth, credential);
         firebaseUser = userCredential.user;
-        console.log('🔥 Étape 1.4 : Firebase Auth finalisée avec succès ! User UID:', firebaseUser?.uid);
+        console.log('✅ Firebase Étape 1.5 : Auth serveur réussie ! UID:', firebaseUser?.uid);
       } else {
         console.log('💻 Étape 1/6 : Authentification Google WEB (Popup)...');
         this.provider.setCustomParameters({
@@ -176,9 +182,8 @@ export class GoogleAuthService {
       // ÉTAPE 3 : Si l'utilisateur existe, le mettre à jour avec les données Google
       if (backendUser) {
         console.log('🔄 Étape 3/6 : Utilisateur trouvé - Mise à jour avec les données Google Auth...');
-        console.log('ID utilisateur existant:', backendUser.id);
 
-        const userId = backendUser.id;
+        const userId = backendUser.id || backendUser._id;
         if (!userId) {
           throw new Error('Impossible de récupérer l\'ID de l\'utilisateur existant');
         }
