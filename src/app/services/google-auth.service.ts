@@ -88,12 +88,6 @@ export class GoogleAuthService {
         console.log('🔑 Étape 1.2 : Création du Credential Firebase...');
         const credential = FirebaseGoogleAuthProvider.credential(idToken);
 
-        // S'assurer que le moteur Firebase est totalement prêt avant de lui parler (Fix iOS hang)
-        if ((this.auth as any).authStateReady) {
-          console.log('⏳ Firebase Étape 1.3 : Attente de authStateReady...');
-          await (this.auth as any).authStateReady();
-        }
-
         console.log('🔥 Firebase Étape 1.4 : Envoi du Credential au serveur Firebase...');
         const userCredential = await signInWithCredential(this.auth, credential);
         firebaseUser = userCredential.user;

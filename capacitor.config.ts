@@ -8,6 +8,7 @@ const config: CapacitorConfig = {
 
   server: {
     androidScheme: 'https',
+    iosScheme: 'https',
     allowNavigation: [
       "10.0.2.2",
       "google.com",
