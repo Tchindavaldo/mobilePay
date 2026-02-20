@@ -25,6 +25,7 @@ const config: CapacitorConfig = {
       splashImmersive: true,
       layoutName: "launch_screen",
       launchFadeOutDuration: 500,
+      useDialog: false,
     },
     SocialLogin: {
       google: {

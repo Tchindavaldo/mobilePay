@@ -19,7 +19,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="circleView" userLabel="Circle">
                                 <rect key="frame" x="137" y="378" width="140" height="140"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_launcher" translatesAutoresizingMaskIntoConstraints="NO" id="logoView" userLabel="Logo">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_launcher_splash" translatesAutoresizingMaskIntoConstraints="NO" id="logoView" userLabel="Logo">
                                         <rect key="frame" x="25" y="25" width="90" height="90"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="90" id="w90"/>
@@ -55,6 +55,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ic_launcher" width="512" height="512"/>
+        <image name="ic_launcher_splash" width="512" height="512"/>
     </resources>
 </document>
