@@ -1,4 +1,48 @@
 
 Showing Recent Issues
-/Users/valdoblair/Documents/mobilePay/ios/App/App/Base.lproj/LaunchScreen.storyboard:circleView: Launch screens may not contain user-defined runtime attributes. [12]
 
+Launch App
+
+Platform: iOS
+
+Device Identifier: 00008110-00014C523452401E
+
+Operating System Version: 26.0 (23A341)
+
+Model: iPhone 13 (iPhone14,5)
+
+Target Architecture: arm64
+
+View debugging: enabled
+Insert view debugging dylib on launch: enabled
+Queue debugging: enabled
+Memory graph on resource exception: disabled
+Address sanitizer: disabled
+Thread sanitizer: disabled
+
+Using LLDBRPC. The LLDB framework is from /Applications/Xcode.app/Contents/SharedFrameworks
+
+Device support directory: /Users/valdoblair/Library/Developer/Xcode/iOS DeviceSupport/iPhone14,5 26.0 (23A341)/Symbols
+
+Attached to process with pid 14193
+
+
+
+
+    private func buildViews() {
+        let storyboardName = Bundle.main.infoDictionary?["UILaunchStoryboardName"] as? String ?? "LaunchScreen"
+        if let vc = UIStoryboard(name: storyboardName.replacingOccurrences(of: ".storyboard", with: ""), bundle: nil).instantiateInitialViewController() {
+            viewController = vc
+        }
+
+        // Observe for changes on frame and bounds to handle rotation resizing
+        parentView.addObserver(self, forKeyPath: "frame", options: .new, context: nil)
+        parentView.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
+
+
+
+
+*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: 'Could not find a storyboard named 'SplashNative' in bundle NSBundle </private/var/containers/Bundle/Application/DAE7240B-19F0-49B6-AFDF-B5B552470ADC/App.app> (loaded)'
+*** First throw call stack:
+(0x1990968c8 0x19600d7c4 0x19fe02bb0 0x1021d2efc 0x1021d2bc8 0x1021d0fe4 0x1021d69a8 0x1021d6a24 0x10213dfac 0x10210aa78 0x10210a8bc 0x102109b28 0x102107b80 0x102107478 0x10212c738 0x10212e4b0 0x19e8c0e00 0x19e8c0d44 0x19e90e3a4 0x19fc6cca0 0x19fc6d040 0x19e9215bc 0x19fc39874 0x19fc3d814 0x19f26bce8 0x19e9aa8d0 0x19f26c564 0x19f26c070 0x19f26c37c 0x19f26be08 0x19f277150 0x19f6def4c 0x19e9ab694 0x19f276e4c 0x19f0b7804 0x19f0b6898 0x19f0b7470 0x19fc3c7e0 0x19f707f78 0x1b87c7388 0x1b87c7840 0x1b87c71a0 0x1b8835818 0x1b87d4f40 0x1b87f1cc0 0x1b87f3624 0x1b87d4f40 0x1017e22d0 0x1017cc998 0x1b031d1d4 0x1b031d054 0x199037230 0x1990371a4 0x199014cd0 0x198fea8b0 0x198fe9c44 0x2383c2498 0x19e964ddc 0x19e909b0c 0x101f4d5b0 0x196062e28)
+terminating due to uncaught exception of type NSException
