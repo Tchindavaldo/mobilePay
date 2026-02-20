@@ -129,13 +129,13 @@ export class AppComponent {
     // Cela évite de rester bloqué indéfiniment sur iOS
     setTimeout(async () => {
       if (this.isFirstLoad) {
-        console.warn('⚠️ [ANGULAR] Auth long à répondre. Masquage forcé du Splash Screen par sécurité.');
+        console.warn('⚠️ [ANGULAR] Auth long à répondre. Masquage forcé du Splash Screen par sécurité 5000.');
         this.isFirstLoad = false;
         await SplashScreen.hide({
           fadeOutDuration: 500
         });
       }
-    }, 5000);
+    }, 30000);
   }
 
   private async navigateWithFlag(route: string[]) {
