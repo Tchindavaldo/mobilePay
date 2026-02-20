@@ -65,10 +65,11 @@ export class AppComponent {
   private async initializeAuth() {
     const hasSeenOnboarding = await this.userStorage.get('hasSeenOnboarding') === true || await this.userStorage.get('hasSeenOnboarding') === 'true';
     const auth = getAuth(app);
+    console.log('🧭 [ANGULAR] Firebase Auth instance obtained.');
 
     onAuthStateChanged(auth, async (user) => {
       const currentUrl = this.router.url;
-      console.log('🧭 [ANGULAR] Auth state changed. User:', !!user, 'URL at start:', currentUrl);
+      console.log('🧭 [ANGULAR] !!! onAuthStateChanged !!! - User:', !!user, 'URL now:', currentUrl);
 
       // Éviter le flash du login si on vient d'une notification
       if (this.isFirstLoad) {
@@ -110,26 +111,15 @@ export class AppComponent {
         }
       }
 
-      // Toujours masquer le splash screen natif dès que la première redirection est lancée/décidée
-      if (this.isFirstLoad) {
-        this.isFirstLoad = false;
-        console.log('🧭 [ANGULAR] isFirstLoad=false. Hiding SplashScreen in 1s...');
-
-        // Attendre que l'app soit complètement initialisée avant de masquer le splash
-        setTimeout(async () => {
-          await SplashScreen.hide({
-            fadeOutDuration: 500
-          });
-          console.log(`✨ Splash Screen masqué après initialisation Auth`);
-        }, 1000);
-      }
+      // Le masquage du splash screen est maintenant géré à la fin de navigateWithFlag
+      // pour garantir une transition fluide vers la première page réelle de l'app.
     });
 
     // SÉCURITÉ : Masquer le splash screen après un délai maximum si l'Auth ne répond pas
     // Cela évite de rester bloqué indéfiniment sur iOS
     setTimeout(async () => {
       if (this.isFirstLoad) {
-        console.warn('⚠️ [ANGULAR] Auth long à répondre. Masquage forcé du Splash Screen par sécurité 5000.');
+        console.warn('⚠️ [ANGULAR] Auth long à répondre (30s). Masquage forcé du Splash Screen.');
         this.isFirstLoad = false;
         await SplashScreen.hide({
           fadeOutDuration: 500
@@ -141,8 +131,19 @@ export class AppComponent {
   private async navigateWithFlag(route: string[]) {
     this.isNavigating = true;
     try {
-      // replaceUrl: true permet de supprimer la page précédente de la pile (évite le retour au login)
       await this.router.navigate(route, { replaceUrl: true });
+
+      // Masquer le splash screen dès que la première navigation réussit
+      if (this.isFirstLoad) {
+        this.isFirstLoad = false;
+        console.log('✨ [ANGULAR] First navigation complete. Hiding Splash Screen...');
+        // Petit délai pour laisser le temps au DOM de se stabiliser
+        setTimeout(async () => {
+          await SplashScreen.hide({
+            fadeOutDuration: 400
+          });
+        }, 300);
+      }
     } finally {
       setTimeout(() => {
         this.isNavigating = false;
