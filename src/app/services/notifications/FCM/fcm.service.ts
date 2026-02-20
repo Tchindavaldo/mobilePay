@@ -184,17 +184,20 @@ export class FcmService {
             await this.router.navigateByUrl('/tabs/tab2');
         });
 
-        // Créer le channel pour Android
-        LocalNotifications.createChannel({
-            id: 'moobilpay_channel_v2',
-            name: 'Notifications MoobilPay',
-            importance: 5,
-            sound: 'default',
-            vibration: true,
-            lights: true,
-            lightColor: '#dc2626',
-            visibility: 1
-        });
+        // Créer le channel pour Android (Seulement sur Android)
+        if (Capacitor.getPlatform() === 'android') {
+            LocalNotifications.createChannel({
+                id: 'moobilpay_channel_v2',
+                name: 'Notifications MoobilPay',
+                importance: 5,
+                sound: 'default',
+                vibration: true,
+                lights: true,
+                lightColor: '#dc2626',
+                visibility: 1
+            }).then(() => console.log('✅ [FCM] Channel "moobilpay_channel_v2" créé via setupListeners'))
+                .catch(err => console.error('❌ [FCM] Erreur création channel (setupListeners):', err));
+        }
     }
 
     private async markAsReadOptimistic(notification: any) {

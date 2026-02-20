@@ -1,15 +1,20 @@
 PODS:
+  - Alamofire (5.10.2)
   - AppAuth (1.7.6):
     - AppAuth/Core (= 1.7.6)
     - AppAuth/ExternalUserAgent (= 1.7.6)
   - AppAuth/Core (1.7.6)
   - AppAuth/ExternalUserAgent (1.7.6):
     - AppAuth/Core
-  - Capacitor (6.2.1):
+  - AppCheckCore (11.2.0):
+    - GoogleUtilities/Environment (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
+    - PromisesObjC (~> 2.4)
+  - Capacitor (6.2.0):
     - CapacitorCordova
   - CapacitorApp (6.0.0):
     - Capacitor
-  - CapacitorCordova (6.2.1)
+  - CapacitorCordova (6.2.0)
   - CapacitorHaptics (6.0.0):
     - Capacitor
   - CapacitorLocalNotifications (6.1.2):
@@ -19,57 +24,46 @@ PODS:
   - CapacitorSecureStoragePlugin (0.10.0):
     - Capacitor
     - SwiftKeychainWrapper
+  - CapacitorSplashScreen (6.0.4):
+    - Capacitor
   - CapacitorStatusBar (6.0.0):
     - Capacitor
-  - CordovaPlugins (6.0.0):
+  - CapgoCapacitorSocialLogin (6.0.1):
+    - Alamofire (~> 5.10.2)
+    - Capacitor
+    - FBSDKCoreKit (= 17.4.0)
+    - FBSDKLoginKit (= 17.4.0)
+    - GoogleSignIn (~> 8.0.0)
+  - CordovaPlugins (6.2.0):
     - CapacitorCordova
   - CordovaPluginsResources (0.0.105)
-  - CordovaPluginsStatic (6.0.0):
-    - CapacitorCordova
-    - GoogleSignIn (~> 5.0.2)
-    - GoogleUtilities (~> 7.2.2)
-  - GoogleSignIn (5.0.2):
-    - AppAuth (~> 1.2)
-    - GTMAppAuth (~> 1.0)
-    - GTMSessionFetcher/Core (~> 1.1)
-  - GoogleUtilities (7.2.2):
-    - GoogleUtilities/AppDelegateSwizzler (= 7.2.2)
-    - GoogleUtilities/Environment (= 7.2.2)
-    - GoogleUtilities/ISASwizzler (= 7.2.2)
-    - GoogleUtilities/Logger (= 7.2.2)
-    - GoogleUtilities/MethodSwizzler (= 7.2.2)
-    - GoogleUtilities/Network (= 7.2.2)
-    - "GoogleUtilities/NSData+zlib (= 7.2.2)"
-    - GoogleUtilities/Reachability (= 7.2.2)
-    - GoogleUtilities/SwizzlerTestHelpers (= 7.2.2)
-    - GoogleUtilities/UserDefaults (= 7.2.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.2.2):
+  - FBAEMKit (17.4.0):
+    - FBSDKCoreKit_Basics (= 17.4.0)
+  - FBSDKCoreKit (17.4.0):
+    - FBAEMKit (= 17.4.0)
+    - FBSDKCoreKit_Basics (= 17.4.0)
+  - FBSDKCoreKit_Basics (17.4.0)
+  - FBSDKLoginKit (17.4.0):
+    - FBSDKCoreKit (= 17.4.0)
+  - GoogleSignIn (8.0.0):
+    - AppAuth (< 2.0, >= 1.7.3)
+    - AppCheckCore (~> 11.0)
+    - GTMAppAuth (< 5.0, >= 4.1.1)
+    - GTMSessionFetcher/Core (~> 3.3)
+  - GoogleUtilities/Environment (8.1.0):
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Logger (8.1.0):
     - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (8.1.0)
+  - GoogleUtilities/UserDefaults (8.1.0):
     - GoogleUtilities/Logger
-    - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.2.2):
-    - PromisesObjC (~> 1.2)
-  - GoogleUtilities/ISASwizzler (7.2.2)
-  - GoogleUtilities/Logger (7.2.2):
-    - GoogleUtilities/Environment
-  - GoogleUtilities/MethodSwizzler (7.2.2):
-    - GoogleUtilities/Logger
-  - GoogleUtilities/Network (7.2.2):
-    - GoogleUtilities/Logger
-    - "GoogleUtilities/NSData+zlib"
-    - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.2.2)"
-  - GoogleUtilities/Reachability (7.2.2):
-    - GoogleUtilities/Logger
-  - GoogleUtilities/SwizzlerTestHelpers (7.2.2):
-    - GoogleUtilities/MethodSwizzler
-  - GoogleUtilities/UserDefaults (7.2.2):
-    - GoogleUtilities/Logger
-  - GTMAppAuth (1.3.1):
-    - AppAuth/Core (~> 1.6)
-    - GTMSessionFetcher/Core (< 3.0, >= 1.5)
-  - GTMSessionFetcher/Core (1.7.2)
-  - PromisesObjC (1.2.12)
+    - GoogleUtilities/Privacy
+  - GTMAppAuth (4.1.1):
+    - AppAuth/Core (~> 1.7)
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3)
+  - GTMSessionFetcher/Core (3.5.0)
+  - PromisesObjC (2.4.0)
   - SwiftKeychainWrapper (4.0.1)
 
 DEPENDENCIES:
@@ -80,14 +74,21 @@ DEPENDENCIES:
   - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
   - "CapacitorPushNotifications (from `../../node_modules/@capacitor/push-notifications`)"
   - CapacitorSecureStoragePlugin (from `../../node_modules/capacitor-secure-storage-plugin`)
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "CapgoCapacitorSocialLogin (from `../../node_modules/@capgo/capacitor-social-login`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - CordovaPluginsResources (from `../capacitor-cordova-ios-plugins`)
-  - CordovaPluginsStatic (from `../capacitor-cordova-ios-plugins`)
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - AppAuth
+    - AppCheckCore
+    - FBAEMKit
+    - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
+    - FBSDKLoginKit
     - GoogleSignIn
     - GoogleUtilities
     - GTMAppAuth
@@ -110,35 +111,44 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/push-notifications"
   CapacitorSecureStoragePlugin:
     :path: "../../node_modules/capacitor-secure-storage-plugin"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapgoCapacitorSocialLogin:
+    :path: "../../node_modules/@capgo/capacitor-social-login"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
   CordovaPluginsResources:
     :path: "../capacitor-cordova-ios-plugins"
-  CordovaPluginsStatic:
-    :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
-  Capacitor: c95400d761e376be9da6be5a05f226c0e865cebf
+  AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
+  Capacitor: 05d35014f4425b0740fc8776481f6a369ad071bf
   CapacitorApp: 30145f2ea2311e4f3744472119ec87d2ddf4c0a7
-  CapacitorCordova: 8d93e14982f440181be7304aa9559ca631d77fff
+  CapacitorCordova: b33e7f4aa4ed105dd43283acdd940964374a87d9
   CapacitorHaptics: 0cea833e6a8bf489dd6acaaebf6d953b90086c59
   CapacitorLocalNotifications: 65d718c32cbcb753697627bea76dd4336ef85dc2
   CapacitorPushNotifications: b3f20973cb167cb8fee622e309ec521134798241
   CapacitorSecureStoragePlugin: 545b51d782d35e61a39231ecf99a966b060a2cbb
+  CapacitorSplashScreen: ef140a8b1ea7244e0c245ce2dd4ce5251e7ab86a
   CapacitorStatusBar: 129c68650d3f950e080e8e7e03d69c3b361dbe52
-  CordovaPlugins: 2be56b62cf5c90034ef1ef430591de588a4de38b
+  CapgoCapacitorSocialLogin: 4fa119e5de63ae6599d5e8bcc2698e340731da7b
+  CordovaPlugins: a59cca88caa1fc64ee59be94be11f9abcf0ac18f
   CordovaPluginsResources: 0c211f770ed91763a179ebcd9b9346e120b70662
-  CordovaPluginsStatic: dcf89a962664b42ecd62884db105204c2307e47d
-  GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
-  GoogleUtilities: 31c5b01f978a70c6cff2afc6272b3f1921614b43
-  GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
-  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
-  PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  FBAEMKit: 58cb5f302cdd715a56d4c1d0dfdd2e423ac1421a
+  FBSDKCoreKit: 94d7461d0cecf441b1ba7c41acfff41daa8ccd41
+  FBSDKCoreKit_Basics: 151b43db8b834d3f0e02f95d36a44ffd36265e45
+  FBSDKLoginKit: 5c1cd53c91a2282b3a4fe6e6d3dcf2b8b0d33d55
+  GoogleSignIn: ce8c89bb9b37fb624b92e7514cc67335d1e277e4
+  GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
+  GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
+  GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
+  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
 
-PODFILE CHECKSUM: c39c90914c8dcfb8ef32dc87056879b1f8141af4
+PODFILE CHECKSUM: ff77b0a1c4d15c292bcfefbb40ea2804a1cd5fbb
 
 COCOAPODS: 1.16.2
