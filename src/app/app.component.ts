@@ -1,6 +1,6 @@
 import { Component, Optional } from '@angular/core';
 import { Router } from '@angular/router';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { app } from '../firebase-config';
 import { AuthStateService } from './services/auth-state.service';
 import { FcmService } from './services/notifications/FCM/fcm.service';
@@ -63,28 +63,37 @@ export class AppComponent {
   }
 
   private async initializeAuth() {
-    const hasSeenOnboarding = await this.userStorage.get('hasSeenOnboarding') === true || await this.userStorage.get('hasSeenOnboarding') === 'true';
     const auth = getAuth(app);
-    console.log('🧭 [ANGULAR] Firebase Auth instance obtained.');
 
+    // Fix iOS: Appliquer une persistance robuste explicitement
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      console.log('🧭 [ANGULAR] Firebase Persistence set to browserLocalPersistence');
+    } catch (e) {
+      console.warn('⚠️ [ANGULAR] Could not set Firebase persistence:', e);
+    }
+
+    console.log('🧭 [ANGULAR] Registering onAuthStateChanged listener...');
+
+    // On enregistre le listener IMMÉDIATEMENT
     onAuthStateChanged(auth, async (user) => {
       const currentUrl = this.router.url;
-      console.log('🧭 [ANGULAR] !!! onAuthStateChanged !!! - User:', !!user, 'URL now:', currentUrl);
+      console.log('🧭 [ANGULAR] !!! onAuthStateChanged fired !!! - User:', !!user, 'URL now:', currentUrl);
+
+      // On récupère "hasSeenOnboarding" au moment du changement d'état
+      // pour ne pas bloquer l'enregistrement du listener ci-dessus
+      const hasSeenOnboarding = await this.userStorage.get('hasSeenOnboarding') === true ||
+        await this.userStorage.get('hasSeenOnboarding') === 'true';
 
       // Éviter le flash du login si on vient d'une notification
       if (this.isFirstLoad) {
-        console.log('🧭 [ANGULAR] isFirstLoad=true. Waiting 300ms for notification plugin...');
-        // Laisser un court instant aux plugins Capacitor pour déclencher l'action de notification
+        console.log('🧭 [ANGULAR] First load - waiting for potential notification triggers...');
         await new Promise(resolve => setTimeout(resolve, 300));
-        console.log('🧭 [ANGULAR] Delay finished. Current URL is:', this.router.url);
       }
 
       if (user) {
-        // L'utilisateur est connecté
-
-        // Pas de redirection si login Google en cours
         if (this.authState.isGoogleLoginActive()) {
-          console.log('🧭 [ANGULAR] Google login in progress, stopping redirection.');
+          console.log('🧭 [ANGULAR] Google login in progress, skip redirection.');
           if (this.isFirstLoad) {
             this.isFirstLoad = false;
             await SplashScreen.hide();
@@ -92,34 +101,27 @@ export class AppComponent {
           return;
         }
 
-        // Redirection vers le Home si sur une page d'auth/onboarding/splash
         if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/' || currentUrl === '/splash') {
-          console.log('🧭 [ANGULAR] Authenticated user on auth/splash page. Redirecting to /tabs/tab1');
+          console.log('🧭 [ANGULAR] User authenticated. Navigating to Home.');
           await this.navigateWithFlag(['/tabs/tab1']);
         }
       } else {
-        // L'utilisateur n'est pas connecté
         if (!hasSeenOnboarding) {
-          console.log('🧭 [ANGULAR] New user. Redirecting to /explication');
+          console.log('🧭 [ANGULAR] New user (Onboarding not seen). Navigating to /explication');
           await this.navigateWithFlag(['/explication']);
         } else {
-          // Si on essaie d'aller sur une page protégée ou la racine/splash, redirection vers login
           if (currentUrl === '/' || currentUrl === '/splash' || currentUrl.includes('/tabs/')) {
-            console.log('🧭 [ANGULAR] Unauthenticated. Redirecting to /login');
+            console.log('🧭 [ANGULAR] User not authenticated. Navigating to Login.');
             await this.navigateWithFlag(['/login']);
           }
         }
       }
-
-      // Le masquage du splash screen est maintenant géré à la fin de navigateWithFlag
-      // pour garantir une transition fluide vers la première page réelle de l'app.
     });
 
     // SÉCURITÉ : Masquer le splash screen après un délai maximum si l'Auth ne répond pas
-    // Cela évite de rester bloqué indéfiniment sur iOS
     setTimeout(async () => {
       if (this.isFirstLoad) {
-        console.warn('⚠️ [ANGULAR] Auth long à répondre (30s). Masquage forcé du Splash Screen.');
+        console.error('❌ [ANGULAR] Auth initialization timed out (30s). Force hiding splash.');
         this.isFirstLoad = false;
         await SplashScreen.hide({
           fadeOutDuration: 500

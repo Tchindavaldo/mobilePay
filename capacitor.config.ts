@@ -10,7 +10,9 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     allowNavigation: [
       "10.0.2.2",
-      "google.com"
+      "google.com",
+      "*.firebaseapp.com",
+      "*.googleapis.com"
     ]
   },
 
