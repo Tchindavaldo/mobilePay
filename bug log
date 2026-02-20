@@ -1,19 +1,41 @@
 `UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
-Could not create a sandbox extension for '/var/containers/Bundle/Application/94F9A514-2A18-4273-A0FB-A508ED3CD958/App.app'
+Could not create a sandbox extension for '/var/containers/Bundle/Application/BF15CCDE-AA9C-4D28-AB1A-C5C7C900F855/App.app'
 ⚡️  Loading app at capacitor://localhost...
-Networking process (0x10e068190) took 1.199457 seconds to launch
-WebContent[14374] Unable to hide query parameters from script (missing data)
-To Native Cordova ->  NetworkStatus getConnectionInfo NetworkStatus435609692 ["options": []]
-⚡️  [log] - onscript loading complete
+Networking process (0x112068190) took 1.546897 seconds to launch
+WebContent process (0x1120ec100) took 1.015363 seconds to launch
+WebContent[14649] Unable to hide query parameters from script (missing data)
+To Native Cordova ->  NetworkStatus getConnectionInfo NetworkStatus662414239 ⚡️  [log] - onscript loading complete
+["options": []]
 ⚡️  WebView loaded
 ⚡️  [log] - 🔌 Initialisation Socket.IO vers: https://netflix-automation.fly.dev
-⚡️  [log] - --- SPLASH PAGE LOADED ---
+⚡️  [log] - 🚪 [PAGE] LoginPage: ngOnInit (Page affichée)
+⚡️  To Native ->  SocialLogin initialize 64369963
+ERROR MESSAGE:  {"message":"No provider was initialized","errorMessage":"No provider was initialized"}
 ⚡️  [warn] - 🚫 [FCM] Notifications désactivées sur iOS pour débogage (soupçon de blocage au démarrage)
-⚡️  To Native ->  SecureStoragePlugin get 18756532
-ERROR MESSAGE:  {"message":"Item with given key does not exist","errorMessage":"Item with given key does not exist"}
-⚡️  [error] - {"message":"Item with given key does not exist","errorMessage":"Item with given key does not exist"}
-⚡️  [log] - 🧭 [ANGULAR] Firebase Auth instance obtained.
-⚡️  To Native ->  App addListener 18756533
-⚡️  To Native ->  SplashScreen hide 18756534
-⚡️  [warn] - ⚠️ [ANGULAR] Auth long à répondre (30s). Masquage forcé du Splash Screen.
-⚡️  TO JS undefined
+⚡️  [error] - {"message":"No provider was initialized","errorMessage":"No provider was initialized"}
+⚡️  [error] - Erreur initialisation SocialLogin: {"errorMessage":"No provider was initialized"}
+⚡️  To Native ->  App addListener 64369964
+⚡️  To Native ->  SocialLogin login 64369965
+⚡️  [log] - 🔐 Début de l'authentification Google...
+⚡️  [log] - 🔒 Google login in progress: true
+⚡️  [log] - 📱 Authentification Google NATIVE (SocialLogin)...
+*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: 'No active configuration.  Make sure GIDClientID is set in Info.plist.'
+*** First throw call stack:
+(0x1990968c8 0x19600d7c4 0x1991218d4 0x10614d450 0x10614be14 0x1060c70dc 0x1060c68cc 0x105f70294 0x10577c63c 0x1057962d0 0x1057b74c0 0x10578c778 0x10578c6b4 0x199038520 0x198fead14 0x198fe9c44 0x2383c2498 0x19e964ddc 0x19e909b0c 0x105e195b0 0x196062e28)
+libc++abi: terminating due to uncaught exception of type NSException
+
+
+
+  if (options.interactive) {
+    // Ensure that a configuration has been provided.
+    if (!_configuration) {
+      // NOLINTNEXTLINE(google-objc-avoid-throwing-exception)
+      [NSException raise:NSInvalidArgumentException
+                  format:@"No active configuration.  Make sure GIDClientID is set in Info.plist."];
+      return;
+    }
+
+     Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: 'No active configuration.  Make sure GIDClientID is set in Info.plist.'
+*** First throw call stack:
+(0x1990968c8 0x19600d7c4 0x1991218d4 0x10614d450 0x10614be14 0x1060c70dc 0x1060c68cc 0x105f70294 0x10577c63c 0x1057962d0 0x1057b74c0 0x10578c778 0x10578c6b4 0x199038520 0x198fead14 0x198fe9c44 0x2383c2498 0x19e964ddc 0x19e909b0c 0x105e195b0 0x196062e28)
+terminating due to uncaught exception of type NSException
