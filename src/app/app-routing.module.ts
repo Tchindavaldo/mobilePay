@@ -22,7 +22,7 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/splash',
+    redirectTo: '/login',
     pathMatch: 'full'
   },
   {
