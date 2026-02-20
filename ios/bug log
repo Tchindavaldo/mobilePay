@@ -1,0 +1,28 @@
+`UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
+Could not create a sandbox extension for '/var/containers/Bundle/Application/6DCAF733-523C-4D56-B60B-F981F9CD7076/App.app'
+⚡️  Loading app at capacitor://localhost...
+Networking process (0x110068190) took 1.639098 seconds to launch
+GPU process (0x1101241e0) took 1.004085 seconds to launch
+WebContent process (0x1100ec100) took 1.036469 seconds to launch
+WebContent[12942] Unable to hide query parameters from script (missing data)
+To Native Cordova ->  NetworkStatus getConnectionInfo NetworkStatus1752014231 ["options": []]
+⚡️  [log] - onscript loading complete
+⚡️  WebView loaded
+⚡️  [log] - 🔌 Initialisation Socket.IO vers: https://netflix-automation.fly.dev
+⚡️  [log] - 🚪 [PAGE] SplashPage: ngOnInit (Page affichée - Chargement en cours)
+⚡️  [log] - 📡 [FCM] Configuration initiale...
+⚡️  To Native ->  PushNotifications addListener 85175710
+⚡️  To Native ->  PushNotifications addListener 85175711
+⚡️  To Native ->  PushNotifications addListener 85175712
+⚡️  To Native ->  LocalNotifications addListener 85175713
+⚡️  To Native ->  PushNotifications requestPermissions 85175714
+⚡️  To Native ->  SecureStoragePlugin get 85175715
+ERROR MESSAGE:  {"errorMessage":"Item with given key does not exist","message":"Item with given key does not exist"}
+⚡️  TO JS {"receive":"granted"}
+⚡️  [error] - {"errorMessage":"Item with given key does not exist","message":"Item with given key does not exist"}
+⚡️  To Native ->  PushNotifications register 85175716
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 85175717
+⚡️  To Native ->  SplashScreen hide 85175718
+⚡️  [warn] - ⚠️ [ANGULAR] Auth long à répondre. Masquage forcé du Splash Screen par sécurité.
+⚡️  TO JS undefined
