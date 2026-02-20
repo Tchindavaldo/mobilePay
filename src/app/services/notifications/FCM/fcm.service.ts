@@ -23,6 +23,10 @@ export class FcmService {
     private isConfigured = false;
 
     async setupPushNotifications() {
+        if (Capacitor.getPlatform() === 'ios') {
+            console.warn('🚫 [FCM] Notifications désactivées sur iOS pour débogage (soupçon de blocage au démarrage)');
+            return;
+        }
         // 1. Récupérer un token non envoyé et tenter de l'envoyer au backend
         // On fait ça AVANT le guard isConfigured car on veut pouvoir retenter l'envoi même si l'init est déjà faite
         const unsentToken = await this.userStorage.get('unsentFcmToken');
