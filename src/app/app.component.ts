@@ -1,6 +1,6 @@
 import { Component, Optional } from '@angular/core';
 import { Router } from '@angular/router';
-import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { initializeAuth, onAuthStateChanged, indexedDBLocalPersistence, browserLocalPersistence } from 'firebase/auth';
 import { app } from '../firebase-config';
 import { AuthStateService } from './services/auth-state.service';
 import { FcmService } from './services/notifications/FCM/fcm.service';
@@ -8,6 +8,7 @@ import { Platform, IonRouterOutlet } from '@ionic/angular';
 import { UserStorageService } from './services/storage/user-storage.service';
 import { App } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 export class AppComponent {
   private isNavigating = false;
   private isFirstLoad = true;
+  private auth: any;
 
   constructor(
     private router: Router,
@@ -40,75 +42,58 @@ export class AppComponent {
   private setupBackButtonCustomHandler() {
     this.platform.backButton.subscribeWithPriority(10, (processNextHandler) => {
       const url = this.router.url;
-      // Liste des pages qui doivent quitter l'application au lieu de faire "retour"
-      const rootPages = [
-        '/tabs/tab1',
-        '/tabs/tab4',
-        '/tabs/activations',
-        '/tabs/tab2',
-        '/tabs/tab3',
-        '/login',
-        '/explication',
-        '/'
-      ];
+      const rootPages = ['/tabs/tab1', '/tabs/tab4', '/tabs/activations', '/tabs/tab2', '/tabs/tab3', '/login', '/explication', '/'];
 
       if (rootPages.some(page => url === page)) {
-        // Sortir de l'application si sur une page racine ou un onglet principal
         App.exitApp();
       } else {
-        // Sinon laisser le comportement normal (ex: retour du paiement vers home)
         processNextHandler();
       }
     });
   }
 
   private async initializeAuth() {
-    const auth = getAuth(app);
-
-    // Fix iOS: Appliquer une persistance robuste explicitement
-    try {
-      await setPersistence(auth, browserLocalPersistence);
-      console.log('🧭 [ANGULAR] Firebase Persistence set to browserLocalPersistence');
-    } catch (e) {
-      console.warn('⚠️ [ANGULAR] Could not set Firebase persistence:', e);
+    // Initialisation robuste pour iOS/Android
+    // On utilise indexedDBLocalPersistence car sur iOS c'est le seul qui ne gèle pas au démarrage
+    if (Capacitor.isNativePlatform()) {
+      this.auth = initializeAuth(app, {
+        persistence: indexedDBLocalPersistence
+      });
+      console.log('🧭 [ANGULAR] Firebase Initialized for NATIVE with indexedDB');
+    } else {
+      this.auth = initializeAuth(app, {
+        persistence: browserLocalPersistence
+      });
+      console.log('🧭 [ANGULAR] Firebase Initialized for WEB');
     }
 
-    console.log('🧭 [ANGULAR] Registering onAuthStateChanged listener...');
-
-    // On enregistre le listener IMMÉDIATEMENT (Non-bloquant)
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(this.auth, (user) => {
       this.handleAuthStateChange(user);
     });
 
-    // SÉCURITÉ : Masquer le splash screen après un délai maximum si l'Auth ne répond pas
+    // Sécurité Splash Screen
     setTimeout(async () => {
       if (this.isFirstLoad) {
-        console.error('❌ [ANGULAR] Auth initialization timed out (30s). Force hiding splash.');
+        console.warn('⚠️ Force hide splash after 15s');
         this.isFirstLoad = false;
-        await SplashScreen.hide({
-          fadeOutDuration: 500
-        });
+        await SplashScreen.hide();
       }
-    }, 30000);
+    }, 15000);
   }
 
   private async handleAuthStateChange(user: any) {
     const currentUrl = this.router.url;
-    console.log('🧭 [ANGULAR] Handling Auth Change - User:', !!user, 'URL now:', currentUrl);
+    console.log('🧭 [ANGULAR] Auth Event - User:', !!user, 'URL:', currentUrl);
 
-    // On récupère "hasSeenOnboarding" de manière isolée
     const hasSeenOnboarding = await this.userStorage.get('hasSeenOnboarding') === true ||
       await this.userStorage.get('hasSeenOnboarding') === 'true';
 
-    // Éviter le flash du login si on vient d'une notification
     if (this.isFirstLoad && (currentUrl === '/' || currentUrl === '/splash')) {
-      console.log('🧭 [ANGULAR] First load - minor delay for plugins...');
       await new Promise(resolve => setTimeout(resolve, 300));
     }
 
     if (user) {
       if (this.authState.isGoogleLoginActive()) {
-        console.log('🧭 [ANGULAR] Google login in progress, suspending auto-redirection.');
         if (this.isFirstLoad) {
           this.isFirstLoad = false;
           SplashScreen.hide();
@@ -117,18 +102,13 @@ export class AppComponent {
       }
 
       if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/' || currentUrl === '/splash') {
-        console.log('🧭 [ANGULAR] User authenticated. Directing to Home.');
         await this.navigateWithFlag(['/tabs/tab1']);
       }
     } else {
       if (!hasSeenOnboarding) {
-        console.log('🧭 [ANGULAR] New user path (Onboarding).');
         await this.navigateWithFlag(['/explication']);
-      } else {
-        if (currentUrl === '/' || currentUrl === '/splash' || currentUrl.includes('/tabs/')) {
-          console.log('🧭 [ANGULAR] Unauthenticated path. Directing to Login.');
-          await this.navigateWithFlag(['/login']);
-        }
+      } else if (currentUrl === '/' || currentUrl === '/splash' || currentUrl.includes('/tabs/')) {
+        await this.navigateWithFlag(['/login']);
       }
     }
   }
@@ -137,22 +117,14 @@ export class AppComponent {
     this.isNavigating = true;
     try {
       await this.router.navigate(route, { replaceUrl: true });
-
-      // Masquer le splash screen dès que la première navigation réussit
       if (this.isFirstLoad) {
         this.isFirstLoad = false;
-        console.log('✨ [ANGULAR] First navigation complete. Hiding Splash Screen...');
-        // Petit délai pour laisser le temps au DOM de se stabiliser
         setTimeout(async () => {
-          await SplashScreen.hide({
-            fadeOutDuration: 400
-          });
+          await SplashScreen.hide();
         }, 300);
       }
     } finally {
-      setTimeout(() => {
-        this.isNavigating = false;
-      }, 500);
+      setTimeout(() => { this.isNavigating = false; }, 500);
     }
   }
 }
