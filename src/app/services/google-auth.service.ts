@@ -44,6 +44,7 @@ export class GoogleAuthService {
         await SocialLogin.initialize({
           google: {
             webClientId: '583417452577-elkimar69os44l6qgagqek2arurgmtbc.apps.googleusercontent.com',
+            iOSClientId: '583417452577-1edun3m83ttsldhsaa2gvesmdj6fg2mt.apps.googleusercontent.com',
             mode: 'online'
           }
         });
