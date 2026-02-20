@@ -1,20 +1,19 @@
 `UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
-Could not create a sandbox extension for '/var/containers/Bundle/Application/E8E65ECD-796E-4342-9471-9B04119067BD/App.app'
+Could not create a sandbox extension for '/var/containers/Bundle/Application/94F9A514-2A18-4273-A0FB-A508ED3CD958/App.app'
 ⚡️  Loading app at capacitor://localhost...
-Networking process (0x10e058190) took 1.610357 seconds to launch
-WebContent process (0x10e0f0100) took 1.072589 seconds to launch
-GPU process (0x10e11c1e0) took 1.059251 seconds to launch
-WebContent[14305] Unable to hide query parameters from script (missing data)
-To Native Cordova ->  NetworkStatus getConnectionInfo NetworkStatus655078677 ⚡️  [log] - onscript loading complete
-["options": []]
+Networking process (0x10e068190) took 1.199457 seconds to launch
+WebContent[14374] Unable to hide query parameters from script (missing data)
+To Native Cordova ->  NetworkStatus getConnectionInfo NetworkStatus435609692 ["options": []]
+⚡️  [log] - onscript loading complete
 ⚡️  WebView loaded
 ⚡️  [log] - 🔌 Initialisation Socket.IO vers: https://netflix-automation.fly.dev
 ⚡️  [log] - --- SPLASH PAGE LOADED ---
 ⚡️  [warn] - 🚫 [FCM] Notifications désactivées sur iOS pour débogage (soupçon de blocage au démarrage)
-⚡️  To Native ->  SecureStoragePlugin get 126762298
-ERROR MESSAGE:  {"errorMessage":"Item with given key does not exist","message":"Item with given key does not exist"}
-⚡️  [error] - {"errorMessage":"Item with given key does not exist","message":"Item with given key does not exist"}
-⚡️  To Native ->  App addListener 126762299
-⚡️  To Native ->  SplashScreen hide 126762300
-⚡️  [warn] - ⚠️ [ANGULAR] Auth long à répondre. Masquage forcé du Splash Screen par sécurité 5000.
+⚡️  To Native ->  SecureStoragePlugin get 18756532
+ERROR MESSAGE:  {"message":"Item with given key does not exist","errorMessage":"Item with given key does not exist"}
+⚡️  [error] - {"message":"Item with given key does not exist","errorMessage":"Item with given key does not exist"}
+⚡️  [log] - 🧭 [ANGULAR] Firebase Auth instance obtained.
+⚡️  To Native ->  App addListener 18756533
+⚡️  To Native ->  SplashScreen hide 18756534
+⚡️  [warn] - ⚠️ [ANGULAR] Auth long à répondre (30s). Masquage forcé du Splash Screen.
 ⚡️  TO JS undefined
