@@ -61,39 +61,31 @@ export class GoogleAuthService {
 
     try {
       const isNative = Capacitor.isNativePlatform();
+      const platform = Capacitor.getPlatform();
       let firebaseUser: User;
 
-      if (isNative) {
-        console.log('📱 Authentification Google NATIVE (SocialLogin)...');
+      // Utiliser le flux WEB sur iOS car le bridge natif Firebase bloque à l'étape 1.4
+      if (isNative && platform !== 'ios') {
+        console.log('📱 Authentification Google NATIVE (Android)...');
         const loginResult = await SocialLogin.login({
           provider: 'google',
-          options: {
-            // Ne pas ajouter de scopes ici si non configurés dans le MainActivity
-          }
+          options: {}
         });
 
         console.log('✓ SocialLogin réussie. Résultat brut:', JSON.stringify(loginResult));
-
         const res = loginResult.result as any;
         const idToken = res.idToken;
-        const accessToken = res.accessToken?.token;
 
-        console.log('🔑 Étape 1.1 : Extraction des tokens...', { hasIdToken: !!idToken, hasAccessToken: !!accessToken });
+        if (!idToken) throw new Error('ID Token manquant');
 
-        if (!idToken) {
-          throw new Error('ID Token manquant dans le résultat de SocialLogin');
-        }
-
-        // Créer un credential Firebase à partir du token natif
-        console.log('🔑 Étape 1.2 : Création du Credential Firebase...');
         const credential = FirebaseGoogleAuthProvider.credential(idToken);
-
-        console.log('🔥 Firebase Étape 1.4 : Envoi du Credential au serveur Firebase...');
+        console.log('🔥 Firebase (Android) : Envoi du Credential...');
         const userCredential = await signInWithCredential(this.auth, credential);
         firebaseUser = userCredential.user;
-        console.log('✅ Firebase Étape 1.5 : Auth serveur réussie ! UID:', firebaseUser?.uid);
       } else {
-        console.log('💻 Étape 1/6 : Authentification Google WEB (Popup)...');
+        // Flux WEB (Popup) pour iOS et Desktop
+        console.log(platform === 'ios' ? '� iOS détecté : Utilisation du flux WEB (Popup) pour stabilité.' : '💻 Web détecté : Utilisation du flux Popup.');
+
         this.provider.setCustomParameters({
           prompt: 'select_account'
         });
