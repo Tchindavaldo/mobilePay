@@ -72,18 +72,26 @@ export class GoogleAuthService {
           }
         });
 
-        console.log('✓ SocialLogin réussie:', loginResult);
+        console.log('✓ SocialLogin réussie. Résultat brut:', JSON.stringify(loginResult));
 
-        const idToken = (loginResult.result as any).idToken;
+        const res = loginResult.result as any;
+        const idToken = res.idToken;
+        const accessToken = res.accessToken?.token;
+
+        console.log('🔑 Étape 1.1 : Extraction des tokens...', { hasIdToken: !!idToken, hasAccessToken: !!accessToken });
 
         if (!idToken) {
-          throw new Error('ID Token manquant dans l\'authentification native');
+          throw new Error('ID Token manquant dans le résultat de SocialLogin');
         }
 
         // Créer un credential Firebase à partir du token natif
+        console.log('🔑 Étape 1.2 : Création du Credential Firebase...');
         const credential = FirebaseGoogleAuthProvider.credential(idToken);
+
+        console.log('🔥 Étape 1.3 : Tentative de signInWithCredential avec Firebase...');
         const userCredential = await signInWithCredential(this.auth, credential);
         firebaseUser = userCredential.user;
+        console.log('🔥 Étape 1.4 : Firebase Auth finalisée avec succès ! User UID:', firebaseUser?.uid);
       } else {
         console.log('💻 Étape 1/6 : Authentification Google WEB (Popup)...');
         this.provider.setCustomParameters({
@@ -94,14 +102,14 @@ export class GoogleAuthService {
         firebaseUser = result.user;
       }
 
-      console.log('✓ Firebase Auth finalisée:', firebaseUser);
+      console.log('✓ [SUCCESS] Authentification Firebase terminée.');
 
       if (!firebaseUser || !firebaseUser.uid) {
-        throw new Error('Aucune donnée utilisateur reçue de Firebase');
+        throw new Error('Aucune donnée utilisateur reçue de Firebase après authentification');
       }
 
       // ÉTAPE 2 : Vérifier si l'utilisateur existe dans la BD backend (par email)
-      console.log('🔍 Étape 2/6 : Vérification dans la base de données par email...');
+      console.log('🔍 Étape 2/6 : Vérification de l\'utilisateur dans le backend...');
       const userEmail = firebaseUser.email;
 
       if (!userEmail) {
@@ -110,14 +118,15 @@ export class GoogleAuthService {
 
       let backendUser;
       try {
+        console.log(`📡 Appel API getUserByEmail pour: ${userEmail}`);
         backendUser = await this.getUserService.getUserByEmail(userEmail);
+        console.log('📡 Réponse API getUserByEmail:', !!backendUser);
       } catch (error: any) {
-        // Si l'erreur n'est pas une 404, la propager
         if (error.response?.status !== 404) {
-          console.error('Erreur lors de la vérification de l\'utilisateur:', error);
-          throw new Error('Erreur de connexion au serveur. Veuillez réessayer.');
+          console.error('❌ Erreur API Critique (Vérification email):', error);
+          throw new Error('Le serveur ne répond pas. Veuillez vérifier votre connexion.');
         }
-        // Si 404, l'utilisateur n'existe pas, on continue
+        console.log('ℹ️ Utilisateur inconnu dans le backend, il sera créé.');
         backendUser = null;
       }
 
