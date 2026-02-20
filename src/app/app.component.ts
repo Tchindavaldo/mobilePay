@@ -75,47 +75,9 @@ export class AppComponent {
 
     console.log('🧭 [ANGULAR] Registering onAuthStateChanged listener...');
 
-    // On enregistre le listener IMMÉDIATEMENT
-    onAuthStateChanged(auth, async (user) => {
-      const currentUrl = this.router.url;
-      console.log('🧭 [ANGULAR] !!! onAuthStateChanged fired !!! - User:', !!user, 'URL now:', currentUrl);
-
-      // On récupère "hasSeenOnboarding" au moment du changement d'état
-      // pour ne pas bloquer l'enregistrement du listener ci-dessus
-      const hasSeenOnboarding = await this.userStorage.get('hasSeenOnboarding') === true ||
-        await this.userStorage.get('hasSeenOnboarding') === 'true';
-
-      // Éviter le flash du login si on vient d'une notification
-      if (this.isFirstLoad) {
-        console.log('🧭 [ANGULAR] First load - waiting for potential notification triggers...');
-        await new Promise(resolve => setTimeout(resolve, 300));
-      }
-
-      if (user) {
-        if (this.authState.isGoogleLoginActive()) {
-          console.log('🧭 [ANGULAR] Google login in progress, skip redirection.');
-          if (this.isFirstLoad) {
-            this.isFirstLoad = false;
-            await SplashScreen.hide();
-          }
-          return;
-        }
-
-        if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/' || currentUrl === '/splash') {
-          console.log('🧭 [ANGULAR] User authenticated. Navigating to Home.');
-          await this.navigateWithFlag(['/tabs/tab1']);
-        }
-      } else {
-        if (!hasSeenOnboarding) {
-          console.log('🧭 [ANGULAR] New user (Onboarding not seen). Navigating to /explication');
-          await this.navigateWithFlag(['/explication']);
-        } else {
-          if (currentUrl === '/' || currentUrl === '/splash' || currentUrl.includes('/tabs/')) {
-            console.log('🧭 [ANGULAR] User not authenticated. Navigating to Login.');
-            await this.navigateWithFlag(['/login']);
-          }
-        }
-      }
+    // On enregistre le listener IMMÉDIATEMENT (Non-bloquant)
+    onAuthStateChanged(auth, (user) => {
+      this.handleAuthStateChange(user);
     });
 
     // SÉCURITÉ : Masquer le splash screen après un délai maximum si l'Auth ne répond pas
@@ -128,6 +90,47 @@ export class AppComponent {
         });
       }
     }, 30000);
+  }
+
+  private async handleAuthStateChange(user: any) {
+    const currentUrl = this.router.url;
+    console.log('🧭 [ANGULAR] Handling Auth Change - User:', !!user, 'URL now:', currentUrl);
+
+    // On récupère "hasSeenOnboarding" de manière isolée
+    const hasSeenOnboarding = await this.userStorage.get('hasSeenOnboarding') === true ||
+      await this.userStorage.get('hasSeenOnboarding') === 'true';
+
+    // Éviter le flash du login si on vient d'une notification
+    if (this.isFirstLoad && (currentUrl === '/' || currentUrl === '/splash')) {
+      console.log('🧭 [ANGULAR] First load - minor delay for plugins...');
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+
+    if (user) {
+      if (this.authState.isGoogleLoginActive()) {
+        console.log('🧭 [ANGULAR] Google login in progress, suspending auto-redirection.');
+        if (this.isFirstLoad) {
+          this.isFirstLoad = false;
+          SplashScreen.hide();
+        }
+        return;
+      }
+
+      if (currentUrl === '/login' || currentUrl === '/phone-auth' || currentUrl === '/explication' || currentUrl === '/' || currentUrl === '/splash') {
+        console.log('🧭 [ANGULAR] User authenticated. Directing to Home.');
+        await this.navigateWithFlag(['/tabs/tab1']);
+      }
+    } else {
+      if (!hasSeenOnboarding) {
+        console.log('🧭 [ANGULAR] New user path (Onboarding).');
+        await this.navigateWithFlag(['/explication']);
+      } else {
+        if (currentUrl === '/' || currentUrl === '/splash' || currentUrl.includes('/tabs/')) {
+          console.log('🧭 [ANGULAR] Unauthenticated path. Directing to Login.');
+          await this.navigateWithFlag(['/login']);
+        }
+      }
+    }
   }
 
   private async navigateWithFlag(route: string[]) {

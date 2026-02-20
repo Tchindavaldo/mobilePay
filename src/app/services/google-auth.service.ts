@@ -64,27 +64,27 @@ export class GoogleAuthService {
       const platform = Capacitor.getPlatform();
       let firebaseUser: User;
 
-      // Utiliser le flux WEB sur iOS car le bridge natif Firebase bloque à l'étape 1.4
+      // Utiliser le flux WEB sur iOS car le bridge natif Firebase bloque souvent
       if (isNative && platform !== 'ios') {
-        console.log('📱 Authentification Google NATIVE (Android)...');
+        console.log('📱 [AUTH] Authentification Google NATIVE (Android)...');
         const loginResult = await SocialLogin.login({
           provider: 'google',
           options: {}
         });
 
-        console.log('✓ SocialLogin réussie. Résultat brut:', JSON.stringify(loginResult));
+        console.log('✓ [AUTH] SocialLogin réussie. Résultat brut:', JSON.stringify(loginResult));
         const res = loginResult.result as any;
         const idToken = res.idToken;
 
         if (!idToken) throw new Error('ID Token manquant');
 
         const credential = FirebaseGoogleAuthProvider.credential(idToken);
-        console.log('🔥 Firebase (Android) : Envoi du Credential...');
+        console.log('🔥 [AUTH] Firebase (Android) : Envoi du Credential...');
         const userCredential = await signInWithCredential(this.auth, credential);
         firebaseUser = userCredential.user;
       } else {
         // Flux WEB (Popup) pour iOS et Desktop
-        console.log(platform === 'ios' ? '� iOS détecté : Utilisation du flux WEB (Popup) pour stabilité.' : '💻 Web détecté : Utilisation du flux Popup.');
+        console.log(platform === 'ios' ? '📱 [AUTH] iOS détecté : Utilisation du flux WEB (Popup).' : '💻 [AUTH] Web détecté : Utilisation du flux Popup.');
 
         this.provider.setCustomParameters({
           prompt: 'select_account'
@@ -92,12 +92,13 @@ export class GoogleAuthService {
 
         const result = await signInWithPopup(this.auth, this.provider);
         firebaseUser = result.user;
+        console.log('✓ [AUTH] signInWithPopup terminé.');
       }
 
-      console.log('✓ [SUCCESS] Authentification Firebase terminée.');
+      console.log('✓ [SUCCESS] Authentification Firebase terminée. UID:', firebaseUser?.uid);
 
       if (!firebaseUser || !firebaseUser.uid) {
-        throw new Error('Aucune donnée utilisateur reçue de Firebase après authentification');
+        throw new Error('Aucune donnée utilisateur reçue de Firebase');
       }
 
       // ÉTAPE 2 : Vérifier si l'utilisateur existe dans la BD backend (par email)
